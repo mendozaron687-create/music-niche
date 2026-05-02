@@ -736,21 +736,14 @@ async def create_single_short(topic: str, niche: str,
     meta = generate_platform_metadata(topic, niche)
     result = {"topic": topic, "paths": paths, "url": None, "meta": meta}
     if upload:
-        yt_meta = meta["youtube"]
-        url = upload_to_youtube(
-            video_path=paths["final"], thumbnail_path=paths["thumbnail"],
-            title=yt_meta["title"],
-            description=yt_meta["description"],
-            tags=yt_meta["tags"],
-            first_comment="What tip surprised you most? 👇 Comment below and follow for more!",
-        )
-        result["url"] = url
+        # YouTube channel is math_quiz only — skip upload for other niches
+        print(f"[upload] Skipping YouTube for niche='{niche}' (channel is math_quiz only)")
     return result
 
 
 async def main():
     print("YouTube Shorts Automation\n")
-    NICHE = "finance"
+    NICHE = "math_quiz"
     topic = get_topic(NICHE)
     output_dir = f"output/single_{topic[:20].replace(' ', '_')}"
     result = await create_single_short(topic=topic, niche=NICHE,
