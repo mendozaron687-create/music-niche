@@ -48,6 +48,72 @@ TIMER_COL = (255, 220,   0,  255)
 DARK      = (15,   15,  15,  255)
 QTEXT_BG  = (8,   15,   55,  175)
 
+# ── 20 rotating card themes ───────────────────────────────────────────────────
+# Each theme: banner bg, category label bg, question box bg,
+#             option circle, timer digit, think overlay, trap CTA strip.
+_CARD_THEMES = [
+    # 0  Deep Navy (original)
+    dict(banner=(15,  30,  80, 240), label=(30,  50, 120, 230), qbg=(8,  15,  55, 175),
+         circle=(100, 175, 240, 255), timer=(255, 220,   0, 255), think=(180, 10, 10, 185), cta=(180, 20, 20, 235)),
+    # 1  Royal Purple
+    dict(banner=(60,  10, 120, 240), label=(80,  20, 140, 230), qbg=(35,  5,  75, 175),
+         circle=(180, 100, 255, 255), timer=(255, 200,  50, 255), think=(100,  0, 180, 185), cta=(100,  0, 180, 235)),
+    # 2  Forest Green
+    dict(banner=(10,  70,  30, 240), label=(15, 100,  40, 230), qbg=(5,  40,  15, 175),
+         circle=( 80, 220, 120, 255), timer=(200, 255, 100, 255), think=( 10, 100,  30, 185), cta=( 10, 100,  30, 235)),
+    # 3  Crimson Red
+    dict(banner=(120, 10,  20, 240), label=(160, 15,  25, 230), qbg=(70,  5,  10, 175),
+         circle=(255,  80,  80, 255), timer=(255, 255, 100, 255), think=(160, 10,  10, 185), cta=(160, 10,  10, 235)),
+    # 4  Midnight Teal
+    dict(banner=(10,  80,  90, 240), label=(15, 110, 120, 230), qbg=(5,  45,  50, 175),
+         circle=( 60, 210, 220, 255), timer=(180, 255, 255, 255), think=( 10,  90, 100, 185), cta=( 10,  90, 100, 235)),
+    # 5  Burnt Orange
+    dict(banner=(120, 55,  10, 240), label=(160, 70,  15, 230), qbg=(70, 30,   5, 175),
+         circle=(255, 160,  60, 255), timer=(255, 240,  80, 255), think=(150,  60,  10, 185), cta=(150,  60,  10, 235)),
+    # 6  Deep Magenta
+    dict(banner=(100, 10,  80, 240), label=(130, 15, 100, 230), qbg=(60,  5,  45, 175),
+         circle=(240,  80, 200, 255), timer=(255, 220, 255, 255), think=(120,  10,  90, 185), cta=(120,  10,  90, 235)),
+    # 7  Slate Blue
+    dict(banner=( 40, 55, 130, 240), label=( 55, 70, 160, 230), qbg=(20, 30,  80, 175),
+         circle=(140, 160, 255, 255), timer=(220, 230, 255, 255), think=( 50,  60, 140, 185), cta=( 50,  60, 140, 235)),
+    # 8  Dark Olive
+    dict(banner=( 55, 65,  10, 240), label=( 75, 85,  15, 230), qbg=(30, 38,   5, 175),
+         circle=(180, 210,  60, 255), timer=(230, 255, 100, 255), think=( 60,  70,  10, 185), cta=( 60,  70,  10, 235)),
+    # 9  Indigo Night
+    dict(banner=( 30,  0, 100, 240), label=( 45,  5, 130, 230), qbg=(15,  0,  60, 175),
+         circle=(120,  80, 255, 255), timer=(200, 180, 255, 255), think=( 40,   0, 120, 185), cta=( 40,   0, 120, 235)),
+    # 10 Rust & Sand
+    dict(banner=(130, 45,  20, 240), label=(160, 60,  25, 230), qbg=(75, 25,  10, 175),
+         circle=(255, 140,  60, 255), timer=(255, 230, 160, 255), think=(140,  50,  20, 185), cta=(140,  50,  20, 235)),
+    # 11 Arctic Blue
+    dict(banner=( 10, 100, 160, 240), label=( 15, 130, 200, 230), qbg=(5,  55,  90, 175),
+         circle=(100, 220, 255, 255), timer=(220, 245, 255, 255), think=( 10, 110, 170, 185), cta=( 10, 110, 170, 235)),
+    # 12 Jungle Dark
+    dict(banner=( 20, 60,  20, 240), label=( 25, 80,  25, 230), qbg=(10, 35,  10, 175),
+         circle=(100, 240, 100, 255), timer=(200, 255, 150, 255), think=( 20,  70,  20, 185), cta=( 20,  70,  20, 235)),
+    # 13 Dark Wine
+    dict(banner=( 90, 10,  40, 240), label=(120, 15,  55, 230), qbg=(50,  5,  20, 175),
+         circle=(230,  80, 140, 255), timer=(255, 200, 220, 255), think=(100,  10,  45, 185), cta=(100,  10,  45, 235)),
+    # 14 Steel Gray
+    dict(banner=( 50, 55,  65, 240), label=( 65, 70,  82, 230), qbg=(25, 30,  38, 175),
+         circle=(160, 180, 210, 255), timer=(220, 230, 240, 255), think=( 55,  60,  70, 185), cta=( 55,  60,  70, 235)),
+    # 15 Deep Amber
+    dict(banner=(110, 75,   0, 240), label=(145, 95,   0, 230), qbg=(65, 42,   0, 175),
+         circle=(255, 195,   0, 255), timer=(255, 245, 150, 255), think=(120,  80,   0, 185), cta=(120,  80,   0, 235)),
+    # 16 Neon Purple Night
+    dict(banner=( 50,  0,  90, 240), label=( 70,  0, 120, 230), qbg=(28,  0,  55, 175),
+         circle=(200,  0, 255, 255), timer=(255, 180, 255, 255), think=( 60,   0, 100, 185), cta=( 60,   0, 100, 235)),
+    # 17 Ocean Depth
+    dict(banner=(  0, 50, 100, 240), label=(  0, 70, 130, 230), qbg=(0,  28,  60, 175),
+         circle=(  0, 190, 255, 255), timer=(150, 240, 255, 255), think=(  0,  55, 110, 185), cta=(  0,  55, 110, 235)),
+    # 18 Dark Brown Earth
+    dict(banner=( 70, 40,  10, 240), label=( 95, 52,  14, 230), qbg=(40, 22,   5, 175),
+         circle=(200, 140,  60, 255), timer=(255, 220, 140, 255), think=( 80,  45,  10, 185), cta=( 80,  45,  10, 235)),
+    # 19 Charcoal Black
+    dict(banner=( 20, 20,  22, 240), label=( 35, 35,  38, 230), qbg=(10, 10,  12, 175),
+         circle=(180, 180, 180, 255), timer=(255, 255, 255, 255), think=( 25,  25,  28, 185), cta=( 25,  25,  28, 235)),
+]
+
 _CHALLENGE_COUNTER_FILE = os.path.join(os.path.dirname(__file__), "challenge_counter.json")
 
 
@@ -190,6 +256,7 @@ def draw_quiz_card(
     thumbnail_banner:   "str | None"         = None,
     trap_answer:        "str | None"         = None,
     series_num:         "int | None"         = None,
+    theme_idx:          "int | None"         = None,
 ) -> Image.Image:
     """Returns an RGBA card image."""
     if solid_bg:
@@ -203,6 +270,10 @@ def draw_quiz_card(
     M  = 45
     d  = ImageDraw.Draw(canvas)
 
+    # ── Pick color theme (rotates every video based on challenge number)
+    _ti = (theme_idx if theme_idx is not None else (series_num or 0)) % len(_CARD_THEMES)
+    _t  = _CARD_THEMES[_ti]
+
     f_ban = _font("impact.ttf",   92)
     f_cat = _font("arialbd.ttf",  38)
     f_ltr = _font("arialbd.ttf",  52)
@@ -211,13 +282,13 @@ def draw_quiz_card(
 
     # ── QUIZ TIME / CHALLENGE banner
     banner_text = f"CHALLENGE #{series_num}" if series_num else "QUIZ TIME"
-    d.rounded_rectangle([M, BANNER_Y1, W - M, BANNER_Y2], radius=20, fill=NAVY)
+    d.rounded_rectangle([M, BANNER_Y1, W - M, BANNER_Y2], radius=20, fill=_t['banner'])
     _cc(d, banner_text, W // 2, (BANNER_Y1 + BANNER_Y2) // 2, f_ban, WHITE)
 
     # ── Category label
     cw  = int(d.textlength(category, font=f_cat)) + 44
     cx1 = (W - cw) // 2
-    d.rounded_rectangle([cx1, LABEL_Y1, cx1 + cw, LABEL_Y2], radius=10, fill=LABEL_BG)
+    d.rounded_rectangle([cx1, LABEL_Y1, cx1 + cw, LABEL_Y2], radius=10, fill=_t['label'])
     _cc(d, category, W // 2, (LABEL_Y1 + LABEL_Y2) // 2, f_cat, WHITE, shadow=False)
 
     # ── Question text (adaptive font — shrink until it fits in ≤4 lines)
@@ -231,7 +302,7 @@ def draw_quiz_card(
     q_block = len(lines) * line_h + 28
     d.rounded_rectangle(
         [M - 10, QUESTION_Y - 18, W - M + 10, QUESTION_Y + q_block],
-        radius=16, fill=QTEXT_BG,
+        radius=16, fill=_t['qbg'],
     )
     qy = QUESTION_Y + 20
     for line in lines:
@@ -264,7 +335,7 @@ def draw_quiz_card(
                              fill=OPT_OK if is_ok else (OPT_WRONG if is_wrong else OPT_WHITE))
         ccx, ccy = M + Rc + 14, (y1 + y2) // 2
         d.ellipse([ccx - Rc, ccy - Rc, ccx + Rc, ccy + Rc],
-                  fill=(50, 160, 80, 255) if is_ok else ((160, 30, 30, 255) if is_wrong else OPT_CIRC))
+                  fill=(50, 160, 80, 255) if is_ok else ((160, 30, 30, 255) if is_wrong else _t['circle']))
         _cc(d, letter, ccx, ccy, f_ltr, WHITE, shadow=False)
         d.text((M + 2 * Rc + 34, (y1 + y2) // 2), txt,
                font=f_opt, fill=WHITE if is_wrong else DARK, anchor="lm")
@@ -295,7 +366,7 @@ def draw_quiz_card(
         cd      = ImageDraw.Draw(cta_layer)
         if trap_answer and trap_answer != correct:
             # Trap reveal: "MOST PICK A — WRONG! 😱"
-            cd.rounded_rectangle([M, 1615, W - M, 1745], radius=20, fill=(180, 20, 20, 235))
+            cd.rounded_rectangle([M, 1615, W - M, 1745], radius=20, fill=_t['cta'])
             canvas  = Image.alpha_composite(canvas, cta_layer)
             d       = ImageDraw.Draw(canvas)
             f_trap1 = _font("impact.ttf", 46)
@@ -334,7 +405,7 @@ def draw_quiz_card(
         d = ImageDraw.Draw(canvas)
         t = str(timer_num)
         d.text((W // 2 + 6, TIMER_CY + 6), t, font=f_tmr, fill=(0, 0, 0, 200), anchor="mm")
-        d.text((W // 2,     TIMER_CY    ), t, font=f_tmr, fill=TIMER_COL,       anchor="mm")
+        d.text((W // 2,     TIMER_CY    ), t, font=f_tmr, fill=_t['timer'],     anchor="mm")
 
     # ── "THINK CAREFULLY!" overlay (pause card between question and countdown)
     if show_think_overlay:
@@ -342,7 +413,7 @@ def draw_quiz_card(
         f_sub   = _font("arialbd.ttf", 48)
         think_layer = Image.new("RGBA", (W, H), (0, 0, 0, 0))
         tl      = ImageDraw.Draw(think_layer)
-        tl.rounded_rectangle([M - 20, 1455, W - M + 20, 1895], radius=25, fill=(180, 10, 10, 185))
+        tl.rounded_rectangle([M - 20, 1455, W - M + 20, 1895], radius=25, fill=_t['think'])
         canvas  = Image.alpha_composite(canvas, think_layer)
         d       = ImageDraw.Draw(canvas)
         _cc(d, "THINK",          W // 2, 1570, f_think, (255, 240,  0, 255), shadow=True)
