@@ -39,6 +39,7 @@ LABEL_BG  = (30,  50, 120,  230)
 GOLD      = (230, 160,  30,  255)
 OPT_WHITE = (255, 255, 255, 245)
 OPT_OK    = (72,  199, 100,  255)
+OPT_WRONG = (210,  45,  45,  235)   # red tint for wrong options on reveal
 OPT_CIRC  = (100, 175, 240,  255)
 BRAND_BG  = (30,   60, 130,  220)
 BRAND_FG  = (180, 220, 255,  255)
@@ -159,13 +160,15 @@ def _download_pexels_bg_video(query: str, pexels_key: str, out_path: str,
 # ── Card renderer ─────────────────────────────────────────────────────────────
 
 def draw_quiz_card(
-    question:    str,
-    options:     dict,
-    correct:     "str | None" = None,
-    category:    str          = "MATH QUIZ",
-    center_img:  "Image.Image | None" = None,
-    timer_num:   "int | None" = None,
-    solid_bg:    bool         = False,   # True = swirly (fallback), False = semi-transparent for video
+    question:           str,
+    options:            dict,
+    correct:            "str | None"         = None,
+    category:           str                  = "MATH QUIZ",
+    center_img:         "Image.Image | None" = None,
+    timer_num:          "int | None"         = None,
+    solid_bg:           bool                 = False,
+    show_think_overlay: bool                 = False,
+    thumbnail_banner:   "str | None"         = None,
 ) -> Image.Image:
     """Returns an RGBA card image."""
     if solid_bg:
@@ -228,19 +231,20 @@ def draw_quiz_card(
     # ── Answer options A / B / C / D
     Rc     = 38
     for i, letter in enumerate("ABCD"):
-        txt   = options.get(letter, "")
-        y1    = OPT_START_Y + i * (OPT_H + OPT_GAP)
-        y2    = y1 + OPT_H
-        is_ok = bool(correct and letter == correct)
+        txt      = options.get(letter, "")
+        y1       = OPT_START_Y + i * (OPT_H + OPT_GAP)
+        y2       = y1 + OPT_H
+        is_ok    = bool(correct and letter == correct)
+        is_wrong = bool(correct and not is_ok)   # reveal card, wrong option
         d.rounded_rectangle([M, y1, W - M, y2],
                              radius=OPT_H // 2,
-                             fill=OPT_OK if is_ok else OPT_WHITE)
+                             fill=OPT_OK if is_ok else (OPT_WRONG if is_wrong else OPT_WHITE))
         ccx, ccy = M + Rc + 14, (y1 + y2) // 2
         d.ellipse([ccx - Rc, ccy - Rc, ccx + Rc, ccy + Rc],
-                  fill=(50, 160, 80, 255) if is_ok else OPT_CIRC)
+                  fill=(50, 160, 80, 255) if is_ok else ((160, 30, 30, 255) if is_wrong else OPT_CIRC))
         _cc(d, letter, ccx, ccy, f_ltr, WHITE, shadow=False)
         d.text((M + 2 * Rc + 34, (y1 + y2) // 2), txt,
-               font=f_opt, fill=DARK, anchor="lm")
+               font=f_opt, fill=WHITE if is_wrong else DARK, anchor="lm")
         if is_ok:
             # Draw a clean checkmark using lines (avoids glyph rendering issues)
             cx0  = W - M - 58
@@ -248,6 +252,28 @@ def draw_quiz_card(
             s    = 18   # half-size
             pts  = [(cx0 - s, cy0), (cx0 - s // 4, cy0 + s), (cx0 + s, cy0 - s)]
             d.line(pts, fill=(255, 255, 255, 255), width=7)
+
+    # ── Progress bar (countdown cards only) — drains from full to empty
+    if timer_num is not None:
+        pb_y1, pb_y2 = 1460, 1490
+        bar_colors   = {3: (72, 199, 100, 255), 2: (255, 180, 0, 255), 1: (220, 50, 50, 255)}
+        bar_col      = bar_colors.get(timer_num, (72, 199, 100, 255))
+        track_x1     = M
+        track_x2     = W - M
+        bar_w        = int((track_x2 - track_x1) * (timer_num / 3))
+        d.rounded_rectangle([track_x1, pb_y1, track_x2, pb_y2], radius=15, fill=(50, 50, 50, 180))
+        if bar_w > 30:
+            d.rounded_rectangle([track_x1, pb_y1, track_x1 + bar_w, pb_y2], radius=15, fill=bar_col)
+
+    # ── CTA strip on answer card (for muted viewers)
+    if correct:
+        f_cta   = _font("arialbd.ttf", 38)
+        cta_layer = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+        cd      = ImageDraw.Draw(cta_layer)
+        cd.rounded_rectangle([M, 1630, W - M, 1730], radius=20, fill=(230, 160, 30, 235))
+        canvas  = Image.alpha_composite(canvas, cta_layer)
+        d       = ImageDraw.Draw(canvas)
+        _cc(d, "FOLLOW FOR DAILY CHALLENGES", W // 2, 1680, f_cta, (15, 15, 15, 255), shadow=False)
 
     # ── Timer countdown digit with glow rings
     if timer_num is not None:
@@ -264,6 +290,29 @@ def draw_quiz_card(
         t = str(timer_num)
         d.text((W // 2 + 6, TIMER_CY + 6), t, font=f_tmr, fill=(0, 0, 0, 200), anchor="mm")
         d.text((W // 2,     TIMER_CY    ), t, font=f_tmr, fill=TIMER_COL,       anchor="mm")
+
+    # ── "THINK CAREFULLY!" overlay (pause card between question and countdown)
+    if show_think_overlay:
+        f_think = _font("impact.ttf", 115)
+        f_sub   = _font("arialbd.ttf", 48)
+        think_layer = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+        tl      = ImageDraw.Draw(think_layer)
+        tl.rounded_rectangle([M - 20, 1455, W - M + 20, 1895], radius=25, fill=(180, 10, 10, 185))
+        canvas  = Image.alpha_composite(canvas, think_layer)
+        d       = ImageDraw.Draw(canvas)
+        _cc(d, "THINK",          W // 2, 1570, f_think, (255, 240,  0, 255), shadow=True)
+        _cc(d, "CAREFULLY!",     W // 2, 1710, f_think, WHITE,               shadow=True)
+        _cc(d, "Lock in your answer...", W // 2, 1840, f_sub, (255, 220, 100, 255), shadow=True)
+
+    # ── Thumbnail banner (drawn on top of everything)
+    if thumbnail_banner:
+        f_tbn  = _font("impact.ttf", 74)
+        tbn_layer = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+        tb     = ImageDraw.Draw(tbn_layer)
+        tb.rectangle([0, 1790, W, H], fill=(210, 30, 30, 245))
+        canvas = Image.alpha_composite(canvas, tbn_layer)
+        d      = ImageDraw.Draw(canvas)
+        _cc(d, thumbnail_banner, W // 2, 1855, f_tbn, WHITE, shadow=True)
 
     return canvas
 
@@ -293,6 +342,57 @@ def _get_kokoro():
     from kokoro_onnx import Kokoro
     _kokoro_inst = Kokoro(_MODEL_PATH, _VOICES_PATH)
     return _kokoro_inst
+
+
+def _normalize_tts(text: str) -> str:
+    """Expand symbols/numbers so TTS reads them as natural spoken words."""
+    import re
+
+    def _expand_currency(m):
+        symbol = m.group(1)   # $, £, €
+        num_str = m.group(2).replace(",", "")
+        try:
+            n = float(num_str)
+        except ValueError:
+            return m.group(0)
+        if n >= 1_000_000_000:
+            val = n / 1_000_000_000
+            suffix = "billion"
+        elif n >= 1_000_000:
+            val = n / 1_000_000
+            suffix = "million"
+        elif n >= 1_000:
+            val = n / 1_000
+            suffix = "thousand"
+        else:
+            val = n
+            suffix = ""
+        val_str = f"{val:g}"  # strips trailing zeros
+        currency_word = {"$": "dollars", "£": "pounds", "€": "euros"}.get(symbol, "dollars")
+        parts = [val_str, suffix, currency_word] if suffix else [val_str, currency_word]
+        return " ".join(p for p in parts if p)
+
+    def _expand_plain_number(m):
+        num_str = m.group(0).replace(",", "")
+        try:
+            n = float(num_str)
+        except ValueError:
+            return m.group(0)
+        if n >= 1_000_000_000:
+            return f"{n/1_000_000_000:g} billion"
+        if n >= 1_000_000:
+            return f"{n/1_000_000:g} million"
+        if n >= 1_000:
+            return f"{n/1_000:g} thousand"
+        return num_str
+
+    # Currency amounts: $10,000 / £1.5M / €500
+    text = re.sub(r'([$£€])([0-9][0-9,]*(?:\.[0-9]+)?)', _expand_currency, text)
+    # Percentages: 10% → 10 percent
+    text = re.sub(r'([0-9]+(?:\.[0-9]+)?)%', r'\1 percent', text)
+    # Plain numbers with commas: 1,000 → 1 thousand
+    text = re.sub(r'\b[0-9]{1,3}(?:,[0-9]{3})+(?:\.[0-9]+)?\b', _expand_plain_number, text)
+    return text
 
 
 async def _tts(text: str, out_path: str, voice: str = "am_adam", speed: float = 1.05):
@@ -344,12 +444,12 @@ async def _build_synced_narration(
     from imageio_ffmpeg import get_ffmpeg_exe
 
     answer_text = options.get(correct, "")
-    a_text = f"The answer is {correct}. {answer_text}! Comment your answer and follow for more!"
+    a_text = f"The answer is {correct}. {_normalize_tts(answer_text)}! Did you get it right? Comment Yes and subscribe for more!"
 
     q_path = os.path.join(output_dir, "_p_q.wav")
     a_path = os.path.join(output_dir, "_p_a.wav")
-    await _tts(question, q_path, voice=voice)
-    await _tts(a_text,   a_path, voice=voice)
+    await _tts(_normalize_tts(question), q_path, voice=voice)
+    await _tts(a_text, a_path, voice=voice)
 
     # Countdown: each word padded to exactly 1.0 s
     sr      = sf.info(q_path).samplerate
@@ -377,11 +477,16 @@ async def _build_synced_narration(
     q_dur = max(sf.info(q_path).duration, 2.5)
     a_dur = max(sf.info(a_path).duration, 2.0)
 
-    # Concat q + cd + a into narration.wav
+    # 2-second silence for the "THINK CAREFULLY" pause card
+    think_silence = np.zeros(2 * sr, dtype=np.float32)
+    think_path    = os.path.join(output_dir, "_p_think.wav")
+    sf.write(think_path, think_silence, sr)
+
+    # Concat q + think_silence + cd + a into narration.wav
     narr_path  = os.path.join(output_dir, "narration.wav")
     concat_txt = os.path.join(output_dir, "_narr_concat.txt")
     with open(concat_txt, "w") as f:
-        for p in [q_path, cd_path, a_path]:
+        for p in [q_path, think_path, cd_path, a_path]:
             f.write(f"file '{os.path.abspath(p).replace(chr(92), chr(47))}'\n")
     _run_ffmpeg([
         get_ffmpeg_exe(), "-y",
@@ -392,14 +497,40 @@ async def _build_synced_narration(
     return q_dur, a_dur
 
 
-def _make_tick_track(output_path: str, q_dur: float, a_dur: float) -> str:
-    """Generate a WAV with 3 tick beeps aligned to countdown seconds."""
+def _make_tick_track(output_path: str, q_dur: float, a_dur: float, think_dur: float = 2.0) -> str:
+    """Generate a WAV with suspense sweep during think card + 3 tick beeps on countdown."""
     import wave
     sample_rate = 44100
-    total_samp  = int((q_dur + 3.0 + a_dur + 1.0) * sample_rate)
+    total_samp  = int((q_dur + think_dur + 3.0 + a_dur + 1.0) * sample_rate)
     data        = np.zeros(total_samp, dtype=np.float32)
+
+    # Deep suspense pulses during the think card (two low "thud" beats)
+    think_start_samp = int(q_dur * sample_rate)
+    for beat_offset in [0.25, 0.85]:   # two thuds spread across the 2 s window
+        bs = think_start_samp + int(beat_offset * sample_rate)
+        # Low-freq thud: 80 Hz sine decaying quickly
+        thud_len = int(0.35 * sample_rate)
+        t_th = np.arange(thud_len, dtype=np.float32) / sample_rate
+        thud = np.sin(2 * np.pi * 80 * t_th) * np.exp(-t_th * 18) * 0.75
+        # Sub-harmonic body at 40 Hz adds weight
+        thud += np.sin(2 * np.pi * 40 * t_th) * np.exp(-t_th * 10) * 0.40
+        end_th = min(bs + thud_len, total_samp)
+        data[bs:end_th] += thud[:end_th - bs]
+    # Short rising tension tone at the end of think card (last 0.5 s)
+    ris_start = think_start_samp + int((think_dur - 0.55) * sample_rate)
+    ris_len   = int(0.55 * sample_rate)
+    t_rs = np.arange(ris_len, dtype=np.float32) / sample_rate
+    freq_rs   = 220.0 + 440.0 * (t_rs / 0.55)           # 220→660 Hz
+    phase_rs  = np.cumsum(2 * np.pi * freq_rs / sample_rate)
+    env_rs    = (t_rs / 0.55) * 0.45                     # ramps up
+    fade_rs   = np.minimum(t_rs / 0.05, 1.0)             # 50 ms fade-in
+    rise_sig  = np.sin(phase_rs) * env_rs * fade_rs
+    end_rs = min(ris_start + ris_len, total_samp)
+    data[ris_start:end_rs] += rise_sig[:end_rs - ris_start]
+
+    # Countdown tick beeps (3-2-1)
     for i, freq in enumerate([700, 700, 1100]):
-        tick_start = int((q_dur + i) * sample_rate)
+        tick_start = int((q_dur + think_dur + i) * sample_rate)
         tick_len   = int(0.12 * sample_rate)
         t          = np.arange(tick_len, dtype=np.float32) / sample_rate
         tick       = np.sin(2 * np.pi * freq * t) * np.exp(-t * 40) * 0.9
@@ -423,10 +554,11 @@ def _run_ffmpeg(cmd: list, label: str):
 
 
 def _assemble_pexels_bg(ffmpeg, bg_video, fpaths, audio, music,
-                        q_dur, a_dur, total, final, output_dir, tick=None):
+                        q_dur, a_dur, total, final, output_dir, tick=None, think_dur=2.0):
     """Overlay RGBA card PNGs frame-by-frame on the Pexels background video."""
     segments = [
         (fpaths["q"],  q_dur),
+        (fpaths["th"], think_dur),
         (fpaths["t3"], 1.0),
         (fpaths["t2"], 1.0),
         (fpaths["t1"], 1.0),
@@ -497,46 +629,51 @@ def _assemble_pexels_bg(ffmpeg, bg_video, fpaths, audio, music,
         ], "audio merge")
 
 
-def _assemble_static(ffmpeg, fpaths, audio, tick, music, q_dur, a_dur, total, final):
+def _assemble_static(ffmpeg, fpaths, audio, tick, music, q_dur, a_dur, total, final, think_dur=2.0):
     """Fallback: static swirly card images, no video background."""
     img_inputs = [
-        "-loop", "1", "-t", str(q_dur),  "-i", fpaths["q"],
-        "-loop", "1", "-t", "1.00",      "-i", fpaths["t3"],
-        "-loop", "1", "-t", "1.00",      "-i", fpaths["t2"],
-        "-loop", "1", "-t", "1.00",      "-i", fpaths["t1"],
-        "-loop", "1", "-t", str(a_dur),  "-i", fpaths["a"],
+        "-loop", "1", "-t", str(q_dur),    "-i", fpaths["q"],
+        "-loop", "1", "-t", str(think_dur),"-i", fpaths["th"],
+        "-loop", "1", "-t", "1.00",         "-i", fpaths["t3"],
+        "-loop", "1", "-t", "1.00",         "-i", fpaths["t2"],
+        "-loop", "1", "-t", "1.00",         "-i", fpaths["t1"],
+        "-loop", "1", "-t", str(a_dur),     "-i", fpaths["a"],
     ]
-    vf  = "[0:v][1:v][2:v][3:v][4:v]concat=n=5:v=1:a=0[cv]"
+    vf  = "[0:v][1:v][2:v][3:v][4:v][5:v]concat=n=6:v=1:a=0[cv]"
     enc = ["-c:v", "libx264", "-preset", "fast", "-crf", "23",
            "-c:a", "aac", "-b:a", "128k",
            "-r", "30", "-pix_fmt", "yuv420p", "-s", f"{W}x{H}"]
     if tick and music:
+        # images 0-5, audio=6, music=7, tick=8
         af  = (f"{vf};"
-               f"[6:a]volume=0.22,atrim=duration={total:.2f}[m];"
-               f"[5:a][7:a]amix=inputs=2:duration=first[narr_tick];"
+               f"[7:a]volume=0.22,atrim=duration={total:.2f}[m];"
+               f"[6:a][8:a]amix=inputs=2:duration=first[narr_tick];"
                f"[narr_tick][m]amix=inputs=2:duration=first:dropout_transition=2[a]")
         cmd = ([ffmpeg, "-y"] + img_inputs
                + ["-i", audio, "-i", music, "-i", tick]
                + ["-filter_complex", af, "-map", "[cv]", "-map", "[a]",
                   "-t", str(total)] + enc + [final])
     elif tick:
-        af  = f"{vf};[5:a][6:a]amix=inputs=2:duration=first[a]"
+        # images 0-5, audio=6, tick=7
+        af  = f"{vf};[6:a][7:a]amix=inputs=2:duration=first[a]"
         cmd = ([ffmpeg, "-y"] + img_inputs
                + ["-i", audio, "-i", tick]
                + ["-filter_complex", af, "-map", "[cv]", "-map", "[a]",
                   "-t", str(total)] + enc + [final])
     elif music:
+        # images 0-5, audio=6, music=7
         af  = (f"{vf};"
-               f"[6:a]volume=0.22,atrim=duration={total:.2f}[m];"
-               f"[5:a][m]amix=inputs=2:duration=first:dropout_transition=2[a]")
+               f"[7:a]volume=0.22,atrim=duration={total:.2f}[m];"
+               f"[6:a][m]amix=inputs=2:duration=first:dropout_transition=2[a]")
         cmd = ([ffmpeg, "-y"] + img_inputs
                + ["-i", audio, "-i", music]
                + ["-filter_complex", af, "-map", "[cv]", "-map", "[a]",
                   "-t", str(total)] + enc + [final])
     else:
+        # images 0-5, audio=6
         cmd = ([ffmpeg, "-y"] + img_inputs
                + ["-i", audio]
-               + ["-filter_complex", vf, "-map", "[cv]", "-map", "5:a",
+               + ["-filter_complex", vf, "-map", "[cv]", "-map", "6:a",
                   "-t", str(total)] + enc + [final])
     _run_ffmpeg(cmd, "static assemble")
 
@@ -568,19 +705,30 @@ async def create_quiz_video(
     # 1. Center photo (Pexels)
     center_img = get_center_image(iq, pexels_key) if pexels_key else None
 
-    # 2. Background video (Pexels)
+    # 2. Background video (Pexels) — math-themed fallback queries
+    _MATH_BG_QUERIES = [
+        "chalkboard classroom dark",
+        "abstract dark blue numbers",
+        "mathematics chalk equations",
+        "dark bokeh abstract studio",
+        "glowing neon digits",
+        "blackboard chalk writing",
+        "dark gradient geometric",
+    ]
     bg_video  = os.path.join(output_dir, "bg_video.mp4")
-    bg_q = quiz_data.get("bg_query", iq)
+    bg_q      = quiz_data.get("bg_query") or random.choice(_MATH_BG_QUERIES)
     _bg_ok, _bg_id = (False, None)
     if pexels_key:
         _bg_ok, _bg_id = _download_pexels_bg_video(bg_q, pexels_key, bg_video, used_video_ids)
     has_bg = _bg_ok
 
     # 3. Render card frames
+    THINK_DUR = 2.0
     solid = not has_bg
     print(f"[quiz] Rendering cards (bg={'pexels_video' if has_bg else 'swirly_fallback'})...")
     keys = [
         ("q",  dict(question=question, options=options, category=category, center_img=center_img, solid_bg=solid)),
+        ("th", dict(question=question, options=options, category=category, center_img=center_img, show_think_overlay=True, solid_bg=solid)),
         ("t3", dict(question=question, options=options, category=category, center_img=center_img, timer_num=3, solid_bg=solid)),
         ("t2", dict(question=question, options=options, category=category, center_img=center_img, timer_num=2, solid_bg=solid)),
         ("t1", dict(question=question, options=options, category=category, center_img=center_img, timer_num=1, solid_bg=solid)),
@@ -593,19 +741,20 @@ async def create_quiz_video(
         img.save(p)
         fpaths[key] = p
     draw_quiz_card(question=question, options=options, category=category,
-                   center_img=center_img, solid_bg=solid).save(
+                   center_img=center_img, solid_bg=solid,
+                   thumbnail_banner="90% GET THIS WRONG").save(
         os.path.join(output_dir, "thumbnail.png"))
 
-    # 4. TTS narration — frame-synced (question + countdown + answer)
+    # 4. TTS narration — frame-synced (question + think pause + countdown + answer)
     audio = os.path.join(output_dir, "narration.wav")
     print(f"[quiz] TTS: {question[:60]}...")
     q_dur, a_dur = await _build_synced_narration(
         question, options, correct, output_dir, voice
     )
 
-    # 5. Timing (exact — derived from TTS part durations)
-    total = round(q_dur + 3.0 + a_dur, 2)
-    print(f"[quiz] Audio={total:.1f}s  question={q_dur:.2f}s  3-2-1  answer={a_dur:.2f}s")
+    # 5. Timing (exact — derived from TTS part durations + think card)
+    total = round(q_dur + THINK_DUR + 3.0 + a_dur, 2)
+    print(f"[quiz] Audio={total:.1f}s  question={q_dur:.2f}s  think={THINK_DUR}s  3-2-1  answer={a_dur:.2f}s")
 
     # 6. Background music
     music     = None
@@ -616,18 +765,17 @@ async def create_quiz_video(
         if tracks:
             music = random.choice(tracks)
 
-    # 7. Tick track
-    tick = _make_tick_track(os.path.join(output_dir, "tick.wav"), q_dur, a_dur)
+    # 7. Tick track (ticks offset by think_dur)
+    tick = _make_tick_track(os.path.join(output_dir, "tick.wav"), q_dur, a_dur, think_dur=THINK_DUR)
 
     # 8. Assemble
     final = os.path.join(output_dir, "final_short.mp4")
     print("[quiz] Assembling video...")
     if has_bg:
         _assemble_pexels_bg(ffmpeg, bg_video, fpaths, audio, music,
-                            q_dur, a_dur, total, final, output_dir, tick)
+                            q_dur, a_dur, total, final, output_dir, tick, think_dur=THINK_DUR)
     else:
-        _assemble_static(ffmpeg, fpaths, audio, tick, music, q_dur, a_dur, total, final)
+        _assemble_static(ffmpeg, fpaths, audio, tick, music, q_dur, a_dur, total, final, think_dur=THINK_DUR)
 
     print(f"[quiz] Done → {final}")
     return final, _bg_id
-

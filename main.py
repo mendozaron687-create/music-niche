@@ -502,7 +502,7 @@ Return ONLY a valid JSON object with exactly these keys:
   "options": {{"A": "...", "B": "...", "C": "...", "D": "..."}},
   "correct_answer": "A",
   "explanation": "surprising one-liner explaining why, max 12 words",
-  "category": "MATH QUIZ",
+  "category": "pick the best label: MATH QUIZ | ORDER OF OPERATIONS | PERCENTAGE TRAP | ALGEBRA TRICK | NUMBER RIDDLE | BRAIN TEASER | TRICK QUESTION",
   "image_query": "3-word Pexels PHOTO showing the math concept visually (e.g. 'pie chart fraction', 'dollar bills percentage', 'ruler triangle geometry', 'clock time numbers')",
   "bg_query": "3-word cinematic background VIDEO (e.g. 'dark bokeh studio', 'chalkboard classroom empty', 'abstract dark blue', 'night city lights')"
 }}
@@ -672,13 +672,14 @@ async def create_single_short(topic: str, niche: str,
                 + post_meta.get("HASHTAGS", "#mathquiz #shorts #math")
             )
             yt_tags  = [t.lstrip("#") for t in post_meta.get("HASHTAGS", "#mathquiz #math #shorts").split() if t.startswith("#")][:20] or ["mathquiz", "math", "quiz"]
+            first_comment = "Did you get the answer? Comment Yes and subscribe for more! 👇"
             result["url"] = upload_to_youtube(
                 video_path=final_path,
                 thumbnail_path=f"{output_dir}/thumbnail.png",
                 title=yt_title,
                 description=yt_desc,
                 tags=yt_tags,
-                first_comment="💡 Drop your answer below! A, B, C, or D? 👇 Answer revealed at the end!",
+                first_comment=first_comment,
             )
             # TikTok
             tiktok_caption = post_meta.get("TITLE", topic) + "\n" + post_meta.get("HASHTAGS", "#mathquiz #shorts #math")
