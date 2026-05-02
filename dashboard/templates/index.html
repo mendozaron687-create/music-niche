@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="stat-card">
+            <div class="stat-icon bg-primary"><i class="bi bi-play-circle"></i></div>
+            <div class="stat-info"><h2>{{ stats.total_videos }}</h2><p>Total Videos</p></div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card">
+            <div class="stat-icon bg-success"><i class="bi bi-calendar-week"></i></div>
+            <div class="stat-info"><h2>{{ stats.week_videos }}</h2><p>This Week</p></div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card">
+            <div class="stat-icon bg-warning"><i class="bi bi-collection"></i></div>
+            <div class="stat-info"><h2>{{ stats.total_batches }}</h2><p>Total Batches</p></div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card">
+            <div class="stat-icon bg-info"><i class="bi bi-gear-wide-connected"></i></div>
+            <div class="stat-info"><h2 id="activeJobsStat">{{ stats.active_jobs }}</h2><p>Active Jobs</p></div>
+        </div>
+    </div>
+</div>
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card dark-card">
+            <div class="card-body">
+                <h5 class="card-title">Quick Actions</h5>
+                <div class="d-flex gap-3 flex-wrap">
+                    <button class="btn btn-danger btn-lg" onclick="quickCreate()">
+                        <i class="bi bi-plus-circle"></i> Create Single Short
+                    </button>
+                    <button class="btn btn-primary btn-lg" onclick="quickBatch()">
+                        <i class="bi bi-collection-play"></i> Run Daily Batch (3 videos)
+                    </button>
+                    <a href="/create" class="btn btn-outline-light btn-lg">
+                        <i class="bi bi-sliders"></i> Advanced Options
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-12">
+        <div class="card dark-card">
+            <div class="card-header d-flex justify-content-between">
+                <span><i class="bi bi-clock-history"></i> Recent Batches</span>
+                <a href="/history" class="btn btn-sm btn-outline-light">View All</a>
+            </div>
+            <div class="card-body">
+                {% if history %}
+                <table class="table table-dark table-hover">
+                    <thead><tr><th>Date</th><th>Videos</th><th>Failed</th><th>Status</th></tr></thead>
+                    <tbody>
+                        {% for h in history %}
+                        <tr>
+                            <td>{{ h.get('date','N/A')[:19] }}</td>
+                            <td><span class="badge bg-success">{{ h.get('successful',0) }}</span></td>
+                            <td><span class="badge bg-danger">{{ h.get('failed',0) }}</span></td>
+                            <td>
+                                {% if h.get('failed',0) == 0 %}
+                                <span class="badge bg-success">Perfect</span>
+                                {% else %}
+                                <span class="badge bg-warning">Partial</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                <div class="text-center text-muted py-4">
+                    <i class="bi bi-camera-video" style="font-size:3rem"></i>
+                    <p class="mt-2">No videos yet. Click "Create Single Short" to start!</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+async function quickCreate() {
+    showToast('Starting video creation...', 'info');
+    const res = await fetch('/api/create', {
+        method: 'POST', headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({niche: 'finance', upload: true})
+    });
+    const data = await res.json();
+    trackJob(data.job_id);
+}
+async function quickBatch() {
+    showToast('Starting batch (3 videos)...', 'info');
+    const res = await fetch('/api/batch', {
+        method: 'POST', headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({count: 3, niche: 'finance', upload: true})
+    });
+    const data = await res.json();
+    trackJob(data.job_id);
+}
+setInterval(async () => {
+    const res = await fetch('/api/stats');
+    const stats = await res.json();
+    document.getElementById('activeJobsStat').textContent = stats.active_jobs;
+    document.getElementById('activeJobCount').textContent = stats.active_jobs;
+}, 5000);
+</script>
+{% endblock %}

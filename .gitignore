@@ -1,0 +1,19 @@
+# Secrets — never commit these
+token.json
+credentials.json
+tiktok_cookies.json
+.env
+
+# Output videos / temp files
+output/
+logs/
+
+# Kokoro model files (large, cached in Actions)
+models/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/

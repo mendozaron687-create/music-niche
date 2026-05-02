@@ -1,0 +1,19 @@
+my_dashboard_project/
+│
+├── app/
+│   ├── __init__.py
+│   ├── main.py
+│   ├── layout.py
+│   ├── callbacks.py
+│   └── styles.css
+│
+├── data/
+│   ├── __init__.py
+│   └── data_source.py
+│
+├── tests/
+│   ├── __init__.py
+│   └── test_app.py
+│
+├── requirements.txt
+└── README.md

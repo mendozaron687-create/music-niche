@@ -1,0 +1,298 @@
+{% extends "base.html" %}
+{% block title %}Auto-Scheduler{% endblock %}
+{% block content %}
+<div class="row mb-4">
+  <div class="col-12">
+    <div class="d-flex align-items-center justify-content-between">
+      <div>
+        <h4 class="mb-1"><i class="bi bi-calendar-check text-warning me-2"></i>Auto-Scheduler</h4>
+        <small class="text-muted">Set daily schedules to auto-generate videos — no manual clicking required.</small>
+      </div>
+      <div>
+        {% if status.running %}
+          <span class="badge bg-success fs-6"><i class="bi bi-circle-fill me-1"></i>Scheduler Running</span>
+        {% else %}
+          <span class="badge bg-secondary fs-6"><i class="bi bi-circle me-1"></i>Scheduler Stopped</span>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Master toggle -->
+<div class="row mb-4">
+  <div class="col-12">
+    <div class="card">
+      <div class="card-body d-flex align-items-center justify-content-between">
+        <div>
+          <h6 class="mb-0">Enable Auto-Scheduler</h6>
+          <small class="text-muted">When enabled, videos are created automatically at scheduled times (UTC).</small>
+        </div>
+        <div class="form-check form-switch">
+          <input class="form-check-input" type="checkbox" id="masterToggle" style="width:3rem;height:1.5rem;"
+            {% if config.enabled %}checked{% endif %}>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Schedule list -->
+<div class="row mb-4">
+  <div class="col-12">
+    <div class="card">
+      <div class="card-header d-flex align-items-center justify-content-between">
+        <span><i class="bi bi-list-task me-2"></i>Daily Schedules</span>
+        <button class="btn btn-sm btn-outline-success" onclick="addSchedule()">
+          <i class="bi bi-plus-circle"></i> Add Schedule
+        </button>
+      </div>
+      <div class="card-body p-0">
+        <div id="scheduleList">
+          {% for sched in config.schedules %}
+          <div class="schedule-item border-bottom p-3" data-id="{{ sched.id }}">
+            <div class="row align-items-center g-2">
+              <div class="col-auto">
+                <div class="form-check form-switch">
+                  <input class="form-check-input sched-active" type="checkbox"
+                    {% if sched.active %}checked{% endif %} title="Enable this schedule">
+                </div>
+              </div>
+              <div class="col-md-2">
+                <label class="form-label text-muted small mb-0">Niche</label>
+                <select class="form-select form-select-sm sched-niche">
+                  {% for niche in topics.keys() %}
+                  <option value="{{ niche }}" {% if niche == sched.niche %}selected{% endif %}>
+                    {{ niche.replace('_',' ').title() }}
+                  </option>
+                  {% endfor %}
+                </select>
+              </div>
+              <div class="col-md-1">
+                <label class="form-label text-muted small mb-0">Videos</label>
+                <input type="number" class="form-control form-control-sm sched-count"
+                  value="{{ sched.count }}" min="1" max="10">
+              </div>
+              <div class="col-md-2">
+                <label class="form-label text-muted small mb-0">Time (UTC)</label>
+                <div class="input-group input-group-sm">
+                  <input type="number" class="form-control sched-hour" placeholder="HH"
+                    value="{{ '%02d'|format(sched.hour) }}" min="0" max="23" style="max-width:60px">
+                  <span class="input-group-text">:</span>
+                  <input type="number" class="form-control sched-minute" placeholder="MM"
+                    value="{{ '%02d'|format(sched.minute) }}" min="0" max="59" style="max-width:60px">
+                </div>
+              </div>
+              <div class="col-md-2">
+                <label class="form-label text-muted small mb-0">Auto Upload</label>
+                <div class="form-check form-switch mt-1">
+                  <input class="form-check-input sched-upload" type="checkbox"
+                    {% if sched.upload %}checked{% endif %}>
+                  <label class="form-check-label small">To YouTube</label>
+                </div>
+              </div>
+              <div class="col-md-3">
+                <label class="form-label text-muted small mb-0">Next Run</label>
+                <div class="small text-info">
+                  {% set ns = namespace(found=false) %}
+                  {% for job in status.jobs %}
+                    {% if job.id == sched.id and not ns.found %}
+                      {% set ns.found = true %}
+                      {{ job.next_run[:16].replace('T',' ') }} UTC
+                    {% endif %}
+                  {% endfor %}
+                  {% if not ns.found %}<span class="text-muted">— not scheduled</span>{% endif %}
+                </div>
+              </div>
+              <div class="col-auto ms-auto">
+                <button class="btn btn-sm btn-outline-info me-1" onclick="runNow(this)" title="Run now">
+                  <i class="bi bi-play-fill"></i>
+                </button>
+                <button class="btn btn-sm btn-outline-danger" onclick="removeSchedule(this)" title="Remove">
+                  <i class="bi bi-trash"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+          {% if not config.schedules %}
+          <div class="text-center text-muted py-4" id="emptyMsg">
+            <i class="bi bi-calendar-x fs-2"></i><br>No schedules yet. Add one above.
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Multi-platform tip card -->
+<div class="row mb-4">
+  <div class="col-md-6">
+    <div class="card border-0" style="background:#1a1a2e;">
+      <div class="card-body">
+        <h6><i class="bi bi-share text-info me-2"></i>Multi-Platform Export</h6>
+        <p class="text-muted small mb-2">Every video now generates platform-ready captions for:</p>
+        <div class="d-flex gap-2 flex-wrap">
+          <span class="badge bg-danger">YouTube Shorts</span>
+          <span class="badge" style="background:#010101;">TikTok</span>
+          <span class="badge" style="background:#E1306C;">Instagram Reels</span>
+          <span class="badge" style="background:#1877F2;">Facebook Reels</span>
+        </div>
+        <p class="text-muted small mt-2 mb-0">Check job results in History for platform-specific titles and hashtags.</p>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="card border-0" style="background:#1a1a2e;">
+      <div class="card-body">
+        <h6><i class="bi bi-lightning-fill text-warning me-2"></i>Top Paying Niches</h6>
+        <div class="d-flex gap-1 flex-wrap">
+          <span class="badge bg-success">Finance</span>
+          <span class="badge bg-primary">Technology</span>
+          <span class="badge bg-warning text-dark">Business</span>
+          <span class="badge bg-info text-dark">Health</span>
+          <span class="badge bg-secondary">Motivation</span>
+          <span class="badge bg-danger">Relationships</span>
+        </div>
+        <p class="text-muted small mt-2 mb-0">Schedule different niches at different times to maximize reach.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Save button -->
+<div class="row">
+  <div class="col-12">
+    <button class="btn btn-success px-5" onclick="saveSchedule()">
+      <i class="bi bi-save me-2"></i>Save & Apply Schedule
+    </button>
+    <span id="saveMsg" class="ms-3 text-muted small"></span>
+  </div>
+</div>
+
+<script>
+const NICHES = {{ topics.keys()|list|tojson }};
+let schedCounter = {{ config.schedules|length }};
+
+function buildScheduleRow(data) {
+  data = data || { id: 'new_' + schedCounter++, niche: 'finance', count: 1, hour: 9, minute: 0, upload: false, active: true };
+  const options = NICHES.map(n =>
+    `<option value="${n}" ${n === data.niche ? 'selected' : ''}>${n.replace(/_/g,' ').replace(/\b\w/g,c=>c.toUpperCase())}</option>`
+  ).join('');
+  return `
+  <div class="schedule-item border-bottom p-3" data-id="${data.id}">
+    <div class="row align-items-center g-2">
+      <div class="col-auto">
+        <div class="form-check form-switch">
+          <input class="form-check-input sched-active" type="checkbox" ${data.active ? 'checked' : ''}>
+        </div>
+      </div>
+      <div class="col-md-2">
+        <label class="form-label text-muted small mb-0">Niche</label>
+        <select class="form-select form-select-sm sched-niche">${options}</select>
+      </div>
+      <div class="col-md-1">
+        <label class="form-label text-muted small mb-0">Videos</label>
+        <input type="number" class="form-control form-control-sm sched-count" value="${data.count}" min="1" max="10">
+      </div>
+      <div class="col-md-2">
+        <label class="form-label text-muted small mb-0">Time (UTC)</label>
+        <div class="input-group input-group-sm">
+          <input type="number" class="form-control sched-hour" value="${String(data.hour).padStart(2,'0')}" min="0" max="23" style="max-width:60px">
+          <span class="input-group-text">:</span>
+          <input type="number" class="form-control sched-minute" value="${String(data.minute).padStart(2,'0')}" min="0" max="59" style="max-width:60px">
+        </div>
+      </div>
+      <div class="col-md-2">
+        <label class="form-label text-muted small mb-0">Auto Upload</label>
+        <div class="form-check form-switch mt-1">
+          <input class="form-check-input sched-upload" type="checkbox" ${data.upload ? 'checked' : ''}>
+          <label class="form-check-label small">To YouTube</label>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <label class="form-label text-muted small mb-0">Next Run</label>
+        <div class="small text-muted">— save to schedule</div>
+      </div>
+      <div class="col-auto ms-auto">
+        <button class="btn btn-sm btn-outline-info me-1" onclick="runNow(this)" title="Run now">
+          <i class="bi bi-play-fill"></i>
+        </button>
+        <button class="btn btn-sm btn-outline-danger" onclick="removeSchedule(this)" title="Remove">
+          <i class="bi bi-trash"></i>
+        </button>
+      </div>
+    </div>
+  </div>`;
+}
+
+function addSchedule() {
+  const list = document.getElementById('scheduleList');
+  const empty = document.getElementById('emptyMsg');
+  if (empty) empty.remove();
+  list.insertAdjacentHTML('beforeend', buildScheduleRow());
+}
+
+function removeSchedule(btn) {
+  btn.closest('.schedule-item').remove();
+}
+
+function collectConfig() {
+  const enabled = document.getElementById('masterToggle').checked;
+  const schedules = [];
+  document.querySelectorAll('.schedule-item').forEach(row => {
+    schedules.push({
+      id: row.dataset.id,
+      niche: row.querySelector('.sched-niche').value,
+      count: parseInt(row.querySelector('.sched-count').value) || 1,
+      hour: parseInt(row.querySelector('.sched-hour').value) || 9,
+      minute: parseInt(row.querySelector('.sched-minute').value) || 0,
+      upload: row.querySelector('.sched-upload').checked,
+      active: row.querySelector('.sched-active').checked,
+    });
+  });
+  return { enabled, schedules };
+}
+
+async function saveSchedule() {
+  const cfg = collectConfig();
+  const res = await fetch('/api/schedule', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify(cfg)
+  });
+  const data = await res.json();
+  const msg = document.getElementById('saveMsg');
+  if (data.status === 'saved') {
+    msg.textContent = '✓ Saved! Scheduler ' + (data.scheduler.running ? 'running.' : 'stopped (no active schedules).');
+    msg.className = 'ms-3 text-success small';
+  } else {
+    msg.textContent = 'Error saving.';
+    msg.className = 'ms-3 text-danger small';
+  }
+  setTimeout(() => msg.textContent = '', 4000);
+}
+
+async function runNow(btn) {
+  const row = btn.closest('.schedule-item');
+  const niche = row.querySelector('.sched-niche').value;
+  const count = parseInt(row.querySelector('.sched-count').value) || 1;
+  const upload = row.querySelector('.sched-upload').checked;
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span>';
+  const res = await fetch('/api/schedule/run-now', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({ niche, count, upload })
+  });
+  const data = await res.json();
+  if (data.job_id) {
+    showToast(`Started job ${data.job_id} — check History for progress.`, 'success');
+    window.trackJob && trackJob(data.job_id);
+  }
+  btn.disabled = false;
+  btn.innerHTML = '<i class="bi bi-play-fill"></i>';
+}
+</script>
+{% endblock %}

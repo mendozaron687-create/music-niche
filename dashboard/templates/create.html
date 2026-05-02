@@ -1,0 +1,210 @@
+{% extends "base.html" %}
+{% block title %}Create Video{% endblock %}
+{% block content %}
+<div class="row">
+    <div class="col-md-6">
+        <div class="card dark-card">
+            <div class="card-header"><i class="bi bi-plus-circle"></i> Create Single Short</div>
+            <div class="card-body">
+                <form id="createForm">
+                    <div class="mb-3">
+                        <label class="form-label">Niche</label>
+                        <select class="form-select bg-dark text-white border-secondary"
+                                id="niche" onchange="loadTopics()">
+                            {% for niche in topics.keys() %}
+                            <option value="{{ niche }}"
+                                {{ 'selected' if niche == settings.DEFAULT_NICHE }}>
+                                {{ niche.replace('_',' ').title() }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Topic</label>
+                        <div class="input-group">
+                            <input type="text" class="form-control bg-dark text-white border-secondary"
+                                   id="topic" placeholder="Leave empty to auto-generate">
+                            <button class="btn btn-outline-warning" type="button" onclick="randomTopic()">
+                                Random
+                            </button>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <label class="form-label mb-0">Trending Now <span class="badge bg-danger">Live</span></label>
+                            <button class="btn btn-sm btn-outline-danger" type="button" onclick="loadTrending()" id="trendingBtn">
+                                <i class="bi bi-fire"></i> Fetch Trends
+                            </button>
+                        </div>
+                        <div id="topicSuggestions" class="d-flex flex-wrap gap-2">
+                            <span class="text-muted small">Click "Fetch Trends" to load today's high-CTR trending topics</span>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Voice</label>
+                        <select class="form-select bg-dark text-white border-secondary" id="voice">
+                            <option value="en-US-ChristopherNeural">Christopher (Male)</option>
+                            <option value="en-US-JennyNeural">Jenny (Female)</option>
+                            <option value="en-US-GuyNeural">Guy (Casual)</option>
+                            <option value="en-GB-RyanNeural">Ryan (British)</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Thumbnail Style</label>
+                        <select class="form-select bg-dark text-white border-secondary" id="thumbnailStyle">
+                            <option value="dark">Dark</option>
+                            <option value="gradient">Gradient</option>
+                            <option value="bright">Bright</option>
+                            <option value="gold">Gold</option>
+                        </select>
+                    </div>
+                    <div class="mb-4">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="autoUpload" checked>
+                            <label class="form-check-label" for="autoUpload">Auto-upload to YouTube</label>
+                        </div>
+                        <div class="form-check form-switch mt-2">
+                            <input class="form-check-input" type="checkbox" id="useVeo">
+                            <label class="form-check-label" for="useVeo">
+                                <span class="badge bg-primary me-1">Veo 3</span> Use AI-generated video background
+                                <small class="text-muted d-block">Requires Gemini Pro — close Chrome first</small>
+                            </label>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-danger btn-lg w-100">
+                        <i class="bi bi-play-circle"></i> Create Short Now
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card dark-card">
+            <div class="card-header"><i class="bi bi-terminal"></i> Live Progress</div>
+            <div class="card-body">
+                <div id="progressPanel" class="text-center text-muted py-5">
+                    <i class="bi bi-camera-video" style="font-size:4rem"></i>
+                    <p class="mt-3">Create a video to see live progress here</p>
+                </div>
+                <div id="logTerminal" class="log-terminal" style="display:none"></div>
+                <div id="resultPanel" style="display:none" class="mt-3">
+                    <div class="alert alert-success">
+                        <h6>Video Created!</h6>
+                        <p id="resultUrl"></p>
+                        <button class="btn btn-sm btn-success" id="downloadBtn">
+                            <i class="bi bi-download"></i> Download Video
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+const allTopics = {{ topics | tojson }};
+let pollInterval = null;
+
+document.getElementById('createForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    document.getElementById('progressPanel').style.display = 'none';
+    document.getElementById('logTerminal').style.display = 'block';
+    document.getElementById('resultPanel').style.display = 'none';
+    const res = await fetch('/api/create', {
+        method: 'POST', headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+            topic: document.getElementById('topic').value,
+            niche: document.getElementById('niche').value,
+            upload: document.getElementById('autoUpload').checked,
+            voice: document.getElementById('voice').value,
+            thumbnail_style: document.getElementById('thumbnailStyle').value,
+            use_veo: document.getElementById('useVeo').checked,
+        })
+    });
+    const data = await res.json();
+    if (pollInterval) clearInterval(pollInterval);
+    pollInterval = setInterval(() => pollJob(data.job_id), 2000);
+    showToast('Job started!', 'success');
+});
+
+async function pollJob(jobId) {
+    const res = await fetch(`/api/job/${jobId}`);
+    const data = await res.json();
+    const terminal = document.getElementById('logTerminal');
+    terminal.innerHTML = data.logs.map(l =>
+        `<div class="log-line"><span class="log-time">[${l.time}]</span> ${l.msg}</div>`
+    ).join('');
+    terminal.scrollTop = terminal.scrollHeight;
+    if (data.job.status === 'complete') {
+        clearInterval(pollInterval);
+        document.getElementById('resultPanel').style.display = 'block';
+        const url = data.job.result?.url;
+        document.getElementById('resultUrl').innerHTML = url
+            ? `<a href="${url}" target="_blank">${url}</a>` : 'Saved locally';
+        document.getElementById('downloadBtn').onclick = () => {
+            window.location.href = `/api/download/${jobId}`;
+        };
+        showToast('Video created!', 'success');
+    } else if (data.job.status === 'failed') {
+        clearInterval(pollInterval);
+        showToast('Failed: ' + data.job.error, 'danger');
+    }
+}
+
+function selectTopic(el) {
+    document.querySelectorAll('.topic-pill').forEach(p => p.classList.remove('selected'));
+    el.classList.add('selected');
+    document.getElementById('topic').value = el.textContent.trim();
+}
+
+function loadTopics() {
+    // When niche changes, clear suggestions and prompt re-fetch
+    document.getElementById('topicSuggestions').innerHTML =
+        '<span class="text-muted small">Click "Fetch Trends" to load today\'s high-CTR trending topics</span>';
+}
+
+async function loadTrending() {
+    const niche = document.getElementById('niche').value;
+    const btn = document.getElementById('trendingBtn');
+    const container = document.getElementById('topicSuggestions');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Fetching...';
+    container.innerHTML = '<span class="text-muted small">Fetching live trends...</span>';
+    try {
+        const res = await fetch(`/api/trending?niche=${niche}&count=8`);
+        const data = await res.json();
+        if (data.error) throw new Error(data.error);
+        if (!data.suggestions || data.suggestions.length === 0) {
+            container.innerHTML = '<span class="text-warning small">No trending topics found – try again or pick manually</span>';
+            return;
+        }
+        container.innerHTML = data.suggestions.map(s =>
+            `<span class="topic-pill" onclick="selectTopic(this)" title="CTR score: ${s.score}">${s.title}</span>`
+        ).join('');
+        showToast(`Loaded ${data.suggestions.length} trending topics!`, 'success');
+    } catch (e) {
+        container.innerHTML = `<span class="text-danger small">Error: ${e.message}</span>`;
+        showToast('Failed to fetch trends', 'danger');
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="bi bi-fire"></i> Refresh';
+    }
+}
+
+async function randomTopic() {
+    const niche = document.getElementById('niche').value;
+    const res = await fetch(`/api/trending?niche=${niche}&count=1`);
+    const data = await res.json();
+    if (data.suggestions && data.suggestions.length > 0) {
+        document.getElementById('topic').value = data.suggestions[0].title;
+        showToast('Trending topic loaded!', 'success');
+    } else {
+        // fallback to static
+        const topics = allTopics[niche] || [];
+        if (topics.length)
+            document.getElementById('topic').value = topics[Math.floor(Math.random() * topics.length)];
+    }
+}
+</script>
+{% endblock %}

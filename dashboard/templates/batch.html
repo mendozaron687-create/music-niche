@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+{% block title %}Batch Create{% endblock %}
+{% block content %}
+<div class="row">
+    <div class="col-md-6">
+        <div class="card dark-card">
+            <div class="card-header"><i class="bi bi-collection-play"></i> Batch Create</div>
+            <div class="card-body">
+                <form id="batchForm">
+                    <div class="mb-3">
+                        <label class="form-label">Niche</label>
+                        <select class="form-select bg-dark text-white border-secondary" id="niche">
+                            {% for niche in topics.keys() %}
+                            <option value="{{ niche }}"
+                                {{ 'selected' if niche == settings.DEFAULT_NICHE }}>
+                                {{ niche.replace('_',' ').title() }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Number of Videos</label>
+                        <input type="number" class="form-control bg-dark text-white border-secondary"
+                               id="count" value="{{ settings.VIDEOS_PER_DAY }}" min="1" max="10">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Delay Between Uploads (seconds)</label>
+                        <input type="number" class="form-control bg-dark text-white border-secondary"
+                               id="delay" value="{{ settings.UPLOAD_DELAY }}" min="10" max="300">
+                    </div>
+                    <div class="mb-4">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="autoUpload"
+                                   {{ 'checked' if settings.AUTO_UPLOAD == 'true' }}>
+                            <label class="form-check-label" for="autoUpload">Auto-upload to YouTube</label>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-lg w-100">
+                        <i class="bi bi-play-circle"></i> Start Batch
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card dark-card">
+            <div class="card-header"><i class="bi bi-terminal"></i> Batch Progress</div>
+            <div class="card-body">
+                <div id="progressPanel" class="text-center text-muted py-5">
+                    <i class="bi bi-collection-play" style="font-size:4rem"></i>
+                    <p class="mt-3">Start a batch to see progress here</p>
+                </div>
+                <div id="logTerminal" class="log-terminal" style="display:none"></div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+document.getElementById('batchForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    document.getElementById('progressPanel').style.display = 'none';
+    document.getElementById('logTerminal').style.display = 'block';
+    const res = await fetch('/api/batch', {
+        method: 'POST', headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+            niche: document.getElementById('niche').value,
+            count: parseInt(document.getElementById('count').value),
+            delay: parseInt(document.getElementById('delay').value),
+            upload: document.getElementById('autoUpload').checked
+        })
+    });
+    const data = await res.json();
+    showToast('Batch started!', 'success');
+    const interval = setInterval(async () => {
+        const r = await fetch(`/api/job/${data.job_id}`);
+        const d = await r.json();
+        const terminal = document.getElementById('logTerminal');
+        terminal.innerHTML = d.logs.map(l =>
+            `<div class="log-line"><span class="log-time">[${l.time}]</span> ${l.msg}</div>`
+        ).join('');
+        terminal.scrollTop = terminal.scrollHeight;
+        if (d.job.status === 'complete') {
+            clearInterval(interval);
+            showToast('Batch complete!', 'success');
+        } else if (d.job.status === 'failed') {
+            clearInterval(interval);
+            showToast('Batch failed: ' + d.job.error, 'danger');
+        }
+    }, 2000);
+});
+</script>
+{% endblock %}

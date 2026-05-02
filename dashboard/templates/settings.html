@@ -1,0 +1,172 @@
+{% extends "base.html" %}
+{% block title %}Settings{% endblock %}
+{% block content %}
+<div class="row">
+    <div class="col-md-6 mb-4">
+        <div class="card dark-card">
+            <div class="card-header">API Keys</div>
+            <div class="card-body">
+                <form id="apiForm">
+                    <div class="mb-3">
+                        <label class="form-label">Gemini API Key
+                            <a href="https://aistudio.google.com" target="_blank"
+                               class="badge bg-success text-decoration-none">Get Free Key</a>
+                        </label>
+                        <input type="password" class="form-control bg-dark text-white border-secondary"
+                               name="GEMINI_API_KEY" value="{{ settings.GEMINI_API_KEY }}">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Pexels API Key
+                            <a href="https://www.pexels.com/api" target="_blank"
+                               class="badge bg-success text-decoration-none">Get Free Key</a>
+                        </label>
+                        <input type="password" class="form-control bg-dark text-white border-secondary"
+                               name="PEXELS_API_KEY" value="{{ settings.PEXELS_API_KEY }}">
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Save API Keys</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 mb-4">
+        <div class="card dark-card">
+            <div class="card-header">Automation Settings</div>
+            <div class="card-body">
+                <form id="autoForm">
+                    <div class="mb-3">
+                        <label class="form-label">Default Niche</label>
+                        <select class="form-select bg-dark text-white border-secondary" name="DEFAULT_NICHE">
+                            {% for niche in topics.keys() %}
+                            <option value="{{ niche }}"
+                                {{ 'selected' if niche == settings.DEFAULT_NICHE }}>
+                                {{ niche.replace('_',' ').title() }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Videos Per Day</label>
+                        <input type="number" class="form-control bg-dark text-white border-secondary"
+                               name="VIDEOS_PER_DAY" value="{{ settings.VIDEOS_PER_DAY }}" min="1" max="10">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Upload Delay (seconds)</label>
+                        <input type="number" class="form-control bg-dark text-white border-secondary"
+                               name="UPLOAD_DELAY" value="{{ settings.UPLOAD_DELAY }}" min="10" max="300">
+                    </div>
+                    <div class="mb-3">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="autoUploadToggle"
+                                   {{ 'checked' if settings.AUTO_UPLOAD == 'true' }}>
+                            <label class="form-check-label" for="autoUploadToggle">Auto Upload to YouTube</label>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Save Settings</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="col-12">
+        <div class="card dark-card">
+            <div class="card-header d-flex justify-content-between">
+                <span>Topics Manager</span>
+                <button class="btn btn-sm btn-success" onclick="addNiche()">+ Add Niche</button>
+            </div>
+            <div class="card-body">
+                {% for niche, niche_topics in topics.items() %}
+                <div class="niche-section mb-4" data-niche="{{ niche }}">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <h6 class="text-warning mb-0">
+                            {{ niche.replace('_',' ').title() }}
+                            <span class="badge bg-secondary">{{ niche_topics|length }}</span>
+                        </h6>
+                        <div>
+                            <button class="btn btn-sm btn-outline-success"
+                                    onclick="addTopic('{{ niche }}')">+ Add</button>
+                            <button class="btn btn-sm btn-outline-danger"
+                                    onclick="removeNiche('{{ niche }}')">Remove</button>
+                        </div>
+                    </div>
+                    <div class="topics-list d-flex flex-wrap gap-2">
+                        {% for topic in niche_topics %}
+                        <span class="topic-pill editable" data-niche="{{ niche }}">
+                            {{ topic }}
+                            <span class="remove-topic" onclick="removeTopic(this)">x</span>
+                        </span>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endfor %}
+                <button class="btn btn-primary" onclick="saveTopics()">Save All Topics</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+let topicsData = {{ topics | tojson }};
+
+document.getElementById('apiForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    await fetch('/api/settings', {
+        method: 'POST', headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(Object.fromEntries(new FormData(e.target)))
+    });
+    showToast('API keys saved!', 'success');
+});
+
+document.getElementById('autoForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const data = Object.fromEntries(new FormData(e.target));
+    data.AUTO_UPLOAD = document.getElementById('autoUploadToggle').checked ? 'true' : 'false';
+    await fetch('/api/settings', {
+        method: 'POST', headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(data)
+    });
+    showToast('Settings saved!', 'success');
+});
+
+function addTopic(niche) {
+    const topic = prompt(`Add topic to "${niche}":`);
+    if (!topic) return;
+    if (!topicsData[niche]) topicsData[niche] = [];
+    topicsData[niche].push(topic);
+    const container = document.querySelector(`[data-niche="${niche}"] .topics-list`);
+    const pill = document.createElement('span');
+    pill.className = 'topic-pill editable';
+    pill.dataset.niche = niche;
+    pill.innerHTML = `${topic}<span class="remove-topic" onclick="removeTopic(this)">x</span>`;
+    container.appendChild(pill);
+}
+
+function removeTopic(el) {
+    const pill = el.parentElement;
+    const niche = pill.dataset.niche;
+    const topic = pill.textContent.replace('x','').trim();
+    topicsData[niche] = topicsData[niche].filter(t => t !== topic);
+    pill.remove();
+}
+
+function addNiche() {
+    const name = prompt('New niche name:');
+    if (!name) return;
+    topicsData[name.toLowerCase().replace(/\s+/g,'_')] = [];
+    location.reload();
+}
+
+function removeNiche(niche) {
+    if (!confirm(`Remove "${niche}"?`)) return;
+    delete topicsData[niche];
+    document.querySelector(`[data-niche="${niche}"]`).remove();
+}
+
+async function saveTopics() {
+    await fetch('/api/topics', {
+        method: 'POST', headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(topicsData)
+    });
+    showToast('Topics saved!', 'success');
+}
+</script>
+{% endblock %}

@@ -1,0 +1,85 @@
+name: Daily Math Quiz
+
+on:
+  schedule:
+    # Every day at 10:00 UTC (6am EST / 3am PST)
+    - cron: "0 10 * * *"
+  workflow_dispatch:  # also allow manual trigger from GitHub UI
+
+jobs:
+  post:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write   # needed to commit quiz_history.json back
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install system deps (ffmpeg + fonts)
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y ffmpeg fonts-liberation fonts-dejavu-core
+
+      # Cache the large Kokoro model files between runs (~114MB, one-time download)
+      - name: Cache Kokoro models
+        uses: actions/cache@v4
+        with:
+          path: models/
+          key: kokoro-models-v1
+
+      - name: Install Python deps
+        run: pip install -r requirements.txt --quiet
+
+      - name: Write secret files
+        env:
+          YOUTUBE_TOKEN:    ${{ secrets.YOUTUBE_TOKEN }}
+          YOUTUBE_CREDS:    ${{ secrets.YOUTUBE_CREDS }}
+          TIKTOK_COOKIES:   ${{ secrets.TIKTOK_COOKIES }}
+        run: |
+          echo "$YOUTUBE_TOKEN"  > token.json
+          echo "$YOUTUBE_CREDS"  > credentials.json
+          echo "$TIKTOK_COOKIES" > tiktok_cookies.json
+
+      - name: Write .env
+        env:
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          PEXELS_API_KEY:     ${{ secrets.PEXELS_API_KEY }}
+        run: |
+          echo "OPENROUTER_API_KEY=$OPENROUTER_API_KEY" > .env
+          echo "PEXELS_API_KEY=$PEXELS_API_KEY"         >> .env
+
+      - name: Generate and post quiz
+        run: |
+          python -c "
+          import asyncio, os
+          from main import create_single_short
+          from datetime import datetime
+
+          async def main():
+              ts  = datetime.utcnow().strftime('%Y%m%d_%H%M')
+              out = f'output/auto_{ts}'
+              result = await create_single_short(
+                  topic='Can you solve this in 5 seconds',
+                  niche='math_quiz',
+                  output_dir=out,
+                  upload=True,
+              )
+              print('YouTube:', result.get('url'))
+              print('TikTok: ', result.get('tiktok_url'))
+
+          asyncio.run(main())
+          "
+
+      - name: Commit updated quiz history
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add quiz_history.json
+          git diff --cached --quiet || git commit -m "chore: update quiz_history [skip ci]"
+          git push
