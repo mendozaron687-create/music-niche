@@ -2,7 +2,12 @@
 token.json
 credentials.json
 tiktok_cookies.json
+cookies.json
 .env
+
+# Temp files
+captioned_videoTEMP_MPY_wvf_snd.mp4
+*.TEMP_MPY_*
 
 # Output videos / temp files
 output/
