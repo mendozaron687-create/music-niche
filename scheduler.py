@@ -19,7 +19,7 @@ _job_callback = None  # set by app.py to trigger dashboard jobs
 
 def _default_config():
     return {
-        "enabled": False,
+        "enabled": True,
         "schedules": [
             {
                 "id": "slot_morning",
@@ -27,8 +27,8 @@ def _default_config():
                 "count": 1,
                 "hour": 9,
                 "minute": 0,
-                "upload": False,
-                "active": False,
+                "upload": True,
+                "active": True,
             },
             {
                 "id": "slot_afternoon",
@@ -36,8 +36,8 @@ def _default_config():
                 "count": 1,
                 "hour": 13,
                 "minute": 0,
-                "upload": False,
-                "active": False,
+                "upload": True,
+                "active": True,
             },
             {
                 "id": "slot_evening",
@@ -45,8 +45,8 @@ def _default_config():
                 "count": 1,
                 "hour": 18,
                 "minute": 0,
-                "upload": False,
-                "active": False,
+                "upload": True,
+                "active": True,
             },
         ]
     }
@@ -59,7 +59,9 @@ def load_config() -> dict:
                 return json.load(f)
         except Exception:
             pass
-    return _default_config()
+    cfg = _default_config()
+    save_config(cfg)  # persist defaults so dashboard shows correct state
+    return cfg
 
 
 def save_config(config: dict):
