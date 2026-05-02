@@ -17,7 +17,9 @@
     "A pet store has 10 birds for sale. You buy all but 3. How many do you have?",
     "What is 15 \u00d7 8?",
     "Which is bigger: 18% of 50 or 50% of 18?",
-    "Four friends equally share a pizza. Three more friends arrive and want some. If they all share equally, what fraction of the ORIGINAL pizza does each person now get?"
+    "Four friends equally share a pizza. Three more friends arrive and want some. If they all share equally, what fraction of the ORIGINAL pizza does each person now get?",
+    "A train leaves Chicago at 8:00 AM traveling 60 mph towards New York. Another leaves New York at 9:00 AM traveling 80 mph toward Chicago. If the distance is 780 miles, which train is closer to Chicago when they meet?",
+    "If a price increases 20% then decreases 20%, what's the net % change?"
   ],
   "video_ids": [
     8108452,
@@ -36,6 +38,8 @@
     9350532,
     8499351,
     16724757,
-    35717614
+    35717614,
+    35835510,
+    34912823
   ]
 }
