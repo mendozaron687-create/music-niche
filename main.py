@@ -354,7 +354,7 @@ def upload_to_youtube(video_path: str, thumbnail_path: str,
                 "title": f"{title} #shorts"[:100],
                 "description": f"{description}\n\n#shorts #viral",
                 "tags": tags + ["shorts", "viral", "youtubeshorts"],
-                "categoryId": "22",
+                "categoryId": "27",
             },
             "status": {
                 "privacyStatus": "public",
@@ -519,8 +519,7 @@ def generate_quiz_content(topic: str, used_questions: list | None = None) -> dic
         return fallback
     prompt = f"""Generate a TRICKY math quiz question about: "{topic}"
 
-The question MUST be SHORT — maximum 20 words total. One sentence only. No multi-sentence word problems.
-The question must make viewers PAUSE, doubt themselves, and want to replay the video to verify.
+The question MUST be SHORT — maximum 20 words total. One sentence only. No multi-sentence word problems.    The question MUST be genuinely hard — at least 7 out of 10 people should answer it wrong. Straightforward arithmetic with obvious answers is NOT allowed.The question must make viewers PAUSE, doubt themselves, and want to replay the video to verify.
 Use one of these high-engagement formats:
 - Order of operations trap: "What is 8 ÷ 2(2+2)?" or "2 + 3 × 4?"
 - Percentage/fraction trick: surprising result most people get wrong
@@ -716,7 +715,30 @@ async def create_single_short(topic: str, niche: str,
                 + post_meta.get("HASHTAGS", "#mathquiz #shorts #math")
             )
             yt_tags  = [t.lstrip("#") for t in post_meta.get("HASHTAGS", "#mathquiz #math #shorts").split() if t.startswith("#")][:20] or ["mathquiz", "math", "quiz"]
-            first_comment = "What did YOU answer? 👇 Comment below — I'll reply with the most common wrong answer!"
+            _FIRST_COMMENTS = [
+                "What did YOU answer? 👇 Comment below — I'll reply with the most common wrong answer!",
+                "Did you get it right? 👇 Drop your answer in the comments!",
+                "What number did you pick? 👇 Comment and let's see who got it right!",
+                "90% of people answer wrong. 👇 What was YOUR answer?",
+                "Comment your answer! 👇 I'll reveal what most people get wrong.",
+                "Think you got it? 👇 Drop your answer and I'll tell you how you did!",
+                "What did you think? 👇 Comment below and let's compare answers!",
+                "Got it right? 👇 Reply with your answer — most people miss this one!",
+                "Comment your answer below! 👇 Did you fall for the trap?",
+                "Reply with what you answered! 👇 Let's see who outsmarted this one!",
+                "What was your first instinct? 👇 Comment below!",
+                "Did the trick get you? 👇 Drop your answer!",
+                "Comment A, B, C, or D below! 👇 Let's see how many got it right!",
+                "Smarter than 95%? 👇 Prove it in the comments!",
+                "What did you pick? 👇 Most people chose wrong — did you?",
+                "Reply with your answer! 👇 I read every comment!",
+                "Did you get tricked? 👇 Comment below and find out!",
+                "Drop your answer below! 👇 Let's see who's in the top 5%!",
+                "What number did your brain tell you? 👇 Comment and let's talk!",
+                "Comment your answer! 👇 I'll pin the best response!",
+            ]
+            import random as _rnd
+            first_comment = _rnd.choice(_FIRST_COMMENTS)
             result["url"] = upload_to_youtube(
                 video_path=final_path,
                 thumbnail_path=f"{output_dir}/thumbnail.png",

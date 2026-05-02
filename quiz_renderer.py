@@ -389,7 +389,31 @@ def draw_quiz_card(
         cd.rounded_rectangle([M, 1625, W - M, 1725], radius=20, fill=(10, 20, 90, 215))
         canvas = Image.alpha_composite(canvas, cmt_layer)
         d      = ImageDraw.Draw(canvas)
-        _cc(d, ">> DROP YOUR ANSWER BELOW! <<", W // 2, 1675, f_cmt, (255, 220, 50, 255), shadow=True)
+        _CARD_CTAS = [
+            ">> DROP YOUR ANSWER BELOW! <<",
+            ">> COMMENT YOUR ANSWER NOW! <<",
+            ">> WHAT'S YOUR ANSWER? COMMENT! <<",
+            ">> REPLY WITH YOUR ANSWER! <<",
+            ">> COMMENT A, B, C, OR D! <<",
+            ">> TYPE YOUR ANSWER BELOW! <<",
+            ">> CAN YOU SOLVE IT? COMMENT! <<",
+            ">> DROP YOUR GUESS BELOW! <<",
+            ">> WHAT DID YOU GET? REPLY! <<",
+            ">> THINK YOU'RE RIGHT? COMMENT! <<",
+            ">> SHOW YOUR ANSWER BELOW! <<",
+            ">> PROVE YOU'RE SMART! COMMENT! <<",
+            ">> TELL US YOUR ANSWER! <<",
+            ">> GOT IT? DROP IT BELOW! <<",
+            ">> SMARTER THAN 95%? COMMENT! <<",
+            ">> REPLY WITH YOUR PICK! <<",
+            ">> COMMENT YOUR ANSWER! <<",
+            ">> TYPE IT IN COMMENTS! <<",
+            ">> SHARE YOUR ANSWER BELOW! <<",
+            ">> PUT YOUR ANSWER BELOW! <<",
+        ]
+        import random as _rnd
+        _card_cta = _rnd.choice(_CARD_CTAS)
+        _cc(d, _card_cta, W // 2, 1675, f_cmt, (255, 220, 50, 255), shadow=True)
 
     # ── Timer countdown digit with glow rings
     if timer_num is not None:
@@ -559,10 +583,34 @@ async def _build_synced_narration(
     import soundfile as sf
     from imageio_ffmpeg import get_ffmpeg_exe
 
+    _CTA_LINES = [
+        "If you got it right, subscribe — you are smarter than 95 percent of people!",
+        "If you solved that, subscribe — only 1 in 20 people get it right!",
+        "Subscribe if you got it! Most people miss this every single time.",
+        "If you answered correctly, hit subscribe — you are in the top 5 percent!",
+        "Got it right? Subscribe now — your brain is above average!",
+        "If you knew that, you are smarter than 9 out of 10 people — subscribe!",
+        "Subscribe if you got it right — only the sharpest minds solve this one!",
+        "If you nailed it, subscribe — most adults get this wrong!",
+        "Got the right answer? Subscribe — you just outsmarted 90 percent of viewers!",
+        "If you solved it, hit subscribe — you just beat the average score!",
+        "If you got it, subscribe! Harvard students even struggle with this one.",
+        "Subscribe if you got it right — you are sharper than most people!",
+        "If you answered correctly, subscribe — your math skills are elite!",
+        "Got it right? You are in the top 5 percent — subscribe for more!",
+        "If you nailed it, subscribe now — most people never get this right!",
+        "Subscribe if you got that! Only 1 in 10 people answer correctly.",
+        "If you got it right, subscribe — you just outsmarted the internet!",
+        "Nailed it? Subscribe — your problem-solving skills are above the curve!",
+        "If you solved that, subscribe — you have a rare mathematical mind!",
+        "Got it right? Subscribe now — only the top percent solve this!",
+    ]
+    import random as _rnd
+    _cta_line = _rnd.choice(_CTA_LINES)
     answer_text = options.get(correct, "")
     a_text = (
         f"The answer is {correct}. {_normalize_tts(answer_text)}! "
-        f"If you got it right, subscribe — you are smarter than 95 percent of people!"
+        f"{_cta_line}"
     )
 
     q_path = os.path.join(output_dir, "_p_q.wav")
