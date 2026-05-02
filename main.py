@@ -311,7 +311,8 @@ def create_base_video(video_path: str, audio_path: str, output_path: str) -> str
 
 
 def upload_to_youtube(video_path: str, thumbnail_path: str,
-                      title: str, description: str, tags: list) -> str:
+                      title: str, description: str, tags: list,
+                      first_comment: str = "") -> str:
     from googleapiclient.discovery import build
     from googleapiclient.http import MediaFileUpload
     from google.oauth2.credentials import Credentials
@@ -355,6 +356,22 @@ def upload_to_youtube(video_path: str, thumbnail_path: str,
             videoId=video_id,
             media_body=MediaFileUpload(thumbnail_path)
         ).execute()
+    if first_comment:
+        try:
+            youtube.commentThreads().insert(
+                part="snippet",
+                body={
+                    "snippet": {
+                        "videoId": video_id,
+                        "topLevelComment": {
+                            "snippet": {"textOriginal": first_comment}
+                        }
+                    }
+                }
+            ).execute()
+            print(f"[yt] First comment posted.")
+        except Exception as e:
+            print(f"[yt] Comment post failed (non-fatal): {e}")
     url = f"https://youtube.com/shorts/{video_id}"
     print(f"Live at: {url}")
     return url
@@ -661,6 +678,7 @@ async def create_single_short(topic: str, niche: str,
                 title=yt_title,
                 description=yt_desc,
                 tags=yt_tags,
+                first_comment="💡 Drop your answer below! A, B, C, or D? 👇 Answer revealed at the end!",
             )
             # TikTok
             tiktok_caption = post_meta.get("TITLE", topic) + "\n" + post_meta.get("HASHTAGS", "#mathquiz #shorts #math")
@@ -718,10 +736,13 @@ async def create_single_short(topic: str, niche: str,
     meta = generate_platform_metadata(topic, niche)
     result = {"topic": topic, "paths": paths, "url": None, "meta": meta}
     if upload:
+        yt_meta = meta["youtube"]
         url = upload_to_youtube(
             video_path=paths["final"], thumbnail_path=paths["thumbnail"],
-            title=topic, description=f"Learn about {topic}. Follow for daily tips!",
-            tags=[niche, topic.split()[0].lower(), "tips", "howto"]
+            title=yt_meta["title"],
+            description=yt_meta["description"],
+            tags=yt_meta["tags"],
+            first_comment="What tip surprised you most? 👇 Comment below and follow for more!",
         )
         result["url"] = url
     return result

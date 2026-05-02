@@ -344,7 +344,7 @@ async def _build_synced_narration(
     from imageio_ffmpeg import get_ffmpeg_exe
 
     answer_text = options.get(correct, "")
-    a_text = f"The answer is {correct}. {answer_text}! Follow for more math challenges!"
+    a_text = f"The answer is {correct}. {answer_text}! Comment your answer and follow for more!"
 
     q_path = os.path.join(output_dir, "_p_q.wav")
     a_path = os.path.join(output_dir, "_p_a.wav")

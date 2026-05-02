@@ -64,15 +64,30 @@ jobs:
       - name: Generate and post quiz
         run: |
           python -c "
-          import asyncio, os, traceback
+          import asyncio, os, traceback, random
           from main import create_single_short
           from datetime import datetime
 
+          TOPICS = [
+              'Can you solve this in 5 seconds',
+              '99 percent of people get this wrong',
+              'Simple math that tricks everyone',
+              'Only geniuses solve this fast',
+              'Most adults fail this grade school math',
+              'The math problem that went viral',
+              'Solve this before the timer runs out',
+              'The trick question everyone gets wrong',
+              'Can you beat the calculator',
+              'What is the real answer here',
+          ]
+
           async def main():
-              ts  = datetime.utcnow().strftime('%Y%m%d_%H%M')
-              out = f'output/auto_{ts}'
+              ts    = datetime.utcnow().strftime('%Y%m%d_%H%M')
+              out   = f'output/auto_{ts}'
+              topic = random.choice(TOPICS)
+              print(f'Topic: {topic}')
               result = await create_single_short(
-                  topic='Can you solve this in 5 seconds',
+                  topic=topic,
                   niche='math_quiz',
                   output_dir=out,
                   upload=True,
