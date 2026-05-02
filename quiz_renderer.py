@@ -50,15 +50,24 @@ QTEXT_BG  = (8,   15,   55,  175)
 # ── Helpers ───────────────────────────────────────────────────────────────────
 
 def _font(name: str, size: int) -> ImageFont.FreeTypeFont:
-    for path in [
-        f"C:/Windows/Fonts/{name}",
-        f"/usr/share/fonts/truetype/msttcorefonts/{name}",
-        f"/System/Library/Fonts/{name}",
-    ]:
-        try:
-            return ImageFont.truetype(path, size)
-        except Exception:
-            pass
+    # Windows → Linux fallback map
+    _fallbacks = {
+        "impact.ttf":  ["impact.ttf", "Impact.ttf",
+                         "/usr/share/fonts/truetype/liberation/LiberationSans-Bold.ttf",
+                         "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"],
+        "arialbd.ttf": ["arialbd.ttf", "Arial_Bold.ttf",
+                         "/usr/share/fonts/truetype/liberation/LiberationSans-Bold.ttf",
+                         "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"],
+    }
+    candidates = _fallbacks.get(name, [name])
+    for candidate in candidates:
+        for prefix in ["C:/Windows/Fonts/", "/usr/share/fonts/truetype/msttcorefonts/",
+                        "/System/Library/Fonts/", ""]:
+            path = candidate if candidate.startswith("/") else f"{prefix}{candidate}"
+            try:
+                return ImageFont.truetype(path, size)
+            except Exception:
+                pass
     return ImageFont.load_default()
 
 
