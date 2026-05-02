@@ -480,6 +480,7 @@ def generate_quiz_content(topic: str, used_questions: list | None = None) -> dic
         "question":      "What is 15 × 8?",
         "options":       {"A": "110", "B": "120", "C": "130", "D": "140"},
         "correct_answer":"B",
+        "trap_answer":   "A",
         "explanation":   "15 times 8 equals 120.",
         "category":      "MATH QUIZ",
         "image_query":   "mathematics numbers chalkboard",
@@ -501,6 +502,7 @@ Return ONLY a valid JSON object with exactly these keys:
   "question": "the tricky question ending with ?",
   "options": {{"A": "...", "B": "...", "C": "...", "D": "..."}},
   "correct_answer": "A",
+  "trap_answer": "the letter (A/B/C/D) that MOST people will instinctively pick but is WRONG",
   "explanation": "surprising one-liner explaining why, max 12 words",
   "category": "pick the best label: MATH QUIZ | ORDER OF OPERATIONS | PERCENTAGE TRAP | ALGEBRA TRICK | NUMBER RIDDLE | BRAIN TEASER | TRICK QUESTION",
   "image_query": "3-word Pexels PHOTO showing the math concept visually (e.g. 'pie chart fraction', 'dollar bills percentage', 'ruler triangle geometry', 'clock time numbers')",
@@ -557,7 +559,7 @@ Correct answer: {correct}) {answer}
 
 Output ONLY a JSON object with exactly these keys:
 {{
-  "title": "A high-CTR YouTube title under 70 chars. Use curiosity, numbers, challenge hooks. Example: '90% Get This Wrong 🤯 Can You?' or '2-Second Math Trick That Fools Everyone'",
+  "title": "MUST use one of these identity/ego-bait templates (fill in the blank): '99% of [group] Fail This 🤯', 'Harvard Students FAILED This 😱', 'This Fools Everyone — Even Teachers', 'I Got This Wrong 😢 Did You?', 'Only Geniuses Get This Right 💡'. Max 70 chars.",
   "description": "3-4 sentences. First line is a hook. Mention the math challenge, tease the answer. Include a CTA to follow. Natural keyword-rich language, NO hashtags here.",
   "hashtags": "20 hashtags as a single line, most viral first. Include: #mathquiz #shorts #math #brainteaser #viral, plus related niche tags. No spaces within each tag."
 }}

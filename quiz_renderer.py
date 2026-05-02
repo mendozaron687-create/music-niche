@@ -169,6 +169,7 @@ def draw_quiz_card(
     solid_bg:           bool                 = False,
     show_think_overlay: bool                 = False,
     thumbnail_banner:   "str | None"         = None,
+    trap_answer:        "str | None"         = None,
 ) -> Image.Image:
     """Returns an RGBA card image."""
     if solid_bg:
@@ -270,10 +271,22 @@ def draw_quiz_card(
         f_cta   = _font("arialbd.ttf", 38)
         cta_layer = Image.new("RGBA", (W, H), (0, 0, 0, 0))
         cd      = ImageDraw.Draw(cta_layer)
-        cd.rounded_rectangle([M, 1630, W - M, 1730], radius=20, fill=(230, 160, 30, 235))
-        canvas  = Image.alpha_composite(canvas, cta_layer)
-        d       = ImageDraw.Draw(canvas)
-        _cc(d, "FOLLOW FOR DAILY CHALLENGES", W // 2, 1680, f_cta, (15, 15, 15, 255), shadow=False)
+        if trap_answer and trap_answer != correct:
+            # Trap reveal: "MOST PICK A — WRONG! 😱"
+            cd.rounded_rectangle([M, 1615, W - M, 1745], radius=20, fill=(180, 20, 20, 235))
+            canvas  = Image.alpha_composite(canvas, cta_layer)
+            d       = ImageDraw.Draw(canvas)
+            f_trap1 = _font("impact.ttf", 46)
+            f_trap2 = _font("arialbd.ttf", 34)
+            _cc(d, f"MOST PEOPLE PICK {trap_answer} -- WRONG!",
+                W // 2, 1660, f_trap1, (255, 230, 0, 255), shadow=True)
+            _cc(d, "Subscribe so you never miss a trick!",
+                W // 2, 1720, f_trap2, WHITE, shadow=False)
+        else:
+            cd.rounded_rectangle([M, 1630, W - M, 1730], radius=20, fill=(230, 160, 30, 235))
+            canvas  = Image.alpha_composite(canvas, cta_layer)
+            d       = ImageDraw.Draw(canvas)
+            _cc(d, "SUBSCRIBE FOR DAILY CHALLENGES", W // 2, 1680, f_cta, (15, 15, 15, 255), shadow=False)
 
     # ── Timer countdown digit with glow rings
     if timer_num is not None:
@@ -451,9 +464,9 @@ async def _build_synced_narration(
     await _tts(_normalize_tts(question), q_path, voice=voice)
     await _tts(a_text, a_path, voice=voice)
 
-    # Countdown: each word padded to exactly 1.0 s
+    # Countdown: each word padded to exactly 0.7 s (snappier pacing)
     sr      = sf.info(q_path).samplerate
-    one_sec = sr
+    one_sec = int(0.7 * sr)
     cd_chunks = []
     for word in ["Three.", "Two.", "One."]:
         tmp = os.path.join(output_dir, f"_p_{word[0].lower()}.wav")
@@ -503,6 +516,16 @@ def _make_tick_track(output_path: str, q_dur: float, a_dur: float, think_dur: fl
     sample_rate = 44100
     total_samp  = int((q_dur + think_dur + 3.0 + a_dur + 1.0) * sample_rate)
     data        = np.zeros(total_samp, dtype=np.float32)
+
+    # Soft heartbeat during question card (two quiet low thuds encourage focus)
+    q_end_samp = int(q_dur * sample_rate)
+    for hb_off in [0.35, 0.70]:    # two beats spaced within the question window
+        hb_s = int(hb_off * q_end_samp)
+        hb_len = int(0.18 * sample_rate)
+        t_hb = np.arange(hb_len, dtype=np.float32) / sample_rate
+        hb   = np.sin(2 * np.pi * 65 * t_hb) * np.exp(-t_hb * 22) * 0.30
+        end_hb = min(hb_s + hb_len, total_samp)
+        data[hb_s:end_hb] += hb[:end_hb - hb_s]
 
     # Deep suspense pulses during the think card (two low "thud" beats)
     think_start_samp = int(q_dur * sample_rate)
@@ -693,12 +716,13 @@ async def create_quiz_video(
     ffmpeg = get_ffmpeg_exe()
     os.makedirs(output_dir, exist_ok=True)
 
-    question = quiz_data["question"]
-    options  = quiz_data["options"]
-    correct  = quiz_data["correct_answer"]
-    exp      = quiz_data.get("explanation", "")
-    category = quiz_data.get("category", "MATH QUIZ")
-    iq       = quiz_data.get("image_query", "mathematics classroom chalkboard")
+    question    = quiz_data["question"]
+    options     = quiz_data["options"]
+    correct     = quiz_data["correct_answer"]
+    exp         = quiz_data.get("explanation", "")
+    category    = quiz_data.get("category", "MATH QUIZ")
+    iq          = quiz_data.get("image_query", "mathematics classroom chalkboard")
+    trap_answer = quiz_data.get("trap_answer", "")
 
     print(f"[quiz] Question: {question}")
 
@@ -723,7 +747,7 @@ async def create_quiz_video(
     has_bg = _bg_ok
 
     # 3. Render card frames
-    THINK_DUR = 2.0
+    THINK_DUR = 1.5
     solid = not has_bg
     print(f"[quiz] Rendering cards (bg={'pexels_video' if has_bg else 'swirly_fallback'})...")
     keys = [
@@ -732,7 +756,7 @@ async def create_quiz_video(
         ("t3", dict(question=question, options=options, category=category, center_img=center_img, timer_num=3, solid_bg=solid)),
         ("t2", dict(question=question, options=options, category=category, center_img=center_img, timer_num=2, solid_bg=solid)),
         ("t1", dict(question=question, options=options, category=category, center_img=center_img, timer_num=1, solid_bg=solid)),
-        ("a",  dict(question=question, options=options, correct=correct,   category=category, center_img=center_img, solid_bg=solid)),
+        ("a",  dict(question=question, options=options, correct=correct,   category=category, center_img=center_img, solid_bg=solid, trap_answer=trap_answer or None)),
     ]
     fpaths = {}
     for key, kwargs in keys:
@@ -740,9 +764,17 @@ async def create_quiz_video(
         p   = os.path.join(output_dir, f"card_{key}.png")
         img.save(p)
         fpaths[key] = p
+    _THUMB_BANNERS = [
+        "90% GET THIS WRONG",
+        "MOST ADULTS FAIL THIS",
+        "IQ TEST: 5 SECONDS",
+        "ONLY 1% GET THIS RIGHT",
+        "THIS BREAKS MOST BRAINS",
+        "CAN YOU BEAT THE ODDS?",
+    ]
     draw_quiz_card(question=question, options=options, category=category,
                    center_img=center_img, solid_bg=solid,
-                   thumbnail_banner="90% GET THIS WRONG").save(
+                   thumbnail_banner=random.choice(_THUMB_BANNERS)).save(
         os.path.join(output_dir, "thumbnail.png"))
 
     # 4. TTS narration — frame-synced (question + think pause + countdown + answer)

@@ -12,7 +12,9 @@
     "A bat and a ball cost $1.10 in total. The bat costs $1.00 more than the ball. How much does the ball cost?",
     "If you\u2019re running a race and you pass the person in 2nd place, what place are you in?",
     "What is 1% of 1 million dollars, minus 10% of $10,000?",
-    "A snail is climbing a 10-foot wall. It climbs 3 feet each day, but slides down 2 feet each night. How many days does it take to reach the top?"
+    "A snail is climbing a 10-foot wall. It climbs 3 feet each day, but slides down 2 feet each night. How many days does it take to reach the top?",
+    "What is 25% of 25%?",
+    "A pet store has 10 birds for sale. You buy all but 3. How many do you have?"
   ],
   "video_ids": [
     8108452,
@@ -27,6 +29,8 @@
     37099690,
     18437040,
     4565572,
-    18401896
+    18401896,
+    9350532,
+    8499351
   ]
 }

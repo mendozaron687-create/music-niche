@@ -2,8 +2,10 @@ name: Daily Math Quiz
 
 on:
   schedule:
-    # Every day at 10:00 UTC = 6:00 PM Philippine Time (UTC+8)
-    - cron: "0 10 * * *"
+    # 3x daily — 6am, 2pm, 10pm Philippine Time (UTC+8)
+    - cron: "0 22 * * *"   # 6:00 AM PHT
+    - cron: "0 6 * * *"    # 2:00 PM PHT
+    - cron: "0 14 * * *"   # 10:00 PM PHT
   workflow_dispatch:  # also allow manual trigger from GitHub UI
 
 env:
