@@ -7,7 +7,7 @@ import os
 import json
 import asyncio
 import threading
-from datetime import datetime
+from datetime import datetime, date
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.cron import CronTrigger
 
@@ -56,12 +56,42 @@ def load_config() -> dict:
     if os.path.exists(CONFIG_FILE):
         try:
             with open(CONFIG_FILE) as f:
-                return json.load(f)
+                cfg = json.load(f)
+            # Seed ramp_start if missing from an old config file
+            if "ramp_start" not in cfg:
+                cfg["ramp_start"] = date.today().isoformat()
+                save_config(cfg)
+            return cfg
         except Exception:
             pass
     cfg = _default_config()
+    cfg["ramp_start"] = date.today().isoformat()
     save_config(cfg)  # persist defaults so dashboard shows correct state
     return cfg
+
+
+def _ramp_slots(cfg: dict) -> int:
+    """Return how many slots (1/2/3) should be active based on weeks since ramp_start.
+
+    Week 1  (days 0-6):   1 upload/day  — only morning slot
+    Week 2  (days 7-13):  2 uploads/day — morning + afternoon
+    Week 3+ (days 14+):   3 uploads/day — all slots
+    """
+    try:
+        start_d = date.fromisoformat(cfg.get("ramp_start", date.today().isoformat()))
+        elapsed_days = (date.today() - start_d).days
+    except Exception:
+        elapsed_days = 14  # default to full speed if date is corrupt
+
+    if elapsed_days < 7:
+        slots = 1
+    elif elapsed_days < 14:
+        slots = 2
+    else:
+        slots = 3
+
+    print(f"[Scheduler] Ramp day {elapsed_days} → {slots} slot(s) active")
+    return slots
 
 
 def save_config(config: dict):
@@ -116,9 +146,14 @@ def start(config: dict = None):
 
     _scheduler = BackgroundScheduler(timezone="UTC")
 
-    for sched in cfg.get("schedules", []):
-        if not sched.get("active"):
-            continue
+    # Determine how many slots to activate based on ramp-up week
+    max_slots = _ramp_slots(cfg)
+    active_schedules = [s for s in cfg.get("schedules", []) if s.get("active")]
+    # Sort by hour so we always pick morning first, then afternoon, then evening
+    active_schedules.sort(key=lambda s: int(s.get("hour", 0)))
+    slots_to_run = active_schedules[:max_slots]
+
+    for sched in slots_to_run:
         niche = sched.get("niche", "finance")
         count = int(sched.get("count", 1))
         upload = sched.get("upload", False)
