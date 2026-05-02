@@ -66,28 +66,51 @@ jobs:
       - name: Generate and post quiz
         run: |
           python -c "
-          import asyncio, os, traceback, random
-          from main import create_single_short
-          from datetime import datetime
+          import asyncio, sys, json, os
+          from datetime import datetime, date
 
-          TOPICS = [
-              'Can you solve this in 5 seconds',
-              '99 percent of people get this wrong',
-              'Simple math that tricks everyone',
-              'Only geniuses solve this fast',
-              'Most adults fail this grade school math',
-              'The math problem that went viral',
-              'Solve this before the timer runs out',
-              'The trick question everyone gets wrong',
-              'Can you beat the calculator',
-              'What is the real answer here',
-          ]
+          # ── Ramp-up check ─────────────────────────────────────────────────
+          # Slot order by UTC hour: 22→slot0(morning PHT), 06→slot1(afternoon PHT), 14→slot2(evening PHT)
+          SLOT_HOURS = [22, 6, 14]   # must match cron order in this file
+          current_hour = datetime.utcnow().hour
+
+          cfg_path = 'scheduler_config.json'
+          if os.path.exists(cfg_path):
+              with open(cfg_path) as f:
+                  cfg = json.load(f)
+          else:
+              cfg = {}
+
+          # Seed ramp_start on very first run
+          if 'ramp_start' not in cfg:
+              cfg['ramp_start'] = date.today().isoformat()
+              with open(cfg_path, 'w') as f:
+                  json.dump(cfg, f, indent=2)
+
+          elapsed_days = (date.today() - date.fromisoformat(cfg['ramp_start'])).days
+          if elapsed_days < 7:
+              max_slots = 1
+          elif elapsed_days < 14:
+              max_slots = 2
+          else:
+              max_slots = 3
+
+          # Find which slot index this run corresponds to
+          slot_index = SLOT_HOURS.index(current_hour) if current_hour in SLOT_HOURS else 0
+          if slot_index >= max_slots:
+              print(f'[ramp] Day {elapsed_days}: slot {slot_index} skipped (max_slots={max_slots})')
+              sys.exit(0)
+
+          print(f'[ramp] Day {elapsed_days}: running slot {slot_index} of {max_slots}')
+
+          # ── Generate & upload ──────────────────────────────────────────────
+          from main import create_single_short, get_topic
+          ts    = datetime.utcnow().strftime('%Y%m%d_%H%M')
+          out   = f'output/auto_{ts}'
+          topic = get_topic('math_quiz')
+          print(f'Topic: {topic}')
 
           async def main():
-              ts    = datetime.utcnow().strftime('%Y%m%d_%H%M')
-              out   = f'output/auto_{ts}'
-              topic = random.choice(TOPICS)
-              print(f'Topic: {topic}')
               result = await create_single_short(
                   topic=topic,
                   niche='math_quiz',
@@ -100,10 +123,10 @@ jobs:
           asyncio.run(main())
           "
 
-      - name: Commit updated quiz history
+      - name: Commit updated state
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add quiz_history.json
-          git diff --cached --quiet || git commit -m "chore: update quiz_history [skip ci]"
+          git add quiz_history.json scheduler_config.json
+          git diff --cached --quiet || git commit -m "chore: update quiz state [skip ci]"
           git push
