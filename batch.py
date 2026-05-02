@@ -5,8 +5,8 @@ from datetime import datetime, timedelta
 from main import get_topic, create_single_short
 
 BATCH_CONFIG = {
-    "videos_per_day": 3,
-    "niche": "finance",
+    "videos_per_day": 6,
+    "niche": "math_quiz",
     "upload": True,
     "delay_between": 30,
 }

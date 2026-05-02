@@ -22,14 +22,23 @@ def _default_config():
         "enabled": False,
         "schedules": [
             {
-                "id": "daily_finance",
-                "niche": "finance",
-                "count": 1,
-                "hour": 9,
+                "id": "morning_math_quiz",
+                "niche": "math_quiz",
+                "count": 3,
+                "hour": 7,
                 "minute": 0,
                 "upload": False,
                 "active": False,
-            }
+            },
+            {
+                "id": "evening_math_quiz",
+                "niche": "math_quiz",
+                "count": 3,
+                "hour": 18,
+                "minute": 0,
+                "upload": False,
+                "active": False,
+            },
         ]
     }
 

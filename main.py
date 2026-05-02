@@ -64,16 +64,31 @@ def get_topic(niche: str = "finance") -> str:
             "Stop wasting your 20s",
         ],
         "math_quiz": [
-            "Can you solve this in 5 seconds",
-            "99 percent of people get this wrong",
-            "Simple math that tricks everyone",
-            "What is 9 times 9 minus 72",
-            "Only geniuses solve this fast",
-            "The math problem that went viral",
-            "Can you beat the calculator",
-            "Most adults fail this grade school math",
-            "Solve this before the timer runs out",
-            "The trick question everyone gets wrong",
+            "This question started a fight online",
+            "95 percent of adults fail this grade school problem",
+            "Harvard students got this WRONG",
+            "The math problem that broke the internet",
+            "If you get this right you are a genius",
+            "This fools everyone even math teachers",
+            "Only 1 in 100 people get this right",
+            "The order of operations trap everyone falls for",
+            "Solve this or unsubscribe",
+            "Gen Z vs Boomers who gets this right",
+            "Most people fail this in under 3 seconds",
+            "The percentage problem that tricks every adult",
+            "What most Americans get wrong about basic math",
+            "Speed challenge solve this before the timer",
+            "The BODMAS question that went viral",
+            "Even engineers get this one wrong",
+            "The math riddle with a counterintuitive answer",
+            "99 percent pick the wrong answer on this one",
+            "Can you solve this faster than a calculator",
+            "The trick question teachers use to fool students",
+            "This simple problem proves most adults failed math",
+            "If you solve this you are in the top 1 percent",
+            "The viral math problem with two correct answers",
+            "Most people fail this in the first 5 seconds",
+            "Comment yes if you got it right first try",
         ],
     }
     return random.choice(builtin.get(niche, builtin["finance"]))
@@ -379,19 +394,34 @@ def upload_to_youtube(video_path: str, thumbnail_path: str,
 
 def generate_platform_metadata(topic: str, niche: str) -> dict:
     """Generate ready-to-use titles, descriptions and hashtags for each platform."""
-    niche_tags = {
-        "finance":        ["finance", "money", "investing", "wealth", "financetips"],
-        "health_wellness":["health", "wellness", "fitness", "healthtips", "selfcare"],
-        "technology":     ["tech", "ai", "technology", "futuretech", "techtips"],
-        "business":       ["business", "entrepreneurship", "startup", "ceo", "success"],
-        "motivation":     ["motivation", "mindset", "success", "inspiration", "grind"],
-        "productivity":   ["productivity", "habits", "focus", "timemanagement", "hustle"],
-        "ai_tools":       ["ai", "chatgpt", "artificialintelligence", "aitools", "tech"],
-        "relationships":  ["relationships", "selfimprovement", "psychology", "mindset", "life"],
-        "math_quiz":       ["mathquiz", "math", "brainteaser", "quiz", "mathchallenge"],
-    }.get(niche, [niche, "tips", "howto"])
-
-    base_tags = niche_tags + ["shorts", "viral", "youtubeshorts", "fyp", "trending"]
+    from datetime import date as _date
+    if niche == "math_quiz":
+        # 3-day rotating hashtag sets: mega + mid + niche for max algorithmic reach
+        _hashtag_sets = [
+            ["mathquiz", "math", "brainteaser", "viral", "shorts", "youtubeshorts", "quiz",
+             "fyp", "trending", "mathchallenge", "puzzle", "riddle", "stem", "education",
+             "smartkids", "maths", "mindblown", "mathtrick", "geniustest", "orderofoperations"],
+            ["mathquiz", "viral", "quiz", "brainteaser", "shorts", "mathpuzzle", "trivia",
+             "challenge", "iq", "geniusmind", "mathfacts", "algebratrick", "percentagetrap",
+             "interestingmath", "quiztime", "learnmath", "numbersense", "braingames",
+             "thinktank", "doyouknow"],
+            ["mathquiz", "shorts", "viral", "brainteaser", "quiz", "math", "challenge", "fyp",
+             "trending", "iqtest", "mathchallenge", "smartpeople", "trickquestion", "percentage",
+             "orderofoperations", "mathmistake", "schoolmath", "cansolve", "mathnerds", "mindblown"],
+        ]
+        base_tags = _hashtag_sets[_date.today().timetuple().tm_yday % 3]
+    else:
+        niche_tags = {
+            "finance":        ["finance", "money", "investing", "wealth", "financetips"],
+            "health_wellness":["health", "wellness", "fitness", "healthtips", "selfcare"],
+            "technology":     ["tech", "ai", "technology", "futuretech", "techtips"],
+            "business":       ["business", "entrepreneurship", "startup", "ceo", "success"],
+            "motivation":     ["motivation", "mindset", "success", "inspiration", "grind"],
+            "productivity":   ["productivity", "habits", "focus", "timemanagement", "hustle"],
+            "ai_tools":       ["ai", "chatgpt", "artificialintelligence", "aitools", "tech"],
+            "relationships":  ["relationships", "selfimprovement", "psychology", "mindset", "life"],
+        }.get(niche, [niche, "tips", "howto"])
+        base_tags = niche_tags + ["shorts", "viral", "youtubeshorts", "fyp", "trending"]
     short_title = f"{topic} #shorts"[:100]
     description = (
         f"{topic}\n\n"
@@ -625,6 +655,17 @@ async def create_single_short(topic: str, niche: str,
         used_q     = history.get("questions", [])
         used_vids  = set(history.get("video_ids", []))
         quiz_data  = generate_quiz_content(topic, used_questions=used_q)
+        # A/B: generate a second candidate, keep the one with a genuine trap answer
+        _ab_topic = get_topic(niche)
+        _ab_data  = generate_quiz_content(
+            _ab_topic, used_questions=used_q + [quiz_data.get("question", "")]
+        )
+        def _trap_score(q):
+            trap, correct = q.get("trap_answer", ""), q.get("correct_answer", "")
+            return 1 if (trap and trap != correct) else 0
+        if _trap_score(_ab_data) > _trap_score(quiz_data):
+            quiz_data, topic = _ab_data, _ab_topic
+        print(f"[A/B] Selected: {quiz_data.get('question', '')[:70]}")
         final_path, vid_id = await create_quiz_video(
             quiz_data, output_dir,
             voice=voice,
@@ -674,7 +715,7 @@ async def create_single_short(topic: str, niche: str,
                 + post_meta.get("HASHTAGS", "#mathquiz #shorts #math")
             )
             yt_tags  = [t.lstrip("#") for t in post_meta.get("HASHTAGS", "#mathquiz #math #shorts").split() if t.startswith("#")][:20] or ["mathquiz", "math", "quiz"]
-            first_comment = "Did you get the answer? Comment Yes and subscribe for more! 👇"
+            first_comment = "What did YOU answer? 👇 Comment below — I'll reply with the most common wrong answer!"
             result["url"] = upload_to_youtube(
                 video_path=final_path,
                 thumbnail_path=f"{output_dir}/thumbnail.png",

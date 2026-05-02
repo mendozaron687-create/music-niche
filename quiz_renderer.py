@@ -18,6 +18,7 @@ import textwrap
 import numpy as np
 from PIL import Image, ImageDraw, ImageFont
 import requests
+import json
 
 # ── Canvas size ──────────────────────────────────────────────────────────────
 W, H = 1080, 1920
@@ -46,6 +47,24 @@ BRAND_FG  = (180, 220, 255,  255)
 TIMER_COL = (255, 220,   0,  255)
 DARK      = (15,   15,  15,  255)
 QTEXT_BG  = (8,   15,   55,  175)
+
+_CHALLENGE_COUNTER_FILE = os.path.join(os.path.dirname(__file__), "challenge_counter.json")
+
+
+def _get_next_challenge_num() -> int:
+    """Read, increment, and persist the per-channel challenge counter."""
+    try:
+        if os.path.exists(_CHALLENGE_COUNTER_FILE):
+            with open(_CHALLENGE_COUNTER_FILE) as f:
+                data = json.load(f)
+            n = data.get("count", 0) + 1
+        else:
+            n = 1
+        with open(_CHALLENGE_COUNTER_FILE, "w") as f:
+            json.dump({"count": n}, f)
+        return n
+    except Exception:
+        return 1
 
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
@@ -170,6 +189,7 @@ def draw_quiz_card(
     show_think_overlay: bool                 = False,
     thumbnail_banner:   "str | None"         = None,
     trap_answer:        "str | None"         = None,
+    series_num:         "int | None"         = None,
 ) -> Image.Image:
     """Returns an RGBA card image."""
     if solid_bg:
@@ -189,9 +209,10 @@ def draw_quiz_card(
     f_opt = _font("arialbd.ttf",  46)
     f_tmr = _font("impact.ttf",  220)
 
-    # ── QUIZ TIME banner
+    # ── QUIZ TIME / CHALLENGE banner
+    banner_text = f"CHALLENGE #{series_num}" if series_num else "QUIZ TIME"
     d.rounded_rectangle([M, BANNER_Y1, W - M, BANNER_Y2], radius=20, fill=NAVY)
-    _cc(d, "QUIZ TIME", W // 2, (BANNER_Y1 + BANNER_Y2) // 2, f_ban, WHITE)
+    _cc(d, banner_text, W // 2, (BANNER_Y1 + BANNER_Y2) // 2, f_ban, WHITE)
 
     # ── Category label
     cw  = int(d.textlength(category, font=f_cat)) + 44
@@ -236,7 +257,8 @@ def draw_quiz_card(
         y1       = OPT_START_Y + i * (OPT_H + OPT_GAP)
         y2       = y1 + OPT_H
         is_ok    = bool(correct and letter == correct)
-        is_wrong = bool(correct and not is_ok)   # reveal card, wrong option
+        # Only highlight the trap answer in red — others stay neutral (less visual clutter)
+        is_wrong = bool(correct and not is_ok and trap_answer and letter == trap_answer)
         d.rounded_rectangle([M, y1, W - M, y2],
                              radius=OPT_H // 2,
                              fill=OPT_OK if is_ok else (OPT_WRONG if is_wrong else OPT_WHITE))
@@ -287,6 +309,16 @@ def draw_quiz_card(
             canvas  = Image.alpha_composite(canvas, cta_layer)
             d       = ImageDraw.Draw(canvas)
             _cc(d, "SUBSCRIBE FOR DAILY CHALLENGES", W // 2, 1680, f_cta, (15, 15, 15, 255), shadow=False)
+
+    # ── Comment bait strip on question card (drives comment engagement → algorithm boost)
+    if not correct and not show_think_overlay and timer_num is None and not thumbnail_banner:
+        f_cmt     = _font("arialbd.ttf", 40)
+        cmt_layer = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+        cd        = ImageDraw.Draw(cmt_layer)
+        cd.rounded_rectangle([M, 1625, W - M, 1725], radius=20, fill=(10, 20, 90, 215))
+        canvas = Image.alpha_composite(canvas, cmt_layer)
+        d      = ImageDraw.Draw(canvas)
+        _cc(d, ">> DROP YOUR ANSWER BELOW! <<", W // 2, 1675, f_cmt, (255, 220, 50, 255), shadow=True)
 
     # ── Timer countdown digit with glow rings
     if timer_num is not None:
@@ -457,16 +489,21 @@ async def _build_synced_narration(
     from imageio_ffmpeg import get_ffmpeg_exe
 
     answer_text = options.get(correct, "")
-    a_text = f"The answer is {correct}. {_normalize_tts(answer_text)}! Did you get it right? Comment Yes and subscribe for more!"
+    a_text = (
+        f"The answer is {correct}. {_normalize_tts(answer_text)}! "
+        f"If you got it right, subscribe — you are smarter than 95 percent of people!"
+    )
 
     q_path = os.path.join(output_dir, "_p_q.wav")
     a_path = os.path.join(output_dir, "_p_a.wav")
     await _tts(_normalize_tts(question), q_path, voice=voice)
-    await _tts(a_text, a_path, voice=voice)
+    # Female voice on the reveal creates contrast and lifts engagement
+    _reveal_voice = "af_bella" if voice.startswith("am_") else voice
+    await _tts(a_text, a_path, voice=_reveal_voice)
 
-    # Countdown: each word padded to exactly 0.7 s (snappier pacing)
+    # Countdown: each word padded to exactly 1.0 s — matches the 1.0s video segments for t3/t2/t1
     sr      = sf.info(q_path).samplerate
-    one_sec = int(0.7 * sr)
+    one_sec = int(1.0 * sr)
     cd_chunks = []
     for word in ["Three.", "Two.", "One."]:
         tmp = os.path.join(output_dir, f"_p_{word[0].lower()}.wav")
@@ -488,10 +525,11 @@ async def _build_synced_narration(
     sf.write(cd_path, cd_all, sr)
 
     q_dur = max(sf.info(q_path).duration, 2.5)
-    a_dur = max(sf.info(a_path).duration, 2.0)
+    # Add 0.5 s tail buffer so the female reveal voice is never hard-cut by ffmpeg
+    a_dur = max(sf.info(a_path).duration, 2.0) + 0.5
 
-    # 2-second silence for the "THINK CAREFULLY" pause card
-    think_silence = np.zeros(2 * sr, dtype=np.float32)
+    # Silence for the "THINK CAREFULLY" pause card — must match THINK_DUR (1.5 s)
+    think_silence = np.zeros(int(1.5 * sr), dtype=np.float32)
     think_path    = os.path.join(output_dir, "_p_think.wav")
     sf.write(think_path, think_silence, sr)
 
@@ -559,12 +597,70 @@ def _make_tick_track(output_path: str, q_dur: float, a_dur: float, think_dur: fl
         tick       = np.sin(2 * np.pi * freq * t) * np.exp(-t * 40) * 0.9
         end        = min(tick_start + tick_len, total_samp)
         data[tick_start:end] += tick[:end - tick_start]
+    # Bright reveal ding at the exact moment the answer appears
+    ding_start = int((q_dur + think_dur + 3.0) * sample_rate)
+    ding_len   = int(0.35 * sample_rate)
+    t_ding     = np.arange(ding_len, dtype=np.float32) / sample_rate
+    ding = (
+        np.sin(2 * np.pi * 880.0  * t_ding) * 0.65 +
+        np.sin(2 * np.pi * 1320.0 * t_ding) * 0.35 +
+        np.sin(2 * np.pi * 1760.0 * t_ding) * 0.18
+    ) * np.exp(-t_ding * 12)
+    end_d = min(ding_start + ding_len, total_samp)
+    data[ding_start:end_d] += ding[:end_d - ding_start]
     data = np.clip(data, -1, 1)
     with wave.open(output_path, "w") as wf:
         wf.setnchannels(1)
         wf.setsampwidth(2)
         wf.setframerate(sample_rate)
         wf.writeframes((data * 32767).astype(np.int16).tobytes())
+    return output_path
+
+
+def _generate_suspense_music(output_path: str, duration: float = 35.0) -> str:
+    """Auto-generate a looping minor-key suspense background track (used when music/ is empty)."""
+    import wave
+    sr    = 44100
+    total = int(duration * sr)
+    data  = np.zeros(total, dtype=np.float32)
+    t     = np.arange(total, dtype=np.float32) / sr
+    # Sub-bass drone (A1 + E2)
+    data += np.sin(2 * np.pi * 55.0  * t) * 0.14
+    data += np.sin(2 * np.pi * 82.5  * t) * 0.09
+    # Pulsing A-minor chord stabs at 120 BPM (every 0.5 s)
+    beat_s = 0.5
+    for beat in range(int(duration / beat_s)):
+        bs  = int(beat * beat_s * sr)
+        bl  = min(int(0.42 * sr), total - bs)
+        if bl <= 0:
+            break
+        t_b = np.arange(bl, dtype=np.float32) / sr
+        env = np.exp(-t_b * 7.0)
+        vel = 0.10 if beat % 2 == 0 else 0.065
+        chord = (
+            np.sin(2 * np.pi * 220.00 * t_b) * vel +
+            np.sin(2 * np.pi * 261.63 * t_b) * vel * 0.75 +
+            np.sin(2 * np.pi * 329.63 * t_b) * vel * 0.60
+        ) * env
+        data[bs:bs + bl] += chord
+    # Rising tension sweep every 8 s
+    for sweep_s in range(0, int(duration) - 2, 8):
+        ss   = sweep_s * sr
+        sl   = min(int(2.0 * sr), total - ss)
+        if sl <= 0:
+            break
+        t_sw = np.arange(sl, dtype=np.float32) / sr
+        freq = 110.0 + 330.0 * (t_sw / 2.0)
+        ph   = np.cumsum(2 * np.pi * freq / sr)
+        env  = (t_sw / 2.0) * 0.18
+        data[ss:ss + sl] += np.sin(ph) * env
+    data = np.clip(data, -1, 1)
+    with wave.open(output_path, "w") as wf:
+        wf.setnchannels(1)
+        wf.setsampwidth(2)
+        wf.setframerate(sr)
+        wf.writeframes((data * 32767).astype(np.int16).tobytes())
+    print(f"[music] Auto-generated suspense track: {os.path.basename(output_path)}")
     return output_path
 
 
@@ -713,8 +809,9 @@ async def create_quiz_video(
     """Returns (final_path, pexels_video_id_used_or_None)."""
     from imageio_ffmpeg import get_ffmpeg_exe
 
-    ffmpeg = get_ffmpeg_exe()
+    ffmpeg     = get_ffmpeg_exe()
     os.makedirs(output_dir, exist_ok=True)
+    series_num = _get_next_challenge_num()
 
     question    = quiz_data["question"]
     options     = quiz_data["options"]
@@ -751,12 +848,12 @@ async def create_quiz_video(
     solid = not has_bg
     print(f"[quiz] Rendering cards (bg={'pexels_video' if has_bg else 'swirly_fallback'})...")
     keys = [
-        ("q",  dict(question=question, options=options, category=category, center_img=center_img, solid_bg=solid)),
-        ("th", dict(question=question, options=options, category=category, center_img=center_img, show_think_overlay=True, solid_bg=solid)),
-        ("t3", dict(question=question, options=options, category=category, center_img=center_img, timer_num=3, solid_bg=solid)),
-        ("t2", dict(question=question, options=options, category=category, center_img=center_img, timer_num=2, solid_bg=solid)),
-        ("t1", dict(question=question, options=options, category=category, center_img=center_img, timer_num=1, solid_bg=solid)),
-        ("a",  dict(question=question, options=options, correct=correct,   category=category, center_img=center_img, solid_bg=solid, trap_answer=trap_answer or None)),
+        ("q",  dict(question=question, options=options, category=category, center_img=center_img, solid_bg=solid, series_num=series_num)),
+        ("th", dict(question=question, options=options, category=category, center_img=center_img, show_think_overlay=True, solid_bg=solid, series_num=series_num)),
+        ("t3", dict(question=question, options=options, category=category, center_img=center_img, timer_num=3, solid_bg=solid, series_num=series_num)),
+        ("t2", dict(question=question, options=options, category=category, center_img=center_img, timer_num=2, solid_bg=solid, series_num=series_num)),
+        ("t1", dict(question=question, options=options, category=category, center_img=center_img, timer_num=1, solid_bg=solid, series_num=series_num)),
+        ("a",  dict(question=question, options=options, correct=correct,   category=category, center_img=center_img, solid_bg=solid, trap_answer=trap_answer or None, series_num=series_num)),
     ]
     fpaths = {}
     for key, kwargs in keys:
@@ -771,10 +868,17 @@ async def create_quiz_video(
         "ONLY 1% GET THIS RIGHT",
         "THIS BREAKS MOST BRAINS",
         "CAN YOU BEAT THE ODDS?",
+        "HARVARD STUDENTS FAILED THIS",
+        "EVEN TEACHERS GET THIS WRONG",
+        "COMMENT IF YOU GOT IT RIGHT",
+        "SOLVE THIS OR UNSUBSCRIBE",
+        "GENIUS LEVEL CHALLENGE",
+        "ARE YOU SMARTER THAN A 5TH GRADER?",
     ]
     draw_quiz_card(question=question, options=options, category=category,
                    center_img=center_img, solid_bg=solid,
-                   thumbnail_banner=random.choice(_THUMB_BANNERS)).save(
+                   thumbnail_banner=random.choice(_THUMB_BANNERS),
+                   series_num=series_num).save(
         os.path.join(output_dir, "thumbnail.png"))
 
     # 4. TTS narration — frame-synced (question + think pause + countdown + answer)
@@ -788,7 +892,7 @@ async def create_quiz_video(
     total = round(q_dur + THINK_DUR + 3.0 + a_dur, 2)
     print(f"[quiz] Audio={total:.1f}s  question={q_dur:.2f}s  think={THINK_DUR}s  3-2-1  answer={a_dur:.2f}s")
 
-    # 6. Background music
+    # 6. Background music — use existing tracks or auto-generate a suspense track
     music     = None
     music_dir = os.path.join(os.path.dirname(__file__), "music")
     if os.path.isdir(music_dir):
@@ -796,6 +900,9 @@ async def create_quiz_video(
                   if f.lower().endswith((".mp3", ".wav"))]
         if tracks:
             music = random.choice(tracks)
+    if not music:
+        gen_music = os.path.join(output_dir, "_suspense_bg.wav")
+        music = _generate_suspense_music(gen_music, duration=total + 5.0)
 
     # 7. Tick track (ticks offset by think_dur)
     tick = _make_tick_track(os.path.join(output_dir, "tick.wav"), q_dur, a_dur, think_dur=THINK_DUR)
@@ -809,5 +916,20 @@ async def create_quiz_video(
     else:
         _assemble_static(ffmpeg, fpaths, audio, tick, music, q_dur, a_dur, total, final, think_dur=THINK_DUR)
 
+    # Loudness normalize to -14 LUFS (YouTube / TikTok standard)
+    norm_tmp = final.replace(".mp4", "_loudnorm.mp4")
+    try:
+        _run_ffmpeg([
+            ffmpeg, "-y", "-i", final,
+            "-af", "loudnorm=I=-14:TP=-1.5:LRA=11",
+            "-c:v", "copy", "-c:a", "aac", "-b:a", "192k",
+            norm_tmp,
+        ], "loudnorm")
+        os.replace(norm_tmp, final)
+        print("[quiz] Loudness normalized to -14 LUFS ✓")
+    except Exception as e:
+        print(f"[quiz] Loudnorm skipped: {e}")
+        if os.path.exists(norm_tmp):
+            os.remove(norm_tmp)
     print(f"[quiz] Done → {final}")
     return final, _bg_id

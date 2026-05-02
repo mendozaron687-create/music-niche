@@ -14,7 +14,10 @@
     "What is 1% of 1 million dollars, minus 10% of $10,000?",
     "A snail is climbing a 10-foot wall. It climbs 3 feet each day, but slides down 2 feet each night. How many days does it take to reach the top?",
     "What is 25% of 25%?",
-    "A pet store has 10 birds for sale. You buy all but 3. How many do you have?"
+    "A pet store has 10 birds for sale. You buy all but 3. How many do you have?",
+    "What is 15 \u00d7 8?",
+    "Which is bigger: 18% of 50 or 50% of 18?",
+    "Four friends equally share a pizza. Three more friends arrive and want some. If they all share equally, what fraction of the ORIGINAL pizza does each person now get?"
   ],
   "video_ids": [
     8108452,
@@ -31,6 +34,8 @@
     4565572,
     18401896,
     9350532,
-    8499351
+    8499351,
+    16724757,
+    35717614
   ]
 }
