@@ -2,8 +2,8 @@ name: Daily Math Quiz
 
 on:
   schedule:
-    # 3x daily — 6am, 2pm, 10pm Philippine Time (UTC+8)
-    - cron: "0 22 * * *"   # 6:00 AM PHT
+    # 3x daily — 6pm, 2pm, 10pm Philippine Time (UTC+8)
+    - cron: "0 10 * * *"   # 6:00 PM PHT
     - cron: "0 6 * * *"    # 2:00 PM PHT
     - cron: "0 14 * * *"   # 10:00 PM PHT
   workflow_dispatch:  # also allow manual trigger from GitHub UI
@@ -71,7 +71,7 @@ jobs:
 
           # ── Ramp-up check ─────────────────────────────────────────────────
           # Slot order by UTC hour: 22→slot0(morning PHT), 06→slot1(afternoon PHT), 14→slot2(evening PHT)
-          SLOT_HOURS = [22, 6, 14]   # must match cron order in this file
+          SLOT_HOURS = [10, 6, 14]   # must match cron order in this file
           current_hour = datetime.utcnow().hour
 
           cfg_path = 'scheduler_config.json'
