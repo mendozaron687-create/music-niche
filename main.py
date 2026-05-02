@@ -519,6 +519,7 @@ def generate_quiz_content(topic: str, used_questions: list | None = None) -> dic
         return fallback
     prompt = f"""Generate a TRICKY math quiz question about: "{topic}"
 
+The question MUST be SHORT — maximum 20 words total. One sentence only. No multi-sentence word problems.
 The question must make viewers PAUSE, doubt themselves, and want to replay the video to verify.
 Use one of these high-engagement formats:
 - Order of operations trap: "What is 8 ÷ 2(2+2)?" or "2 + 3 × 4?"

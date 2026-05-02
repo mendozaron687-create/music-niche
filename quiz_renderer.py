@@ -291,14 +291,14 @@ def draw_quiz_card(
     d.rounded_rectangle([cx1, LABEL_Y1, cx1 + cw, LABEL_Y2], radius=10, fill=_t['label'])
     _cc(d, category, W // 2, (LABEL_Y1 + LABEL_Y2) // 2, f_cat, WHITE, shadow=False)
 
-    # ── Question text (adaptive font — shrink until it fits in ≤4 lines)
-    for q_size, q_wrap in [(62, 28), (52, 32), (44, 38)]:
+    # ── Question text (adaptive font — shrink until it fits in ≤6 lines)
+    for q_size, q_wrap in [(62, 28), (52, 32), (44, 38), (36, 46), (30, 54)]:
         f_q   = _font("arialbd.ttf", q_size)
         lines = textwrap.wrap(question, width=q_wrap)
-        if len(lines) <= 4:
+        if len(lines) <= 6:
             break
-    lines   = lines[:5]
-    line_h  = q_size + 14
+    lines   = lines[:7]
+    line_h  = q_size + 10
     q_block = len(lines) * line_h + 28
     d.rounded_rectangle(
         [M - 10, QUESTION_Y - 18, W - M + 10, QUESTION_Y + q_block],
