@@ -506,15 +506,16 @@ def generate_quiz_content(topic: str, used_questions: list | None = None) -> dic
     """Call OpenRouter to get a quiz question + 4 options + answer as JSON."""
     import requests as _req
     api_key = os.getenv("OPENROUTER_API_KEY", "")
-    fallback = {
-        "question":      "What is 15 × 8?",
-        "options":       {"A": "110", "B": "120", "C": "130", "D": "140"},
-        "correct_answer":"B",
-        "trap_answer":   "A",
-        "explanation":   "15 times 8 equals 120.",
-        "category":      "MATH QUIZ",
-        "image_query":   "mathematics numbers chalkboard",
-    }
+    _fallbacks = [
+        {"question": "What is 8 ÷ 2(2+2)?", "options": {"A": "1", "B": "16", "C": "8", "D": "4"}, "correct_answer": "B", "trap_answer": "A", "explanation": "Left to right: 8÷2=4, then 4×4=16.", "category": "ORDER OF OPERATIONS", "image_query": "mathematics equation chalkboard"},
+        {"question": "What is 6 ÷ 2(1+2)?", "options": {"A": "1", "B": "9", "C": "3", "D": "6"}, "correct_answer": "B", "trap_answer": "A", "explanation": "Left to right: 6÷2=3, then 3×3=9.", "category": "ORDER OF OPERATIONS", "image_query": "mathematics numbers chalkboard"},
+        {"question": "What is 1 + 1 + 1 + 1 × 0?", "options": {"A": "0", "B": "3", "C": "4", "D": "1"}, "correct_answer": "B", "trap_answer": "A", "explanation": "Multiply first: 1×0=0, then 1+1+1+0=3.", "category": "ORDER OF OPERATIONS", "image_query": "math problem whiteboard"},
+        {"question": "A bat and ball cost $1.10. Bat costs $1 more than ball. Ball costs?", "options": {"A": "10 cents", "B": "5 cents", "C": "15 cents", "D": "20 cents"}, "correct_answer": "B", "trap_answer": "A", "explanation": "If ball=5¢, bat=105¢, total=$1.10.", "category": "BRAIN TEASER", "image_query": "baseball bat ball"},
+        {"question": "What is 2² + 2²?", "options": {"A": "8", "B": "16", "C": "4²", "D": "4"}, "correct_answer": "A", "trap_answer": "B", "explanation": "2²=4, so 4+4=8. Not 4²=16.", "category": "ALGEBRA TRICK", "image_query": "mathematics exponents chalkboard"},
+        {"question": "What percent of 80 is 20?", "options": {"A": "20%", "B": "25%", "C": "40%", "D": "15%"}, "correct_answer": "B", "trap_answer": "A", "explanation": "20÷80×100=25%, not 20%.", "category": "PERCENTAGE TRAP", "image_query": "percentage chart math"},
+        {"question": "How many months have 28 days?", "options": {"A": "1", "B": "12", "C": "2", "D": "7"}, "correct_answer": "B", "trap_answer": "A", "explanation": "All 12 months have at least 28 days.", "category": "TRICK QUESTION", "image_query": "calendar months year"},
+    ]
+    fallback = random.choice(_fallbacks)
     if not api_key:
         return fallback
     prompt = f"""Generate a TRICKY math quiz question about: "{topic}"
@@ -582,6 +583,63 @@ def generate_quiz_post_txt(quiz_data: dict, output_dir: str) -> str:
     options  = quiz_data.get("options", {})
     answer   = options.get(correct, "")
 
+    import hashlib as _hl
+    # Pick a template index deterministically from the question text so the same
+    # question always gets the same title, but different questions get different ones.
+    _q_hash = int(_hl.md5(question.encode()).hexdigest(), 16)
+    _ALL_TEMPLATES = [
+        "99% of Adults Fail This 🤯",
+        "Harvard Students FAILED This 😱",
+        "I Got This Wrong 😢 Did You?",
+        "Only Geniuses Get This Right 💡",
+        "90% of People Get This Wrong 🤯",
+        "Most People Miss This One 😬",
+        "Can YOU Solve This? 🧠",
+        "This Breaks Most Brains 🤯",
+        "Are You Smarter Than 95%? 💡",
+        "Even Math Teachers Get This Wrong 😱",
+        "Stop Scrolling — Solve This First 🛑",
+        "Bet You Can't Get This Right 😤",
+        "The Trick Question That Stumps Everyone 🤔",
+        "Your Brain Will Lie to You on This One 🧠",
+        "Solve This in 5 Seconds — Genius IQ Only 💡",
+        "This Simple Question Has a Shocking Answer 😲",
+        "99% of High Schoolers Fail This 📚",
+        "Don't Answer Too Fast — This Is a Trap ⚠️",
+        "The Math Problem Everyone Gets Wrong 🤦",
+        "Only 1 in 100 People Get This Right 🏆",
+        "This Went Viral Because Everyone Gets It Wrong 🔥",
+        "What's Your IQ? Solve This Now 🧠",
+        "The Problem That Started a Million Arguments 💥",
+        "If You Get This Right You're a Genius 🎓",
+        "Comment Your Answer — Most People Are Wrong 👇",
+        "Quick Math That Tricks Almost Everyone ⚡",
+        "Your Teachers Probably Got This Wrong Too 😅",
+        "Adults Are Failing This Grade School Problem 😬",
+        "This Is Harder Than It Looks — Trust Me 😤",
+        "Prove You're Smarter Than the Average Person 💪",
+        "How Fast Can You Solve This? ⏱️",
+        "The Percentage Trap That Fools Everyone 💸",
+        "Order of Operations — Do You Remember? 📐",
+        "The Internet Is Still Fighting Over This Answer 🔥",
+        "Think Before You Answer — This Is Sneaky 🐍",
+        "Viral Math Problem — What's Your Answer? 📲",
+        "Most Adults Fail This in Under 3 Seconds ⚡",
+        "The Math Riddle That's Driving People Crazy 😵",
+        "You'll Second-Guess Yourself on This One 😰",
+        "Would You Fail This in Front of Your Friends? 😬",
+        "The Classic Trick That Never Gets Old 😏",
+        "Solve This or Unsubscribe 😂",
+        "Everyone Picks the Wrong Answer Here — Will You? 🤔",
+        "Genius Test: Only Smartest 5% Pass 🏅",
+        "Fast Math — But Don't Get Fooled ⚡",
+        "This Fools Everyone on the First Try 😵",
+        "Can Your Brain Handle This? 🧠",
+        "What Most People Miss in This Problem 🔍",
+        "Score 100%? You're Officially a Genius 💯",
+    ]
+    _chosen_template = _ALL_TEMPLATES[_q_hash % len(_ALL_TEMPLATES)]
+
     prompt = f"""You are a viral YouTube Shorts SEO expert. Write post copy for a math quiz Short.
 
 Quiz question: "{question}"
@@ -589,13 +647,13 @@ Correct answer: {correct}) {answer}
 
 Output ONLY a JSON object with exactly these keys:
 {{
-  "title": "MUST use one of these identity/ego-bait templates (fill in the blank): '99% of [group] Fail This 🤯', 'Harvard Students FAILED This 😱', 'This Fools Everyone — Even Teachers', 'I Got This Wrong 😢 Did You?', 'Only Geniuses Get This Right 💡'. Max 70 chars.",
+  "title": "Use EXACTLY this title template and fill it in naturally for the question: '{_chosen_template}'. Adapt the wording slightly to fit the specific question if needed. Max 70 chars. No hashtags in the title.",
   "description": "3-4 sentences. First line is a hook. Mention the math challenge, tease the answer. Include a CTA to follow. Natural keyword-rich language, NO hashtags here.",
   "hashtags": "20 hashtags as a single line, most viral first. Include: #mathquiz #shorts #math #brainteaser #viral, plus related niche tags. No spaces within each tag."
 }}
 
 Rules:
-- title: power words, emotional triggers, numbers if natural. Max 70 chars.
+- title: use the given template as the base. Power words, emotional triggers. Max 70 chars.
 - description: conversational, not robotic. Don't reveal the answer.
 - hashtags: space-separated, all lowercase, no quotes
 - Return ONLY the raw JSON — no markdown, no backticks."""
@@ -620,7 +678,7 @@ Rules:
     except Exception as e:
         print(f"[post] Metadata LLM failed ({e}), using fallback")
         data = {
-            "title":       f"90% Get This Wrong 🤯 {question[:50]}",
+            "title":       _ALL_TEMPLATES[_q_hash % len(_ALL_TEMPLATES)],
             "description": (
                 f"This math problem is trickier than it looks! {question} "
                 f"Most people pick the wrong answer — can you get it right? "

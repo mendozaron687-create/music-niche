@@ -127,6 +127,6 @@ jobs:
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add quiz_history.json scheduler_config.json
+          git add quiz_history.json scheduler_config.json challenge_counter.json
           git diff --cached --quiet || git commit -m "chore: update quiz state [skip ci]"
           git push
