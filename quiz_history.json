@@ -22,7 +22,8 @@
     "If a price increases 20% then decreases 20%, what's the net % change?",
     "What is 10 - 2 x (5 - 2) + 1?",
     "Solve for x: \u221a(9 + x) = 5. What is x?",
-    "What's greater: 1/3 of 120 or 30% of 200?"
+    "What's greater: 1/3 of 120 or 30% of 200?",
+    "What is 6 \u00f7 2 + 1 \u00d7 4 - 2?"
   ],
   "video_ids": [
     8108452,
@@ -46,6 +47,7 @@
     34912823,
     37046385,
     20349691,
-    15440318
+    15440318,
+    5787614
   ]
 }
