@@ -20,7 +20,8 @@
     "Four friends equally share a pizza. Three more friends arrive and want some. If they all share equally, what fraction of the ORIGINAL pizza does each person now get?",
     "A train leaves Chicago at 8:00 AM traveling 60 mph towards New York. Another leaves New York at 9:00 AM traveling 80 mph toward Chicago. If the distance is 780 miles, which train is closer to Chicago when they meet?",
     "If a price increases 20% then decreases 20%, what's the net % change?",
-    "What is 10 - 2 x (5 - 2) + 1?"
+    "What is 10 - 2 x (5 - 2) + 1?",
+    "Solve for x: \u221a(9 + x) = 5. What is x?"
   ],
   "video_ids": [
     8108452,
@@ -42,6 +43,7 @@
     35717614,
     35835510,
     34912823,
-    37046385
+    37046385,
+    20349691
   ]
 }
