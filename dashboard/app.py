@@ -18,20 +18,6 @@ jobs = {}
 job_logs = {}
 
 
-def load_topics():
-    path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "topics.json")
-    if os.path.exists(path):
-        with open(path) as f:
-            return json.load(f)
-    return {}
-
-
-def save_topics(data):
-    path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "topics.json")
-    with open(path, "w") as f:
-        json.dump(data, f, indent=2)
-
-
 def load_history():
     logs_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), "logs")
     history = []
@@ -48,12 +34,13 @@ def load_history():
 
 def load_settings():
     return {
-        "GEMINI_API_KEY":  os.getenv("GEMINI_API_KEY", ""),
-        "PEXELS_API_KEY":  os.getenv("PEXELS_API_KEY", ""),
-        "DEFAULT_NICHE":   os.getenv("DEFAULT_NICHE", "finance"),
-        "VIDEOS_PER_DAY":  os.getenv("VIDEOS_PER_DAY", "3"),
-        "AUTO_UPLOAD":     os.getenv("AUTO_UPLOAD", "true"),
-        "UPLOAD_DELAY":    os.getenv("UPLOAD_DELAY", "30"),
+        "SUNO_API_KEY":     os.getenv("SUNO_API_KEY", ""),
+        "PEXELS_API_KEY":   os.getenv("PEXELS_API_KEY", ""),
+        "OPENROUTER_API_KEY": os.getenv("OPENROUTER_API_KEY", ""),
+        "DEFAULT_GENRE":    os.getenv("DEFAULT_GENRE", "lofi_hiphop"),
+        "DEFAULT_MODEL":    os.getenv("DEFAULT_MODEL", "V4_5ALL"),
+        "VIDEOS_PER_DAY":   os.getenv("VIDEOS_PER_DAY", "3"),
+        "AUTO_UPLOAD":      os.getenv("AUTO_UPLOAD", "true"),
     }
 
 
@@ -79,7 +66,7 @@ def get_stats():
         "total_failed":  sum(h.get("failed", 0) for h in history),
         "total_batches": len(history),
         "week_videos":   week_videos,
-        "active_jobs":   len([j for j in jobs.values() if j["status"] == "running"])
+        "active_jobs":   len([j for j in jobs.values() if j["status"] == "running"]),
     }
 
 
@@ -91,7 +78,6 @@ def run_job_in_background(job_id, job_type, **kwargs):
 
     async def run():
         import sys
-        # Redirect stdout so print() calls from main.py show in dashboard log
         class LogWriter:
             def write(self, msg):
                 msg = msg.strip()
@@ -105,28 +91,30 @@ def run_job_in_background(job_id, job_type, **kwargs):
             jobs[job_id]["status"] = "running"
             log("Job started...")
             if job_type == "single":
-                from main import create_single_short, get_topic
-                topic = kwargs.get("topic") or get_topic(kwargs.get("niche", "finance"))
-                log(f"Topic: {topic}")
-                result = await create_single_short(
-                    topic=topic, niche=kwargs.get("niche", "finance"),
+                from main import create_music_video
+                result = await create_music_video(
+                    genre_key=kwargs.get("genre", kwargs.get("niche")),
                     output_dir=f"output/dash_{job_id}",
                     upload=kwargs.get("upload", True),
-                    voice=kwargs.get("voice", "en-US-ChristopherNeural"),
-                    thumbnail_style=kwargs.get("thumbnail_style", "dark"),
-                    use_veo=kwargs.get("use_veo", False),
+                    model=kwargs.get("model", "V4_5ALL"),
+                    instrumental=kwargs.get("instrumental", False),
                 )
                 jobs[job_id]["result"] = result
                 log(f"Done! {result.get('url', 'Saved locally')}")
             elif job_type == "batch":
-                from batch import run_batch
-                log(f"Starting batch of {kwargs.get('count', 3)} videos...")
-                results = await run_batch(
-                    count=kwargs.get("count", 3),
-                    niche=kwargs.get("niche", "finance"),
-                    upload=kwargs.get("upload", True),
-                    delay=kwargs.get("delay", 30)
-                )
+                from main import create_music_video
+                count = kwargs.get("count", 1)
+                log(f"Starting batch of {count} music video(s)...")
+                results = []
+                for i in range(count):
+                    r = await create_music_video(
+                        genre_key=kwargs.get("genre", kwargs.get("niche")),
+                        output_dir=f"output/dash_{job_id}_{i}",
+                        upload=kwargs.get("upload", True),
+                        model=kwargs.get("model", "V4_5ALL"),
+                        instrumental=kwargs.get("instrumental", False),
+                    )
+                    results.append(r)
                 jobs[job_id]["result"] = results
                 log(f"Batch complete! {len(results)} videos created")
             jobs[job_id]["status"] = "complete"
@@ -148,19 +136,23 @@ def run_job_in_background(job_id, job_type, **kwargs):
 
 @app.route("/")
 def index():
+    from music_topics import GENRES
     return render_template("index.html",
         stats=get_stats(),
         history=load_history()[:5],
-        active_jobs={k: v for k, v in jobs.items() if v["status"] == "running"}
+        active_jobs={k: v for k, v in jobs.items() if v["status"] == "running"},
+        genres=list(GENRES.keys()),
     )
 
 @app.route("/create")
 def create():
-    return render_template("create.html", topics=load_topics(), settings=load_settings())
+    from music_topics import GENRES
+    return render_template("create.html", genres=GENRES, settings=load_settings())
 
 @app.route("/batch")
 def batch():
-    return render_template("batch.html", topics=load_topics(), settings=load_settings())
+    from music_topics import GENRES
+    return render_template("batch.html", genres=GENRES, settings=load_settings())
 
 @app.route("/history")
 def history():
@@ -168,7 +160,7 @@ def history():
 
 @app.route("/settings")
 def settings():
-    return render_template("settings.html", settings=load_settings(), topics=load_topics())
+    return render_template("settings.html", settings=load_settings())
 
 @app.route("/api/create", methods=["POST"])
 def api_create():
@@ -176,7 +168,7 @@ def api_create():
     job_id = datetime.now().strftime("%Y%m%d%H%M%S")
     jobs[job_id] = {"id": job_id, "type": "single", "status": "queued",
                     "created": datetime.now().isoformat(),
-                    "topic": data.get("topic", ""), "result": None}
+                    "genre": data.get("genre", "lofi_hiphop"), "result": None}
     run_job_in_background(job_id, "single", **data)
     return jsonify({"job_id": job_id, "status": "queued"})
 
@@ -186,7 +178,7 @@ def api_batch():
     job_id = f"batch_{datetime.now().strftime('%Y%m%d%H%M%S')}"
     jobs[job_id] = {"id": job_id, "type": "batch", "status": "queued",
                     "created": datetime.now().isoformat(),
-                    "count": data.get("count", 3), "result": None}
+                    "count": data.get("count", 1), "result": None}
     run_job_in_background(job_id, "batch", **data)
     return jsonify({"job_id": job_id, "status": "queued"})
 
@@ -270,17 +262,17 @@ def api_schedule_save():
 
 @app.route("/api/schedule/run-now", methods=["POST"])
 def api_schedule_run_now():
-    """Immediately trigger a scheduled niche without waiting for cron time."""
+    """Immediately trigger a scheduled genre without waiting for cron time."""
     data = request.json or {}
-    niche = data.get("niche", "finance")
+    genre = data.get("genre", data.get("niche", "lofi_hiphop"))
     count = int(data.get("count", 1))
     upload = data.get("upload", False)
     job_id = f"sched_{datetime.now().strftime('%Y%m%d%H%M%S')}"
     jobs[job_id] = {"id": job_id, "type": "scheduled", "status": "queued",
                     "created": datetime.now().isoformat(),
-                    "niche": niche, "result": None}
+                    "genre": genre, "result": None}
     run_job_in_background(job_id, "batch",
-                          niche=niche, count=count, upload=upload, delay=5)
+                          genre=genre, count=count, upload=upload)
     return jsonify({"job_id": job_id, "status": "queued"})
 
 
