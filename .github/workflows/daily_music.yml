@@ -1,0 +1,109 @@
+name: Daily OPM Music Video
+
+on:
+  schedule:
+    # 3x daily — timed to hit PH peak viewing hours (UTC+8)
+    # Post 1 hour BEFORE each peak so YouTube indexes it first
+    - cron: "0 21 * * *"   # 5:00 AM PHT  → catches 6-8 AM morning commute peak
+    - cron: "0 10 * * *"   # 6:00 PM PHT  → catches 7-9 PM prime time (highest traffic)
+    - cron: "0 13 * * *"   # 9:00 PM PHT  → catches 10 PM-12 AM late night hugot hours
+  workflow_dispatch:   # also trigger manually from GitHub UI
+    inputs:
+      genre:
+        description: "Genre key (leave blank for random hugot)"
+        required: false
+        default: ""
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  generate-and-post:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60   # full render + upload can take 30-40 min
+    permissions:
+      contents: write      # needed to push used_stories.json back to repo
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install system deps (ffmpeg + fonts)
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y ffmpeg \
+            fonts-liberation fonts-liberation2 fonts-dejavu-core fonts-dejavu \
+            libsndfile1 libsndfile1-dev
+          fc-cache -f -v
+
+      - name: Install Python deps
+        run: |
+          pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Write secret files
+        env:
+          YOUTUBE_TOKEN: ${{ secrets.YOUTUBE_TOKEN }}
+          YOUTUBE_CREDS: ${{ secrets.YOUTUBE_CREDS }}
+        run: |
+          echo "$YOUTUBE_TOKEN" > token.json
+          echo "$YOUTUBE_CREDS" > credentials.json
+
+      - name: Write .env
+        env:
+          SUNO_API_KEY:       ${{ secrets.SUNO_API_KEY }}
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          PEXELS_API_KEY:     ${{ secrets.PEXELS_API_KEY }}
+          GROQ_API_KEY:       ${{ secrets.GROQ_API_KEY }}
+          GEMINI_API_KEY:     ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          echo "SUNO_API_KEY=$SUNO_API_KEY"             > .env
+          echo "OPENROUTER_API_KEY=$OPENROUTER_API_KEY" >> .env
+          echo "PEXELS_API_KEY=$PEXELS_API_KEY"         >> .env
+          echo "GROQ_API_KEY=$GROQ_API_KEY"             >> .env
+          echo "GEMINI_API_KEY=$GEMINI_API_KEY"         >> .env
+          echo "HF_HUB_DISABLE_SYMLINKS_WARNING=1"      >> .env
+
+      - name: Restore used_stories cache
+        uses: actions/cache@v4
+        with:
+          path: used_stories.json
+          key: used-stories-${{ github.run_number }}
+          restore-keys: used-stories-
+
+      - name: Generate and post music video
+        run: |
+          # If genre manually specified, use it. Otherwise rotate by UTC hour:
+          # 21 UTC (5 AM PHT morning slot) → hugot_ballad
+          # 10 UTC (6 PM PHT prime slot)   → hugot_opm_pop
+          # 13 UTC (9 PM PHT late slot)    → opm_rnb_hugot
+          if [ -n "${{ github.event.inputs.genre }}" ]; then
+            GENRE="${{ github.event.inputs.genre }}"
+          else
+            HOUR=$(date -u +%H)
+            if [ "$HOUR" = "21" ]; then
+              GENRE="hugot_ballad"
+            elif [ "$HOUR" = "10" ]; then
+              GENRE="hugot_opm_pop"
+            else
+              GENRE="opm_rnb_hugot"
+            fi
+          fi
+          echo "Running genre: $GENRE"
+          python main.py --genre "$GENRE"
+
+      - name: Commit updated used_stories.json
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git remote set-url origin https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}
+          git add used_stories.json
+          git diff --cached --quiet || git commit -m "chore: update used stories [skip ci]"
+          git push
