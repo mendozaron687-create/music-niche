@@ -24,6 +24,7 @@ import subprocess
 import shutil
 from datetime import datetime
 from dotenv import load_dotenv
+import requests as _requests
 
 
 def _trim_audio(audio_path: str, max_sec: float = 270, fade_sec: float = 5) -> float:
@@ -57,6 +58,44 @@ def _trim_audio(audio_path: str, max_sec: float = 270, fade_sec: float = 5) -> f
         return dur
 
 load_dotenv()
+
+
+# ── Pre-flight checks (run before Suno to avoid wasting credits) ────────────
+
+def _preflight_checks(output_dir: str) -> None:
+    """Raise early (before Suno is called) if any dependency will fail later."""
+    import imageio_ffmpeg
+
+    # 1. ffmpeg reachable
+    try:
+        ffmpeg = imageio_ffmpeg.get_ffmpeg_exe()
+        r = subprocess.run([ffmpeg, "-version"], capture_output=True, timeout=10)
+        if r.returncode != 0:
+            raise RuntimeError("ffmpeg returned non-zero")
+    except Exception as e:
+        raise RuntimeError(f"[preflight] ffmpeg not working: {e}")
+
+    # 2. Pexels API key valid (single cheap request)
+    pexels_key = os.getenv("PEXELS_API_KEY", "")
+    if not pexels_key:
+        raise RuntimeError("[preflight] PEXELS_API_KEY not set")
+    try:
+        res = _requests.get(
+            "https://api.pexels.com/videos/search",
+            headers={"Authorization": pexels_key},
+            params={"query": "nature", "per_page": 1},
+            timeout=15,
+        )
+        if res.status_code == 401:
+            raise RuntimeError("[preflight] PEXELS_API_KEY is invalid (401)")
+        if res.status_code not in (200, 429):  # 429 = rate-limited but key is valid
+            raise RuntimeError(f"[preflight] Pexels returned unexpected status {res.status_code}")
+    except RuntimeError:
+        raise
+    except Exception as e:
+        raise RuntimeError(f"[preflight] Pexels API check failed: {e}")
+
+    print("[preflight] ffmpeg OK, Pexels key OK — safe to spend credits")
 
 
 # ── YouTube upload ──────────────────────────────────────────────────────────
@@ -337,6 +376,10 @@ async def create_music_video(
     try:
         credits = get_credits()
         print(f"[suno] Credits remaining: {credits}")
+        if credits < 30:
+            raise RuntimeError(f"[suno] Insufficient credits ({credits}) — need at least 30. Aborting before spending any.")
+    except RuntimeError:
+        raise
     except Exception as e:
         print(f"[suno] Could not fetch credits: {e}")
 
@@ -345,6 +388,9 @@ async def create_music_video(
     if not output_dir:
         output_dir = os.path.join(os.path.dirname(__file__), "output", f"{genre_key}_{timestamp}")
     os.makedirs(output_dir, exist_ok=True)
+
+    # --- Pre-flight checks (run BEFORE calling Suno to avoid wasting credits) ---
+    _preflight_checks(output_dir)
 
     # 2. Generate lyrics
     song_title = ""
@@ -430,6 +476,19 @@ async def create_music_video(
     suno_task_id = music_result.get("taskId")
     suno_audio_id = track.get("id")
     print(f"[pipeline] Track: '{track.get('title')}'")
+
+    # Checkpoint: save Suno result immediately so credits aren't wasted if
+    # anything downstream (video render, upload) fails later.
+    _checkpoint_path = os.path.join(output_dir, "suno_checkpoint.json")
+    with open(_checkpoint_path, "w", encoding="utf-8") as _cf:
+        json.dump({
+            "audio_url": audio_url,
+            "suno_task_id": suno_task_id,
+            "suno_audio_id": suno_audio_id,
+            "track_title": track.get("title"),
+            "track_duration": track.get("duration"),
+        }, _cf, indent=2)
+    print(f"[pipeline] Suno checkpoint saved → {_checkpoint_path}")
 
     # Use the lyrics Suno actually sang (from task response) for captions.
     suno_lyrics = track.get("suno_lyrics", "").strip()
