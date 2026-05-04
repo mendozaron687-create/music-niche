@@ -95,7 +95,26 @@ jobs:
             fi
           fi
           echo "Running genre: $GENRE"
-          python main.py --genre "$GENRE"
+
+          # First attempt — full pipeline including Suno
+          if python main.py --genre "$GENRE"; then
+            echo "✅ First attempt succeeded."
+            exit 0
+          fi
+
+          # First attempt failed. Check if Suno already generated a track
+          # (suno_checkpoint.json written immediately after Suno returns).
+          # If found, re-render the video without spending credits again.
+          CHECKPOINT=$(find output -name "suno_checkpoint.json" 2>/dev/null | sort | tail -1)
+          if [ -n "$CHECKPOINT" ]; then
+            OUTPUT_DIR=$(dirname "$CHECKPOINT")
+            echo "⚠️  First attempt failed but Suno checkpoint found: $CHECKPOINT"
+            echo "🔄 Retrying video render from checkpoint (no credits spent)..."
+            python main.py --resume "$OUTPUT_DIR" --genre "$GENRE"
+          else
+            echo "❌ No Suno checkpoint found — Suno itself failed. Full failure."
+            exit 1
+          fi
 
       - name: Commit updated used_stories.json
         env:
