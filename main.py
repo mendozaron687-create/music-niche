@@ -356,11 +356,148 @@ async def create_music_video(
     upload: bool = True,
     model: str = "V4_5ALL",
     instrumental: bool = False,
+    resume_from: str = None,
 ) -> dict:
     from suno_api import generate_music, download_audio, get_credits
     from music_video import build_music_video
     from music_topics import get_random_genre, get_genre, build_video_title
     from thumbnail import generate_music_thumbnail
+
+    # ── RESUME MODE: skip Suno entirely, reload from a previous checkpoint ──
+    if resume_from:
+        resume_from = os.path.abspath(resume_from)
+        _ckpt_file = os.path.join(resume_from, "suno_checkpoint.json")
+        if not os.path.exists(_ckpt_file):
+            raise FileNotFoundError(
+                f"[resume] No suno_checkpoint.json found in {resume_from}\n"
+                "Make sure you point --resume at the output folder from a previous run."
+            )
+        with open(_ckpt_file) as _cf:
+            _ckpt = json.load(_cf)
+        print(f"[resume] Loaded Suno checkpoint: track='{_ckpt.get('track_title')}' "
+              f"duration={_ckpt.get('track_duration')}s")
+
+        # Infer genre_key from directory name (e.g. hugot_ballad_20260505_...)
+        _dir_name = os.path.basename(resume_from)
+        if not genre_key:
+            for _sep in ("_202", "_"):
+                if _sep in _dir_name:
+                    _candidate = _dir_name.split(_sep)[0]
+                    try:
+                        genre_dict = get_genre(_candidate)
+                        genre_key = _candidate
+                        break
+                    except Exception:
+                        pass
+        if not genre_key:
+            raise RuntimeError(
+                "[resume] Could not infer genre from directory name. "
+                "Pass --genre explicitly (e.g. --genre hugot_ballad)."
+            )
+        genre_dict = get_genre(genre_key)
+        print(f"[resume] Genre: {genre_key}")
+
+        output_dir = resume_from
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+
+        _preflight_checks(output_dir)
+
+        # Reload lyrics
+        _lyrics_suno = os.path.join(output_dir, "lyrics_suno.txt")
+        _lyrics_orig = os.path.join(output_dir, "lyrics.txt")
+        if os.path.exists(_lyrics_suno):
+            caption_lyrics = open(_lyrics_suno, encoding="utf-8").read()
+        elif os.path.exists(_lyrics_orig):
+            caption_lyrics = open(_lyrics_orig, encoding="utf-8").read()
+        else:
+            raise FileNotFoundError("[resume] No lyrics.txt or lyrics_suno.txt found in output dir.")
+
+        audio_url   = _ckpt["audio_url"]
+        suno_task_id  = _ckpt.get("suno_task_id")
+        suno_audio_id = _ckpt.get("suno_audio_id")
+
+        # Re-download audio if missing (run may have died before download)
+        audio_path = os.path.join(output_dir, "music.mp3")
+        if not os.path.exists(audio_path) or os.path.getsize(audio_path) < 10_000:
+            print("[resume] music.mp3 missing or incomplete — re-downloading from Suno URL...")
+            download_audio(audio_url, audio_path)
+        else:
+            print("[resume] music.mp3 already present, skipping download.")
+        actual_duration = _trim_audio(audio_path, max_sec=270, fade_sec=5)
+
+        # Reload metadata for upload title / hook
+        _meta_file = os.path.join(output_dir, "metadata.json")
+        if os.path.exists(_meta_file):
+            with open(_meta_file) as _mf:
+                _meta = json.load(_mf)
+            upload_title = _meta.get("title", genre_key)
+            hook_text    = _meta.get("trend_story", "")[:70]
+            song_title   = _meta.get("song_title", "")
+            description  = _meta.get("description", "")
+            tags         = _meta.get("tags", [])
+        else:
+            song_title   = _ckpt.get("track_title", "")
+            title        = build_video_title(genre_dict, song_title=song_title)
+            upload_title = title[:100]
+            hook_text    = ""
+            description  = ""
+            tags         = genre_dict.get("youtube_tags", []) + ["music", "aimusic"]
+
+        # Rebuild video
+        print("[resume] Re-rendering video...")
+        final_path = os.path.join(output_dir, "final.mp4")
+        build_music_video(
+            audio_path=audio_path,
+            lyrics=caption_lyrics,
+            title=song_title or upload_title,
+            genre_dict=genre_dict,
+            output_path=final_path,
+            pexels_key=os.getenv("PEXELS_API_KEY", ""),
+            hook_text=hook_text or None,
+            song_title=song_title or upload_title,
+        )
+
+        # Regenerate thumbnail
+        thumbnail_path = os.path.join(output_dir, "thumbnail.png")
+        generate_music_thumbnail(
+            title=upload_title,
+            genre_key=genre_key,
+            output_path=thumbnail_path,
+            video_path=final_path,
+            story_hook=hook_text or None,
+        )
+
+        result = {
+            "genre": genre_key,
+            "title": upload_title,
+            "song_title": song_title,
+            "paths": {
+                "audio": audio_path,
+                "lyrics": _lyrics_orig if os.path.exists(_lyrics_orig) else _lyrics_suno,
+                "final": final_path,
+                "short": "",
+                "thumbnail": thumbnail_path,
+                "metadata": _meta_file if os.path.exists(_meta_file) else "",
+            },
+            "url": None,
+            "short_url": None,
+        }
+
+        if upload:
+            first_comment = random.choice(_FIRST_COMMENTS)
+            result["url"] = upload_to_youtube(
+                video_path=final_path,
+                thumbnail_path=thumbnail_path,
+                title=upload_title,
+                description=description,
+                tags=tags,
+                first_comment=first_comment,
+                genre_key=genre_key,
+            )
+
+        print(f"[resume] Done. URL: {result['url']}")
+        return result
+    # ── END RESUME MODE ─────────────────────────────────────────────────────
 
     # 1. Pick genre
     if genre_key:
@@ -660,6 +797,10 @@ if __name__ == "__main__":
     parser.add_argument("--model", default="V4_5ALL", help="Suno model version")
     parser.add_argument("--instrumental", action="store_true", help="Instrumental only")
     parser.add_argument("--output-dir", default=None, help="Custom output directory")
+    parser.add_argument(
+        "--resume", default=None, metavar="OUTPUT_DIR",
+        help="Re-render video from a previous run's output folder (skips Suno, uses saved checkpoint)",
+    )
     args = parser.parse_args()
 
     result = asyncio.run(create_music_video(
@@ -668,6 +809,7 @@ if __name__ == "__main__":
         upload=not args.no_upload,
         model=args.model,
         instrumental=args.instrumental,
+        resume_from=args.resume,
     ))
 
     print("\n" + "="*55)
