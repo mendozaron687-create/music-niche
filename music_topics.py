@@ -222,8 +222,9 @@ GENRES = {
 
 
 def get_random_genre() -> tuple[str, dict]:
-    """Return (genre_key, genre_dict) randomly."""
-    key = random.choice(list(GENRES.keys()))
+    """Return (genre_key, genre_dict) randomly — hugot/OPM genres only."""
+    hugot_keys = ["hugot_ballad", "hugot_opm_pop", "pinoy_rap_hugot", "opm_rnb_hugot", "pamana_folk_opm"]
+    key = random.choice(hugot_keys)
     return key, GENRES[key]
 
 
