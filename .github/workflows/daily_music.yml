@@ -2,11 +2,7 @@ name: Daily OPM Music Video
 
 on:
   schedule:
-    # 3x daily — timed to hit PH peak viewing hours (UTC+8)
-    # Post 1 hour BEFORE each peak so YouTube indexes it first
-    - cron: "0 21 * * *"   # 5:00 AM PHT  → catches 6-8 AM morning commute peak
-    - cron: "0 10 * * *"   # 6:00 PM PHT  → catches 7-9 PM prime time (highest traffic)
-    - cron: "0 13 * * *"   # 9:00 PM PHT  → catches 10 PM-12 AM late night hugot hours
+    - cron: "0 10 * * *"   # 6:00 PM PHT — prime time peak
   workflow_dispatch:   # also trigger manually from GitHub UI
     inputs:
       genre:
@@ -78,26 +74,18 @@ jobs:
 
       - name: Generate and post music video
         run: |
-          # If genre manually specified, use it. Otherwise rotate by UTC hour:
-          # 21 UTC (5 AM PHT morning slot) → hugot_ballad
-          # 10 UTC (6 PM PHT prime slot)   → hugot_opm_pop
-          # 13 UTC (9 PM PHT late slot)    → opm_rnb_hugot
+          # Use manually specified genre, or let main.py pick randomly
           if [ -n "${{ github.event.inputs.genre }}" ]; then
             GENRE="${{ github.event.inputs.genre }}"
+            GENRE_ARG="--genre $GENRE"
           else
-            HOUR=$(date -u +%H)
-            if [ "$HOUR" = "21" ]; then
-              GENRE="hugot_ballad"
-            elif [ "$HOUR" = "10" ]; then
-              GENRE="hugot_opm_pop"
-            else
-              GENRE="opm_rnb_hugot"
-            fi
+            GENRE_ARG=""
+            GENRE="random"
           fi
           echo "Running genre: $GENRE"
 
           # First attempt — full pipeline including Suno
-          if python main.py --genre "$GENRE"; then
+          if python main.py $GENRE_ARG; then
             echo "✅ First attempt succeeded."
             exit 0
           fi
@@ -110,7 +98,7 @@ jobs:
             OUTPUT_DIR=$(dirname "$CHECKPOINT")
             echo "⚠️  First attempt failed but Suno checkpoint found: $CHECKPOINT"
             echo "🔄 Retrying video render from checkpoint (no credits spent)..."
-            python main.py --resume "$OUTPUT_DIR" --genre "$GENRE"
+            python main.py --resume "$OUTPUT_DIR" $GENRE_ARG
           else
             echo "❌ No Suno checkpoint found — Suno itself failed. Full failure."
             exit 1

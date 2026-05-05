@@ -70,7 +70,6 @@ def generate_music(
         "model": model,
         "style": style[:1000],
         "title": title[:80],
-        "count": 1,  # generate exactly 1 track to conserve credits
         "callBackUrl": "https://example.com/callback",
     }
     if not instrumental:
