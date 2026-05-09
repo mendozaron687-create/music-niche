@@ -232,8 +232,18 @@ def burn_captions_to_video(video_path: str, captions: list,
 
     # ── Method 2: drawtext via filter script file ─────────────────────────────
     if captions:
-        # Arial Bold is at this path on Windows — ffmpeg escaping needs double backslash
-        font_path = "C\\\\:/Windows/Fonts/arialbd.ttf"
+        # Resolve Arial Bold cross-platform for ffmpeg drawtext
+        if os.name == "nt":
+            font_path = "C\\\\:/Windows/Fonts/arialbd.ttf"
+        else:
+            _linux_fonts = [
+                "/usr/share/fonts/truetype/liberation/LiberationSans-Bold.ttf",
+                "/usr/share/fonts/liberation/LiberationSans-Bold.ttf",
+                "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",
+                "/usr/share/fonts/truetype/freefont/FreeSansBold.ttf",
+            ]
+            font_path = next((f for f in _linux_fonts if os.path.exists(f)),
+                             "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf")
         filters = []
         for cap in captions:
             text = (

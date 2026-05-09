@@ -34,7 +34,21 @@ jobs:
           sudo apt-get update -qq
           sudo apt-get install -y ffmpeg \
             fonts-liberation fonts-liberation2 fonts-dejavu-core fonts-dejavu \
+            fonts-freefont-ttf fonts-open-sans fonts-urw-base35 \
             libsndfile1 libsndfile1-dev
+          # Fontconfig aliases: map Windows font names → installed Linux equivalents
+          # libass (ffmpeg subtitle renderer) uses fontconfig to resolve font families
+          mkdir -p /etc/fonts/conf.d
+          cat > /etc/fonts/conf.d/99-ci-aliases.conf << 'EOF'
+          <?xml version="1.0"?>
+          <!DOCTYPE fontconfig SYSTEM "fonts.dtd">
+          <fontconfig>
+            <alias><family>Arial</family><prefer><family>Liberation Sans</family></prefer></alias>
+            <alias><family>Arial Bold</family><prefer><family>Liberation Sans</family></prefer></alias>
+            <alias><family>Arial Black</family><prefer><family>Liberation Sans</family></prefer></alias>
+            <alias><family>Impact</family><prefer><family>FreeSans</family></prefer></alias>
+          </fontconfig>
+          EOF
           fc-cache -f -v
 
       - name: Install Python deps
