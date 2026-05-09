@@ -26,7 +26,7 @@ read_and_print("YOUTUBE_TOKEN", os.path.join(base, "token.json"))
 read_and_print("YOUTUBE_CREDS", os.path.join(base, "credentials.json"))
 
 print("\n\nAlso add these from your .env:")
-env_keys = ["SUNO_API_KEY", "OPENROUTER_API_KEY", "PEXELS_API_KEY", "GROQ_API_KEY", "GEMINI_API_KEY"]
+env_keys = ["KIE_API_KEY", "SUNO_API_KEY", "OPENROUTER_API_KEY", "PEXELS_API_KEY", "GROQ_API_KEY", "GEMINI_API_KEY"]
 env_path = os.path.join(base, ".env")
 if os.path.exists(env_path):
     env = {}

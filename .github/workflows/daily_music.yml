@@ -52,13 +52,13 @@ jobs:
 
       - name: Write .env
         env:
-          SUNO_API_KEY:       ${{ secrets.SUNO_API_KEY }}
+          KIE_API_KEY:        ${{ secrets.KIE_API_KEY }}
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
           PEXELS_API_KEY:     ${{ secrets.PEXELS_API_KEY }}
           GROQ_API_KEY:       ${{ secrets.GROQ_API_KEY }}
           GEMINI_API_KEY:     ${{ secrets.GEMINI_API_KEY }}
         run: |
-          echo "SUNO_API_KEY=$SUNO_API_KEY"             > .env
+          echo "KIE_API_KEY=$KIE_API_KEY"               > .env
           echo "OPENROUTER_API_KEY=$OPENROUTER_API_KEY" >> .env
           echo "PEXELS_API_KEY=$PEXELS_API_KEY"         >> .env
           echo "GROQ_API_KEY=$GROQ_API_KEY"             >> .env
