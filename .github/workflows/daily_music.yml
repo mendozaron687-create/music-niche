@@ -38,8 +38,8 @@ jobs:
             libsndfile1 libsndfile1-dev
           # Fontconfig aliases: map Windows font names → installed Linux equivalents
           # libass (ffmpeg subtitle renderer) uses fontconfig to resolve font families
-          mkdir -p /etc/fonts/conf.d
-          cat > /etc/fonts/conf.d/99-ci-aliases.conf << 'EOF'
+          sudo mkdir -p /etc/fonts/conf.d
+          sudo tee /etc/fonts/conf.d/99-ci-aliases.conf > /dev/null << 'EOF'
           <?xml version="1.0"?>
           <!DOCTYPE fontconfig SYSTEM "fonts.dtd">
           <fontconfig>
@@ -49,7 +49,7 @@ jobs:
             <alias><family>Impact</family><prefer><family>FreeSans</family></prefer></alias>
           </fontconfig>
           EOF
-          fc-cache -f -v
+          sudo fc-cache -f -v
 
       - name: Install Python deps
         run: |
