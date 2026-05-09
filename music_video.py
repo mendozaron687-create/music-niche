@@ -35,6 +35,19 @@ CLIP_DURATION = 30       # seconds per background clip
 XFADE_DUR = 1.0          # crossfade duration between clips
 
 
+def _make_whisper_model(size: str, model_dir: str):
+    """Load faster-whisper on GPU (CUDA float16) if available, else CPU int8."""
+    from faster_whisper import WhisperModel
+    try:
+        model = WhisperModel(size, device="cuda", compute_type="float16", download_root=model_dir)
+        print(f"[whisper] Using GPU (CUDA) — {size}")
+        return model
+    except Exception:
+        model = WhisperModel(size, device="cpu", compute_type="int8", download_root=model_dir)
+        print(f"[whisper] Using CPU — {size}")
+        return model
+
+
 # ── Visual style presets ─────────────────────────────────────────────────────
 
 VISUAL_STYLES = {
@@ -338,7 +351,7 @@ def _whisper_word_captions(audio_path: str, words_per_line: int = 6, lyrics_hint
     #   no_speech_threshold=0.1  — don't skip quiet/melodic segments
     #   temperature=0.0  — deterministic; combined with above avoids loops
     try:
-        from faster_whisper import WhisperModel
+        from faster_whisper import WhisperModel  # noqa: F401 (checked via _make_whisper_model)
     except ImportError:
         print("[whisper] faster-whisper not installed")
         return None
@@ -347,7 +360,7 @@ def _whisper_word_captions(audio_path: str, words_per_line: int = 6, lyrics_hint
     try:
         print("[whisper] Local faster-whisper (small, tl, anti-hallucination)...")
         os.environ.setdefault("HF_HUB_DISABLE_SYMLINKS_WARNING", "1")
-        model = WhisperModel("small", device="cpu", compute_type="int8", download_root=model_dir)
+        model = _make_whisper_model("small", model_dir)
 
         # Use first ~200 chars of lyrics as context so Whisper knows the vocabulary
         prompt = lyrics_hint[:200] if lyrics_hint else ""
@@ -411,7 +424,7 @@ def _detect_vocal_onset(audio_path: str) -> float | None:
     try:
         print("[whisper] Detecting vocal onset...")
         os.environ.setdefault("HF_HUB_DISABLE_SYMLINKS_WARNING", "1")
-        model = WhisperModel("base", device="cpu", compute_type="int8", download_root=model_dir)
+        model = _make_whisper_model("base", model_dir)
         segments, info = model.transcribe(
             audio_path,
             vad_filter=True,
@@ -432,6 +445,191 @@ def _detect_vocal_onset(audio_path: str) -> float | None:
     except Exception as e:
         print(f"[whisper] Vocal onset detection failed: {e}")
         return None
+
+
+def _parse_lyric_lines(lyrics: str) -> list[str]:
+    """Extract clean, displayable lyric lines from lyrics text.
+    Strips section headers like [Verse 1], English-only parentheticals, and markdown."""
+    lines = []
+    for raw in lyrics.splitlines():
+        line = re.sub(r"\*+", "", raw).strip()
+        if not line:
+            continue
+        if re.match(r"^\[.*\]$", line):      # [Verse 1] → skip
+            continue
+        if re.match(r"^\*?\s*\(", line) and line.rstrip("*").rstrip().endswith(")"):
+            continue  # translation parentheticals
+        lines.append(line)
+    return lines
+
+
+def _get_whisper_segment_times(audio_path: str, lyrics_hint: str = "") -> list[tuple[float, float]] | None:
+    """
+    Get word-level timestamps from Whisper for fine-grained lyric sync.
+    Returns sorted list of (start, end) tuples — one per recognised word (or segment
+    as fallback). Returns None on failure.
+    Uses Groq first (word + segment granularity), then local faster-whisper with
+    word_timestamps=True.
+    """
+    # ── Groq ─────────────────────────────────────────────────────────────
+    groq_key = os.environ.get("GROQ_API_KEY", "")
+    if groq_key:
+        try:
+            import groq as _groq
+            client = _groq.Groq(api_key=groq_key)
+            with open(audio_path, "rb") as f:
+                result = client.audio.transcriptions.create(
+                    file=(os.path.basename(audio_path), f),
+                    model="whisper-large-v3-turbo",
+                    response_format="verbose_json",
+                    timestamp_granularities=["word", "segment"],
+                    language="tl",
+                    prompt=lyrics_hint[:224] if lyrics_hint else None,
+                )
+            # Prefer word-level timestamps — many more anchor points
+            words = getattr(result, "words", None) or []
+            if words:
+                pairs = []
+                for w in words:
+                    s = w.get("start", 0.0) if isinstance(w, dict) else getattr(w, "start", 0.0)
+                    e = w.get("end", s + 0.3) if isinstance(w, dict) else getattr(w, "end", s + 0.3)
+                    pairs.append((float(s), float(e)))
+                if pairs:
+                    print(f"[subs] Groq word timestamps: {len(pairs)} words")
+                    return pairs
+            # Fallback to segment boundaries
+            segments = getattr(result, "segments", None) or []
+            if segments:
+                pairs = []
+                for seg in segments:
+                    s = seg.get("start", 0.0) if isinstance(seg, dict) else getattr(seg, "start", 0.0)
+                    e = seg.get("end", s + 3.0) if isinstance(seg, dict) else getattr(seg, "end", s + 3.0)
+                    pairs.append((float(s), float(e)))
+                print(f"[subs] Groq segment timestamps: {len(pairs)} segments")
+                return pairs if pairs else None
+        except Exception as e:
+            print(f"[subs] Groq timing failed: {e}")
+
+    # ── Local faster-whisper (word_timestamps=True) ───────────────────────
+    try:
+        from faster_whisper import WhisperModel  # noqa: F401
+        model_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "models", "whisper-small")
+        os.environ.setdefault("HF_HUB_DISABLE_SYMLINKS_WARNING", "1")
+        model = _make_whisper_model("small", model_dir)
+        seg_gen, _ = model.transcribe(
+            audio_path,
+            language="tl",
+            vad_filter=False,
+            word_timestamps=True,
+            beam_size=5,
+            temperature=0.0,
+            initial_prompt=lyrics_hint[:200] if lyrics_hint else None,
+            condition_on_previous_text=False,
+        )
+        pairs = []
+        for seg in seg_gen:
+            if hasattr(seg, "words") and seg.words:
+                for w in seg.words:
+                    pairs.append((float(w.start), float(w.end)))
+            else:
+                pairs.append((float(seg.start), float(seg.end)))
+        if pairs:
+            print(f"[subs] Local whisper word timestamps: {len(pairs)} words")
+            return pairs
+    except ImportError:
+        pass
+    except Exception as e:
+        print(f"[subs] Local word timing failed: {e}")
+    return None
+
+
+def _segment_level_captions(
+    lyrics: str,
+    duration: float,
+    audio_path: str = None,
+    lines_per_cue: int = 1,
+) -> list[dict]:
+    """
+    Build segment-level synced captions using our ORIGINAL lyrics.
+
+    Strategy:
+      1. Detect vocal onset via Whisper (fast — base model)
+      2. Get Whisper segment start times (maps to where each phrase starts)
+      3. Map our lyric lines to those segment times
+      4. Fallback: proportional distribution from vocal onset → audio end
+
+    Each caption = one lyric line shown when it is being sung.
+    Returns list of {text, start, end}.
+    """
+    lyric_lines = _parse_lyric_lines(lyrics)
+    if not lyric_lines:
+        return []
+
+    # Vocal onset (when singing starts — skip instrumental intro)
+    vocal_onset = 5.0
+    if audio_path:
+        onset = _detect_vocal_onset(audio_path)
+        if onset is not None:
+            vocal_onset = onset
+    usable_end = duration - 3.0
+
+    # Get word-level timestamps from Groq / local whisper
+    seg_times: list[tuple[float, float]] | None = None
+    if audio_path:
+        hint = " ".join(lyric_lines[:4])
+        seg_times = _get_whisper_segment_times(audio_path, lyrics_hint=hint)
+        if seg_times:
+            # Filter to only timestamps after vocal onset
+            seg_times = [(s, e) for s, e in seg_times if s >= vocal_onset * 0.85]
+
+    if seg_times and len(seg_times) >= 2:
+        # ── Word-proportional sync ──────────────────────────────────────
+        # Each lyric line gets a share of the timestamp pool proportional
+        # to its word count. No two lines ever share the same start time.
+        n_lines = len(lyric_lines)
+        n_slots = len(seg_times)  # seg_times is now list[(start, end)]
+        line_wc = [max(1, len(l.split())) for l in lyric_lines]
+        total_wc = sum(line_wc)
+
+        captions = []
+        slot_offset = 0.0
+        for i, line in enumerate(lyric_lines):
+            # Slots this line "deserves" proportional to its word count
+            slots = line_wc[i] / total_wc * n_slots
+
+            s_idx = min(int(slot_offset), n_slots - 1)
+            e_idx = min(int(slot_offset + slots), n_slots - 1)
+
+            start = seg_times[s_idx][0]
+            # End = start of the next slot boundary, or end of that word
+            if e_idx > s_idx:
+                end = seg_times[e_idx][0] - 0.1
+            else:
+                end = seg_times[e_idx][1]
+
+            end = max(end, start + 1.5)
+            end = min(end, usable_end)
+            captions.append({"text": line, "start": round(start, 2), "end": round(end, 2)})
+            slot_offset += slots
+
+        print(f"[subs] Word-proportional sync: {len(captions)} lines across {n_slots} timestamps")
+        return captions
+
+    # ── Proportional fallback ───────────────────────────────────────────
+    print(f"[subs] Segment-level fallback: distributing {len(lyric_lines)} lines "
+          f"from {vocal_onset:.1f}s → {usable_end:.1f}s")
+    total_time = max(usable_end - vocal_onset, 1.0)
+    total_words = sum(max(1, len(line.split())) for line in lyric_lines)
+    captions = []
+    t = vocal_onset
+    for line in lyric_lines:
+        w = max(1, len(line.split()))
+        dur = max(1.5, total_time * w / total_words)
+        captions.append({"text": line, "start": round(t, 2), "end": round(t + dur - 0.1, 2)})
+        t += dur
+        if t >= usable_end:
+            break
+    return captions
 
 
 def _build_ass(lyrics: str, duration: float, vstyle: dict, output_path: str, is_opm: bool = False, story_cards: list = None, pull_quotes: list = None, audio_path: str = None, story_segments: list = None, song_title: str = ""):
@@ -562,9 +760,9 @@ def _build_ass(lyrics: str, duration: float, vstyle: dict, output_path: str, is_
     # CAPTION / LYRIC MODE (fallback when no story_segments)
     # ══════════════════════════════════════════════════════════════════════
     else:
-        # Story intro cards (old 3-card style, kept for non-OPM genres)
+        # Story intro cards — start AFTER title card fades out at 5s
         if story_cards:
-            card_dur2, gap2, t2 = 3.0, 0.25, 0.5
+            card_dur2, gap2, t2 = 3.0, 0.25, 5.5
             for card in story_cards:
                 safe = card.replace("{", "").replace("}", "")
                 events.append(
@@ -573,30 +771,31 @@ def _build_ass(lyrics: str, duration: float, vstyle: dict, output_path: str, is_
                 )
                 t2 += card_dur2 + gap2
 
-        word_captions = _whisper_word_captions(audio_path, lyrics_hint=lyrics_hint) if audio_path else None
+        # ── Segment-level sync: use OUR original lyrics with Whisper timing ──
+        seg_captions = _segment_level_captions(
+            lyrics=lyrics,
+            duration=duration,
+            audio_path=audio_path,
+        )
 
-        if word_captions:
-            usable_start = word_captions[0]["start"]
-            print(f"[subs] Word-level captions: {len(word_captions)} lines, "
-                  f"first at {usable_start:.2f}s, last at {word_captions[-1]['start']:.2f}s")
-            for cap in word_captions:
+        if seg_captions:
+            print(f"[subs] Segment-level captions: {len(seg_captions)} lines, "
+                  f"first at {seg_captions[0]['start']:.2f}s")
+            for cap in seg_captions:
                 text = cap["text"].replace("{", "").replace("}", "")
                 events.append(
                     f"Dialogue: 0,{_ass_time(cap['start'])},{_ass_time(cap['end'])},Lyric,,0,0,0,,"
                     f"{{\\fad(300,200)\\blur2}}{text}"
                 )
         else:
-            if audio_path:
-                onset = _detect_vocal_onset(audio_path)
-                usable_start = onset if onset is not None else default_intro_gap
-            else:
-                usable_start = default_intro_gap
+            # Pure fallback: estimate from duration (no audio available)
+            vocal_onset = default_intro_gap
             if story_cards:
-                usable_start = max(usable_start, len(story_cards) * 3.25 + 0.5)
-            print(f"[subs] Proportional fallback from {usable_start:.2f}s")
+                vocal_onset = max(vocal_onset, len(story_cards) * 3.25 + 0.5)
+            print(f"[subs] Duration-only fallback from {vocal_onset:.2f}s")
             total_words = sum(max(1, len(c.split())) for c in chunks)
-            total_time = usable_end - usable_start
-            t = usable_start
+            total_time = usable_end - vocal_onset
+            t = vocal_onset
             for chunk in chunks:
                 w = max(1, len(chunk.split()))
                 dur = total_time * w / total_words
@@ -610,7 +809,7 @@ def _build_ass(lyrics: str, duration: float, vstyle: dict, output_path: str, is_
         if pull_quotes:
             q_dur = 5.0
             q_times = [duration * 0.33, duration * 0.66]
-            usable_start_q = word_captions[0]["start"] if word_captions else default_intro_gap
+            usable_start_q = seg_captions[0]["start"] if seg_captions else default_intro_gap
             for q_text, q_start in zip(pull_quotes, q_times):
                 q_start = max(q_start, usable_start_q + 20)
                 safe_q = q_text.replace("{", "").replace("}", "")
@@ -891,7 +1090,18 @@ def _build_filter_complex(
     if with_title_card:
         import re as _re
         # Strip emojis and non-ASCII — ffmpeg drawtext cannot render them
-        card_text = _re.sub(r'[^\x20-\x7E]', '', (hook_text or title)).strip()[:60]
+        raw_text = _re.sub(r'[^\x20-\x7E]', '', (hook_text or title)).strip()
+        # Wrap at word boundary so text never overflows 1920px at the chosen font size
+        # Target ~32 chars per line at fontsize 62 (≈ 62 × 32 × 0.6 ≈ 1190px ✓)
+        def _wrap(txt: str, max_chars: int = 32) -> str:
+            if len(txt) <= max_chars:
+                return txt
+            mid = len(txt) // 2
+            cut = txt.rfind(' ', max(0, mid - 10), mid + 10)
+            if cut > 0:
+                return txt[:cut] + '\n' + txt[cut + 1:]
+            return txt[:max_chars]  # hard truncate fallback
+        card_text = _wrap(raw_text[:80])  # cap input at 80 chars before wrapping
         if not card_text:
             card_text = "OPM Hugot"
         safe_title = (
@@ -903,11 +1113,11 @@ def _build_filter_complex(
             .replace("]", "\\]")
         )
         title_f = (
-            f"drawtext=text='{safe_title}':fontsize=76:fontcolor=white"
+            f"drawtext=text='{safe_title}':fontsize=62:fontcolor=white"
             f":x=(w-text_w)/2"
-            f":y=(h-text_h)/2+80*max(0\\,1-t/0.8)"
+            f":y=(h-text_h)/2+60*max(0\\,1-t/0.8)"
             f":alpha='if(lt(t\\,0.8)\\,t/0.8\\,if(lt(t\\,4.0)\\,1\\,max(0\\,(5.0-t))))'"
-            f":box=1:boxcolor=black@0.72:boxborderw=28"
+            f":box=1:boxcolor=black@0.72:boxborderw=22"
             f":shadowx=3:shadowy=3:shadowcolor=black@0.9"
             f":enable='lt(t\\,5)'"
         )

@@ -108,6 +108,114 @@ _AI_BG_PROMPTS = {
 }
 
 
+# ── Pexels high-emotion search queries per genre ─────────────────────────────
+_PEXELS_THUMB_QUERIES: dict = {
+    "hugot_ballad":         ["woman crying face closeup", "sad woman portrait tears", "crying woman face"],
+    "hugot_opm_pop":        ["shocked woman face closeup", "woman open mouth surprise", "emotional woman face"],
+    "opm_rnb_hugot":        ["sad woman night portrait", "emotional woman crying", "heartbroken woman face"],
+    "pinoy_rap_hugot":      ["emotional man crying face", "sad man portrait", "man heartbroken face"],
+    "pamana_folk_opm":      ["sad woman portrait", "tearful woman face closeup", "woman crying face"],
+    "pinoy_rant":           ["angry man face closeup", "frustrated man expression", "shocked man face"],
+    "pinoy_protest_anthem": ["angry person face", "frustrated person shouting face", "shocked person face"],
+    "motivational_hip_hop": ["confident man face closeup", "motivated man portrait", "determined man face"],
+    "lofi_hiphop":          ["sad girl face aesthetic", "lonely woman face", "melancholy woman portrait"],
+    "chill_pop":            ["happy woman laughing face", "joyful woman face closeup", "happy girl face"],
+    "default":              ["emotional woman face crying", "sad woman face closeup", "woman heartbroken face"],
+}
+
+
+def _fetch_pexels_background(genre_key: str, pexels_key: str) -> "Image.Image | None":
+    """
+    Fetch a high-emotion face photo from Pexels for the thumbnail background.
+    Prefers portrait orientation (vertical) so the face fills the frame well.
+    Crops/pads portrait photos to 1280x720 with face on the right side.
+    Returns a 1280x720 PIL Image, or None on failure / missing API key.
+    """
+    if not pexels_key or not _requests:
+        return None
+
+    queries = _PEXELS_THUMB_QUERIES.get(genre_key) or _PEXELS_THUMB_QUERIES["default"]
+    query   = random.choice(queries)
+    page    = random.randint(1, 3)
+
+    def _try_fetch(orientation: str, pg: int):
+        try:
+            resp = _requests.get(
+                "https://api.pexels.com/v1/search",
+                headers={"Authorization": pexels_key},
+                params={"query": query, "per_page": 15, "page": pg, "orientation": orientation},
+                timeout=20,
+            )
+            resp.raise_for_status()
+            return resp.json().get("photos", [])
+        except Exception:
+            return []
+
+    # Try portrait first (tall photos = face fills frame), fallback landscape
+    photos = _try_fetch("portrait", page)
+    if not photos:
+        photos = _try_fetch("portrait", 1)
+    if not photos:
+        photos = _try_fetch("landscape", page)
+    if not photos:
+        photos = _try_fetch("landscape", 1)
+    if not photos:
+        return None
+
+    photo   = random.choice(photos)
+    src     = photo.get("src") or {}
+    img_url = src.get("large2x") or src.get("original") or src.get("large")
+    if not img_url:
+        return None
+
+    try:
+        img_resp = _requests.get(img_url, timeout=30)
+        img_resp.raise_for_status()
+        img = Image.open(io.BytesIO(img_resp.content)).convert("RGB")
+        W_out, H_out = 1280, 720
+        iw, ih = img.size
+
+        if iw < ih:
+            # Portrait photo: scale to ~760px wide (face stays on right, gradient blends over left edge)
+            target_w = 760
+            scale    = target_w / iw
+            new_h    = int(ih * scale)
+            img      = img.resize((target_w, new_h), Image.LANCZOS)
+            # Crop from top — face is typically in upper 720px of a portrait
+            crop_h   = min(new_h, H_out)
+            img      = img.crop((0, 0, target_w, crop_h))
+            if crop_h < H_out:
+                pad = Image.new("RGB", (target_w, H_out), (0, 0, 0))
+                pad.paste(img, (0, 0))
+                img = pad
+            canvas  = Image.new("RGB", (W_out, H_out), (0, 0, 0))
+            paste_x = W_out - target_w  # ≈520
+            # Build a left-to-right gradient mask to feather the portrait's left edge
+            blend_w = min(240, target_w // 3)
+            mask    = Image.new("L", (target_w, H_out), 255)
+            try:
+                import numpy as _np
+                m_arr = _np.full((H_out, target_w), 255, dtype=_np.uint8)
+                fade  = (_np.arange(blend_w, dtype=float) / blend_w * 255).astype(_np.uint8)
+                m_arr[:, :blend_w] = fade[_np.newaxis, :]
+                mask = Image.fromarray(m_arr, "L")
+            except ImportError:
+                md = ImageDraw.Draw(mask)
+                for x in range(blend_w):
+                    md.line([(x, 0), (x, H_out)], fill=int(255 * x / blend_w))
+            canvas.paste(img, (paste_x, 0), mask=mask)
+            img = canvas
+        else:
+            # Landscape: fit to 1280x720
+            img = img.resize((W_out, H_out), Image.LANCZOS)
+
+        print(f"[thumb] Pexels background: '{query}' ({photo.get('width')}x{photo.get('height')}, {len(img_resp.content)//1024}KB)")
+        return img
+    except Exception as e:
+        print(f"[thumb] Pexels background download failed: {e}")
+        return None
+
+
 def _prompt_to_text(p: dict) -> str:
     """Serialize structured JSON prompt dict to a precise ordered FLUX prompt string."""
     order = ["subject", "position", "face", "lighting", "background", "emotion", "style", "quality"]
@@ -207,33 +315,26 @@ def _extract_video_frame(video_path: str, time_sec: float = 45.0) -> "Image.Imag
 
 def _ai_split_thumbnail_text(text: str, max_tw_px: int) -> tuple[str, str]:
     """
-    Ask OpenRouter to split 'text' into two grammatically correct Filipino lines:
-      - Line 1 (yellow): the emotional hook phrase — short, punchy, fits on thumbnail
-      - Line 2 (white): the follow-up / context phrase — can be empty
-
-    Falls back to a punctuation-aware word split if OpenRouter is unavailable.
+    Split 'text' (the actual song/video title) into two thumbnail display lines.
+    Line 1 (yellow): first emotional chunk — punchy, 3-6 words.
+    Line 2 (white): second chunk — context/follow-up, can be empty.
+    IMPORTANT: preserve the original words — do NOT rewrite or translate.
     """
     api_key = os.getenv("OPENROUTER_API_KEY", "")
     if api_key and _requests:
         try:
             prompt = (
-                "Ikaw ay isang Filipino hugot copywriter para sa YouTube music thumbnails.\n"
-                "Binibigyan ka ng isang raw na hugot na ideya (maaaring halo ng Tagalog at English).\n"
-                "Ang trabaho mo: i-rewrite ito bilang DALAWANG maikling linya ng natural na Tagalog hugot "
-                "na parang totoong pag-uusap — kung paano talaga nagsasalita ang mga Pilipino kapag masakit ang puso.\n\n"
-                "Mga panuntunan:\n"
-                "1. Dapat grammatically correct ang bawat linya sa natural na Filipino/Tagalog.\n"
-                "2. Huwag literal na isalin — gamitin ang natural na Filipino sentence structure (Verb-Subject-Object).\n"
-                "   Halimbawa: 'Walang Iwanan Sabi Mo Bakit Ako Iniwan Mo' → "
-                "LINE1: Sabi mo walang iwanan? / LINE2: Bakit ako iniwan mo?\n"
-                "3. Line 1 = ang emotional punch / accusation — 4-6 salita, may tanong o exclamation.\n"
-                "4. Line 2 = ang follow-up na tanong o sakit — 4-6 salita. Pwedeng wala kung isang linya na lang.\n"
-                "5. Gumamit ng natural na Tagalog particles: mo, ka, ako, na, ba, kaya, lang, talaga, nga, eh.\n"
-                "6. Huwag mag-translate sa English. Tagalog lang.\n"
-                "7. Isagot lang ang dalawang linya, wala ng iba. Format:\n"
-                "LINE1: <unang linya>\n"
-                "LINE2: <pangalawang linya o blangko>\n\n"
-                f"Raw hugot idea: {text}"
+                "You are a YouTube thumbnail text layout assistant.\n"
+                "Given a song/video title, split it into EXACTLY two display lines for a thumbnail.\n"
+                "Rules:\n"
+                "1. Do NOT change, translate, or rewrite the words — only split them.\n"
+                "2. LINE1 = the first emotional punch — 3 to 5 words from the title.\n"
+                "3. LINE2 = the remaining words. Can be empty if title is very short.\n"
+                "4. Split at a natural phrase boundary (after a comma, conjunction, or question mark).\n"
+                "5. Reply ONLY in this format:\n"
+                "LINE1: <first part>\n"
+                "LINE2: <second part or empty>\n\n"
+                f"Title: {text}"
             )
             resp = _requests.post(
                 "https://openrouter.ai/api/v1/chat/completions",
@@ -245,8 +346,8 @@ def _ai_split_thumbnail_text(text: str, max_tw_px: int) -> tuple[str, str]:
                 json={
                     "model": "google/gemini-2.0-flash-001",
                     "messages": [{"role": "user", "content": prompt}],
-                    "temperature": 0.4,
-                    "max_tokens": 80,
+                    "temperature": 0.1,
+                    "max_tokens": 60,
                 },
                 timeout=15,
             )
@@ -259,25 +360,24 @@ def _ai_split_thumbnail_text(text: str, max_tw_px: int) -> tuple[str, str]:
                 elif line.upper().startswith("LINE2:"):
                     line2 = line.split(":", 1)[1].strip()
             if line1:
-                print(f"[thumb] AI text split → yellow='{line1}' white='{line2}'")
+                print(f"[thumb] Title split → yellow='{line1}' white='{line2}'")
                 return line1, line2
         except Exception as e:
             print(f"[thumb] AI split failed ({e}), using fallback")
 
-    # Fallback: split at natural punctuation breaks (... / " / ? / !)
+    # Fallback: split at natural punctuation breaks
     clean = re.sub(r'[^\w\s]', '', text).strip()
-    # Try splitting at ellipsis or quote boundary in original text
-    for sep in ['...', '"', '?', '!']:
+    for sep in ['...', ',', '?', '!', ' na ', ' at ']:
         parts = text.split(sep, 1)
         if len(parts) == 2:
             p1 = re.sub(r'[^\w\s]', '', parts[0]).strip()
             p2 = re.sub(r'[^\w\s]', '', parts[1]).strip()
             if p1 and p2:
-                return p1[:40], p2[:40]
+                return p1[:44], p2[:44]
     # Last resort: half-split by word count
     words = clean.split()
     mid = max(2, len(words) // 2)
-    return " ".join(words[:mid]), " ".join(words[mid:mid+4])
+    return " ".join(words[:mid]), " ".join(words[mid:])
 
 
 def generate_music_thumbnail(
@@ -286,26 +386,26 @@ def generate_music_thumbnail(
     output_path: str,
     video_path: str = None,
     story_hook: str = None,
+    pexels_key: str = "",
 ) -> str:
     """
     High-CTR 1280x720 YouTube thumbnail.
-    Layout: AI photo full-bleed → hard opaque-left dark panel → bold left text → subject visible right.
-    Research: split-panel, face/emotion right, 5-6 words max, yellow first line, sadness = 2.3M avg views.
+    Style: MCA Music PH / Star Music PH — full-bleed emotional Pexels face,
+    soft left gradient (no hard line/border), thick-stroke bold text left,
+    large face right, red arrows + circle, red bottom badge.
     """
     os.makedirs(os.path.dirname(output_path) if os.path.dirname(output_path) else ".", exist_ok=True)
-    W, H      = 1280, 720
-    BADGE_H   = 62
-    LP        = int(W * 0.52)   # left panel hard edge: 665px (text stays left of this)
-    FADE_END  = int(W * 0.72)   # panel fades to 0 here: 921px (subject visible right of this)
-    TX        = 52              # text left margin
-    MAX_TW    = LP - TX - 30    # max text pixel width: ~583px
-    is_hugot  = "hugot" in genre_key or "ballad" in genre_key or "opm" in genre_key
-    RED       = (210, 15, 45)
-    YELLOW    = (255, 220, 0)
-    WHITE     = (255, 255, 255)
+    W, H       = 1280, 720
+    BADGE_H    = 70
+    TX         = 50               # text left margin
+    TEXT_ZONE  = int(W * 0.53)    # text stays left of this (~678px)
+    MAX_TW     = TEXT_ZONE - TX - 18
+    is_hugot   = "hugot" in genre_key or "ballad" in genre_key or "opm" in genre_key
+    RED        = (218, 18, 38)
+    YELLOW     = (255, 220, 0)
+    WHITE      = (255, 255, 255)
 
     def _fn(size):
-        # Search order: Windows Arial Bold → Liberation Sans Bold (Linux) → DejaVu Bold → fallback
         candidates = [
             "arialbd.ttf",
             "/usr/share/fonts/truetype/liberation/LiberationSans-Bold.ttf",
@@ -313,99 +413,86 @@ def generate_music_thumbnail(
             "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",
             "/usr/share/fonts/dejavu/DejaVuSans-Bold.ttf",
             "/usr/share/fonts/truetype/freefont/FreeSansBold.ttf",
-            "/System/Library/Fonts/Helvetica.ttc",   # macOS
+            "/System/Library/Fonts/Helvetica.ttc",
         ]
         for path in candidates:
             try:
                 return ImageFont.truetype(path, size)
             except Exception:
                 continue
-        # Last resort: Pillow default (tiny but won't crash)
         return ImageFont.load_default()
 
-    # ── 1. Background: AI → video frame → gradient ───────────────────────────
-    frame = _generate_ai_background(genre_key)
+    def _stroke_text(d, xy, text, font, fill, sw=9, sf=(0, 0, 0), anchor="lm"):
+        """Thick black-stroke text — multiple offset pass to simulate bold outline."""
+        x, y = xy
+        for ox in range(-sw, sw + 1, 3):
+            for oy in range(-sw, sw + 1, 3):
+                if ox == 0 and oy == 0:
+                    continue
+                d.text((x + ox, y + oy), text, font=font, fill=sf, anchor=anchor)
+        d.text((x, y), text, font=font, fill=fill, anchor=anchor)
+
+    # ── 1. Background: Pexels → AI → video frame → gradient ──────────────────
+    frame = _fetch_pexels_background(genre_key, pexels_key)
+    if frame is None:
+        frame = _generate_ai_background(genre_key)
     if frame is None and video_path and os.path.exists(video_path):
         frame = _extract_video_frame(video_path, time_sec=45.0)
 
     if frame:
         img = frame.resize((W, H), Image.LANCZOS)
-        # Very light global darken — preserve the AI photo's vibrancy
-        dark = Image.new("RGB", (W, H), (0, 0, 0))
-        img  = Image.blend(img, dark, 0.08)
-        img  = ImageEnhance.Brightness(img).enhance(1.25)
-        img  = ImageEnhance.Color(img).enhance(1.55)
-        img  = ImageEnhance.Contrast(img).enhance(1.12)
+        img = ImageEnhance.Brightness(img).enhance(1.12)
+        img = ImageEnhance.Color(img).enhance(1.65)
+        img = ImageEnhance.Contrast(img).enhance(1.18)
+        img = ImageEnhance.Sharpness(img).enhance(1.4)
     else:
-        # Fallback: dramatic diagonal gradient — still looks intentional/branded
         colors = _MUSIC_GRADIENTS.get(genre_key, [(15, 15, 35), (45, 25, 80)])
         img = Image.new("RGB", (W, H))
-        try:
-            import numpy as np
-            yy, xx = np.mgrid[0:H, 0:W]
-            # diagonal blend so right side is slightly lighter (where subject would be)
-            t  = (xx / W * 0.35 + yy / H * 0.65).clip(0, 1)
-            r0, g0, b0 = colors[0]
-            r1, g1, b1 = colors[1]
-            arr = np.stack([
-                (r0 * (1-t) + r1 * t).astype(np.uint8),
-                (g0 * (1-t) + g1 * t).astype(np.uint8),
-                (b0 * (1-t) + b1 * t).astype(np.uint8),
-            ], axis=-1)
-            img = Image.fromarray(arr, 'RGB')
-        except ImportError:
-            for y in range(H):
-                r = y / H
-                img.paste((
-                    int(colors[0][0] * (1-r) + colors[1][0] * r),
-                    int(colors[0][1] * (1-r) + colors[1][1] * r),
-                    int(colors[0][2] * (1-r) + colors[1][2] * r),
-                ), (0, y, W, y + 1))
+        for y in range(H):
+            r = y / H
+            img.paste((
+                int(colors[0][0] * (1-r) + colors[1][0] * r),
+                int(colors[0][1] * (1-r) + colors[1][1] * r),
+                int(colors[0][2] * (1-r) + colors[1][2] * r),
+            ), (0, y, W, y + 1))
 
-    # ── 2. Hard left dark panel (OPAQUE left half → transparent by 72%) ──────
+    # ── 2. Soft LEFT-ONLY gradient (no hard edge, no vertical line) ───────────
+    # Darkens the text zone smoothly; face on the right stays fully bright.
     img = img.convert("RGBA")
     try:
         import numpy as np
+        FADE_START = int(W * 0.08)   # solid dark starts here
+        FADE_END   = int(W * 0.60)   # fully transparent by 60%
         arr   = np.zeros((H, W, 4), dtype=np.uint8)
-        x     = np.arange(W, dtype=float)
+        x_idx = np.arange(W, dtype=float)
         alpha = np.where(
-            x < LP,
-            205,
-            np.where(x < FADE_END,
-                205 * (1.0 - (x - LP) / (FADE_END - LP)),
-                0)
+            x_idx < FADE_START,
+            215,
+            np.where(
+                x_idx < FADE_END,
+                215 * (1.0 - (x_idx - FADE_START) / (FADE_END - FADE_START)),
+                0,
+            )
         ).clip(0, 255).astype(np.uint8)
         arr[:, :, 3] = alpha[np.newaxis, :]
-        panel = Image.fromarray(arr, 'RGBA')
+        panel = Image.fromarray(arr, "RGBA")
     except ImportError:
         panel = Image.new("RGBA", (W, H), (0, 0, 0, 0))
         pd = ImageDraw.Draw(panel)
-        pd.rectangle([0,  0, LP,       H], fill=(0, 0, 0, 205))
-        pd.rectangle([LP, 0, FADE_END, H], fill=(0, 0, 0,  95))
-    img = Image.alpha_composite(img, panel)
+        pd.rectangle([0, 0, int(W * 0.38), H], fill=(0, 0, 0, 210))
+        pd.rectangle([int(W * 0.38), 0, int(W * 0.60), H], fill=(0, 0, 0, 95))
+    img = Image.alpha_composite(img, panel).convert("RGB")
 
-    # Thin top/bottom bar to frame the image nicely
-    vig = Image.new("RGBA", (W, H), (0, 0, 0, 0))
-    vd  = ImageDraw.Draw(vig)
-    vd.rectangle([0, 0, W, H // 11],    fill=(0, 0, 0, 60))
-    vd.rectangle([0, H * 10 // 11, W, H], fill=(0, 0, 0, 80))
-    img = Image.alpha_composite(img, vig).convert("RGB")
-    draw = ImageDraw.Draw(img)
+    # ── 3. Split the ACTUAL title into 2 display lines ────────────────────────
+    # Strip '| Music' suffix so it doesn't appear on thumbnail
+    clean_title = re.sub(r'\s*\|\s*Music\s*$', '', title, flags=re.IGNORECASE).strip()
+    clean_title = re.sub(r'[^\x20-\x7E\u0080-\u024F]', '', clean_title).strip()
+    y_txt, w_txt = _ai_split_thumbnail_text(clean_title, MAX_TW)
 
-    # Vertical red accent stripe at the panel edge
-    draw.rectangle([LP - 7, 0, LP, H - BADGE_H], fill=RED)
-
-    # ── 3. Fonts & text ──────────────────────────────────────────────────────
-    raw   = story_hook or title
-    clean = re.sub(r'[^\x20-\x7E\u0080-\u024F]', '', raw).strip()
-
-    # Use OpenRouter to split the text into 2 grammatically correct Filipino lines
-    y_txt, w_txt = _ai_split_thumbnail_text(clean, MAX_TW)
-
-    # Auto-size yellow text so it always fits in the left panel
-    f_yellow   = _fn(72)
-    y_size     = 72
-    for sz in range(155, 64, -5):
+    # ── 4. Fonts & auto-sizing ────────────────────────────────────────────────
+    f_yellow = _fn(72)
+    y_size   = 72
+    for sz in range(148, 54, -4):
         fnt = _fn(sz)
         bb  = fnt.getbbox(y_txt)
         if (bb[2] - bb[0]) <= MAX_TW:
@@ -413,85 +500,73 @@ def generate_music_thumbnail(
             y_size   = sz
             break
 
-    w_size  = max(64, int(y_size * 0.76))
+    w_size  = max(56, int(y_size * 0.74))
     f_white = _fn(w_size)
-    f_tag   = _fn(30)
-    f_sub   = _fn(34)
-    f_heart = _fn(52)
-    f_badge = _fn(32)
+    f_tag   = _fn(28)
+    f_heart = _fn(50)
+    f_badge = _fn(31)
 
-    lh_y = int(y_size  * 1.18)
-    lh_w = int(w_size  * 1.18)
+    lh_y = int(y_size  * 1.20)
+    lh_w = int(w_size  * 1.20)
 
-    # Layout: ♥ + HUGOT tag → yellow line → white line → subtitle
-    H_HEART = 66
-    H_TAG   = 50
-    GAP     = 14
-    H_SUB   = 44
-    total   = (H_HEART + GAP + H_TAG + GAP
-               + lh_y
-               + (lh_w + GAP if w_txt else 0)
-               + GAP + H_SUB)
-    base_y  = max(44, (H - total) // 2)
+    # ── 5. Vertical layout (centered in left text zone, clear of badge) ───────
+    H_TAG = 44
+    GAP   = 18
+    total = H_TAG + GAP + lh_y + (lh_w + GAP if w_txt else 0)
+    avail = H - BADGE_H - 60
+    base_y     = max(40, (avail - total) // 2 + 20)
+    tag_cy     = base_y + H_TAG // 2
+    yellow_cy  = base_y + H_TAG + GAP + lh_y // 2
+    white_cy   = yellow_cy + lh_y // 2 + GAP + lh_w // 2 if w_txt else 0
 
-    heart_cy  = base_y + H_HEART // 2
-    tag_y     = base_y + H_HEART + GAP
-    yellow_cy = tag_y + H_TAG + GAP + lh_y // 2
-    white_cy  = yellow_cy + lh_y // 2 + GAP + lh_w // 2 if w_txt else 0
-    sub_cy    = (white_cy + lh_w // 2 + GAP) if w_txt else (yellow_cy + lh_y // 2 + GAP)
-
-    # ── 4. Glow pass (blurred shadow behind text) ────────────────────────────
+    # ── 6. Glow blob behind text (large soft dark halo for readability) ───────
     glow = Image.new("RGBA", (W, H), (0, 0, 0, 0))
     gd   = ImageDraw.Draw(glow)
-    for ox, oy in [(-11,-11),(11,-11),(-11,11),(11,11),(0,-14),(0,14),(-14,0),(14,0)]:
-        gd.text((TX + ox, yellow_cy + oy), y_txt, font=f_yellow, fill=(0, 0, 0, 255), anchor="lm")
+    for ox, oy in [(-16, -16), (16, -16), (-16, 16), (16, 16),
+                   (0, -20), (0, 20), (-20, 0), (20, 0)]:
+        gd.text((TX + ox, yellow_cy + oy), y_txt, font=f_yellow,
+                fill=(0, 0, 0, 210), anchor="lm")
         if w_txt:
-            gd.text((TX + ox, white_cy + oy), w_txt, font=f_white, fill=(0, 0, 0, 255), anchor="lm")
-    glow = glow.filter(ImageFilter.GaussianBlur(radius=12))
+            gd.text((TX + ox, white_cy + oy), w_txt, font=f_white,
+                    fill=(0, 0, 0, 210), anchor="lm")
+    glow = glow.filter(ImageFilter.GaussianBlur(radius=22))
     img  = img.convert("RGBA")
-    img  = Image.alpha_composite(img, glow)
-    img  = img.convert("RGB")
+    img  = Image.alpha_composite(img, glow).convert("RGB")
     draw = ImageDraw.Draw(img)
 
-    # ── 5. ♥ Heart symbol ────────────────────────────────────────────────────
-    draw.text((TX + 3, heart_cy + 3), "\u2665", font=f_heart, fill=(90, 0, 15), anchor="lm")
-    draw.text((TX,     heart_cy),     "\u2665", font=f_heart, fill=RED,          anchor="lm")
+    # ── 7. ♥ Heart + HUGOT pill tag ───────────────────────────────────────────
+    draw.text((TX + 3, tag_cy + 3), "\u2665", font=f_heart, fill=(80, 0, 12), anchor="lm")
+    draw.text((TX,     tag_cy),     "\u2665", font=f_heart, fill=RED,          anchor="lm")
+    hb      = f_heart.getbbox("\u2665")
+    heart_w = hb[2] - hb[0] + 10
+    pill_x  = TX + heart_w
+    tag_lbl = "HUGOT" if is_hugot else genre_key.upper()[:6]
+    tb      = f_tag.getbbox(tag_lbl)
+    pill_w  = tb[2] - tb[0] + 22
+    draw.rounded_rectangle(
+        [pill_x, tag_cy - H_TAG // 2, pill_x + pill_w, tag_cy + H_TAG // 2],
+        radius=7, fill=RED,
+    )
+    draw.text((pill_x + 11, tag_cy), tag_lbl, font=f_tag, fill=WHITE, anchor="lm")
 
-    # ── 6. HUGOT tag pill (right of heart) ───────────────────────────────────
-    hb       = f_heart.getbbox("\u2665")
-    heart_w  = hb[2] - hb[0] + 14
-    pill_x   = TX + heart_w
-    tag_lbl  = "HUGOT" if is_hugot else "OPM"
-    tb       = f_tag.getbbox(tag_lbl)
-    pill_w   = tb[2] - tb[0] + 26
-    draw.rounded_rectangle([pill_x, tag_y, pill_x + pill_w, tag_y + H_TAG], radius=8, fill=RED)
-    draw.text((pill_x + 13, tag_y + H_TAG // 2), tag_lbl, font=f_tag, fill=WHITE, anchor="lm")
-
-    # ── 7. Yellow text (first line — the SHOCK) ───────────────────────────────
-    draw.text((TX + 4, yellow_cy + 4), y_txt, font=f_yellow, fill=(0, 0, 0), anchor="lm")
-    draw.text((TX,     yellow_cy),     y_txt, font=f_yellow, fill=YELLOW,    anchor="lm")
-    # Yellow underline
+    # ── 8. Yellow first line — thick stroke + fill ────────────────────────────
+    _stroke_text(draw, (TX, yellow_cy), y_txt, f_yellow, YELLOW, sw=10, anchor="lm")
+    # Bold yellow underline
     yb   = f_yellow.getbbox(y_txt)
-    ul_y = yellow_cy + lh_y // 2 + 6
-    draw.rectangle([TX, ul_y, TX + yb[2] - yb[0], ul_y + 6], fill=YELLOW)
+    ul_y = yellow_cy + lh_y // 2 + 5
+    draw.rectangle([TX, ul_y, TX + yb[2] - yb[0], ul_y + 7], fill=YELLOW)
 
-    # ── 8. White text (second line — the CONTEXT) ────────────────────────────
+    # ── 9. White second line — thick stroke + fill ────────────────────────────
     if w_txt:
-        draw.text((TX + 3, white_cy + 3), w_txt, font=f_white, fill=(0, 0, 0), anchor="lm")
-        draw.text((TX,     white_cy),     w_txt, font=f_white, fill=WHITE,     anchor="lm")
+        _stroke_text(draw, (TX, white_cy), w_txt, f_white, WHITE, sw=9, anchor="lm")
 
-    # ── 9. Subtitle (song title) ──────────────────────────────────────────────
-    sub_clean = re.sub(r'[^\x20-\x7E\u0080-\u024F]', '', title).strip()[:42]
-    draw.text((TX + 2, sub_cy + 2), sub_clean, font=f_sub, fill=(0, 0, 0),       anchor="lm")
-    draw.text((TX,     sub_cy),     sub_clean, font=f_sub, fill=(185, 185, 185), anchor="lm")
-
-    # ── 10. Bottom badge ──────────────────────────────────────────────────────
+    # ── 10. Bottom red badge ───────────────────────────────────────────────────
     draw.rectangle([0, H - BADGE_H, W, H], fill=RED)
-    badge_txt = "OPM HUGOT PLAYLIST  \u2022  NEW SONG" if is_hugot else "SUBSCRIBE FOR MORE MUSIC"
+    badge_txt = "OPM HUGOT  \u2022  BAGONG KANTA" if is_hugot else "SUBSCRIBE FOR MORE MUSIC"
     draw.text((W // 2, H - BADGE_H // 2), badge_txt, font=f_badge, fill=WHITE, anchor="mm")
 
-    # ── 11. Top accent bar ────────────────────────────────────────────────────
-    draw.rectangle([0, 0, W, 6], fill=RED)
+    # ── 12. Thin top accent bar (4px) ─────────────────────────────────────────
+    draw.rectangle([0, 0, W, 4], fill=RED)
 
     img.save(output_path, "PNG", quality=95)
     print(f"[thumb] Music thumbnail saved: {output_path}")

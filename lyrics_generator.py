@@ -71,6 +71,33 @@ GENRE_PROMPTS = {
             "Structure: [Verse 1], [Chorus], [Verse 2], [Chorus], [Bridge], [Final Chorus]"
         ),
     },
+    "pinoy_rant": {
+        "suno_style": (
+            "Pinoy rant rap, angry Tagalog hip hop, social commentary, trap beat, "
+            "frustrated Filipino voice, political satire, raw emotional delivery, spoken word"
+        ),
+        "instruction": (
+            "Write a raw angry Pinoy rant rap/spoken word song in Tagalog about the trending issue. "
+            "Channel the FRUSTRATION of an ordinary Filipino — rising prices, broken government promises, "
+            "corruption, traffic, lack of ayuda, or whatever the trending issue is about. "
+            "Be specific, sarcastic, and painfully relatable. Quotable punchlines. "
+            "DO NOT sugarcoat — this is a RANT. But end with a sliver of stubborn Filipino resilience. "
+            "Structure: [Intro], [Verse 1], [Hook], [Verse 2], [Hook], [Bridge], [Outro]"
+        ),
+    },
+    "pinoy_protest_anthem": {
+        "suno_style": (
+            "Filipino protest anthem, OPM rock, powerful, emotional choir, "
+            "Freddie Aguilar inspired, Noel Cabangon style, acoustic builds to electric, call to action"
+        ),
+        "instruction": (
+            "Write a powerful Filipino protest anthem in Tagalog inspired by the trending issue. "
+            "It should start quietly and build to a rousing, fist-raising chorus. "
+            "Channel the spirit of Freddie Aguilar's 'Bayan Ko', APO's 'American Junk', or Noel Cabangon. "
+            "About standing up, demanding accountability, and Filipino resilience and dignity. "
+            "Structure: [Verse 1], [Chorus], [Verse 2], [Chorus], [Bridge], [Final Chorus]"
+        ),
+    },
 }
 
 
@@ -167,25 +194,30 @@ def generate_tagalog_lyrics(
     genre = GENRE_PROMPTS.get(genre_key, GENRE_PROMPTS["hugot_ballad"])
 
     system_prompt = (
-        "You are a professional OPM (Original Pilipino Music) songwriter. "
-        "You write viral, emotionally resonant hugot songs in Tagalog and Taglish "
+        "You are a professional OPM (Original Pilipino Music) songwriter and political lyricist. "
+        "You write viral, emotionally resonant songs in Tagalog and Taglish "
         "that Filipinos share on social media because they deeply relate to them. "
         "Your lyrics are poetic, specific, and deeply human — not generic. "
-        "IMPORTANT OUTPUT FORMAT: Start DIRECTLY with [Verse 1] — no preamble, no title line, "
-        "no explanation, no English translations. Just the raw song lyrics with section labels. "
+        "IMPORTANT OUTPUT FORMAT: Start DIRECTLY with [Verse 1] or [Intro] — "
+        "no preamble, no title line, no explanation, no English translations. "
+        "Output ONLY the raw song lyrics with section labels. "
+        "These lyrics will be fed EXACTLY as written to a music AI — "
+        "write them as clean, singable, final lyrics with no notes, no commentary. "
         "Do NOT include any English-only lines — keep it Tagalog or Taglish."
     )
 
     user_prompt = (
-        f"Inspiration (trending story in the Philippines):\n{trend_context}\n\n"
+        f"Inspiration (trending news in the Philippines):\n{trend_context}\n\n"
         f"Genre instructions:\n{genre['instruction']}\n\n"
         f"Write a SHORT song (strictly 3-4 minutes when performed at normal ballad tempo). "
         f"Structure: [Verse 1] → [Pre-Chorus] → [Chorus] → [Verse 2] → [Chorus] → [Bridge] → [Outro]. "
         f"MAXIMUM 2 verses + 2 chorus repeats + 1 bridge + 1 outro. "
         f"Each section: maximum 4 lines. Keep it tight and punchy — less is more. "
-        f"The song theme should be inspired by the trending story above — adapt it "
-        f"into a universal hugot/heartbreak/relatable emotional experience that Filipinos "
-        f"can deeply connect with. Don't directly name celebrities or news events.\n"
+        f"The song should be inspired by the trending news above — channel it "
+        f"into a universal Filipino emotional experience: frustration, hope, resilience, "
+        f"or the feeling of being an ordinary Filipino facing real everyday struggles. "
+        f"Do NOT directly name news events, politicians, or headlines in the lyrics — "
+        f"make it poetic and universally relatable.\n"
         f"Make the opening line instantly hook the listener.\n"
     )
     if extra_instructions:
@@ -270,7 +302,7 @@ def generate_viral_yt_title(story_title: str, lyrics: str) -> str:
     """
     api_key = os.getenv("OPENROUTER_API_KEY", "")
     if not api_key:
-        return story_title[:100]
+        return story_title[:92].rstrip() + " | Music"
 
     messages = [
         {
@@ -291,31 +323,33 @@ def generate_viral_yt_title(story_title: str, lyrics: str) -> str:
     try:
         raw = _call_openrouter(messages, _MODELS[0])
         title = raw.strip().strip('"\'').split("\n")[0].strip()
-        return title[:100] if title else story_title[:100]
+        base = title if title else story_title
+        # Trim to leave room for " | Music" suffix (8 chars)
+        return base[:92].rstrip() + " | Music"
     except Exception:
-        return story_title[:100]
+        return story_title[:92].rstrip() + " | Music"
 
 
 def generate_pinned_comment(story_title: str, lyrics: str) -> str:
     """
-    Generate a viral pinned comment: emotional reflection + hitting lyric + engagement question + share CTA.
+    Generate a viral pinned comment tied to the trending news topic.
     """
     api_key = os.getenv("OPENROUTER_API_KEY", "")
     if not api_key:
-        return "💔 Para sa lahat ng nasaktan... Alam ko kung paano 'yan.\n\nI-share mo 'to sa taong kailangan marinig ito 👇"
+        return "🇵🇭 Para sa bawat Pilipinong may nararamdaman tungkol dito...\n\nI-share mo 'to sa kaibigan mong kailangan marinig ito 👇"
 
     messages = [
         {
             "role": "user",
             "content": (
-                f"Song inspired by: \"{story_title}\"\n"
+                f"Trending news topic: \"{story_title}\"\n"
                 f"Sample lyrics:\n{lyrics[:400]}\n\n"
                 "Write a short pinned YouTube comment (4 lines max) that:\n"
-                "1. Reflects emotionally on the song in Tagalog/Taglish\n"
-                "2. Quotes the most emotionally hitting lyric line from above (in quotes)\n"
-                "3. Asks viewers a direct question to drive replies (e.g., 'Sino ang nasa isip mo habang naririnig ito?')\n"
-                "4. Ends with: 'I-share mo 'to sa taong kailangan marinig ito 💔'\n"
-                "Use emojis naturally. Keep it real and personal, not corporate."
+                "1. Reacts to the trending news topic in Tagalog/Taglish — what most Filipinos are feeling right now\n"
+                "2. Quotes the most powerful lyric line from above (in quotes)\n"
+                "3. Asks viewers a question about the topic to drive replies (e.g., 'Ano ang nararamdaman mo tungkol dito?')\n"
+                "4. Ends with: 'I-share mo 'to sa lahat ng Pilipinong kailangan marinig ito 🇵🇭'\n"
+                "Use emojis naturally. Keep it passionate and real."
             ),
         }
     ]
@@ -323,22 +357,22 @@ def generate_pinned_comment(story_title: str, lyrics: str) -> str:
         raw = _call_openrouter(messages, _MODELS[0])
         return raw.strip()[:600]
     except Exception:
-        return "💔 Para sa lahat ng nasaktan... Alam ko kung paano 'yan.\n\nI-share mo 'to sa taong kailangan marinig ito 👇"
+        return "🇵🇭 Para sa bawat Pilipinong may nararamdaman tungkol dito...\n\nI-share mo 'to sa kaibigan mong kailangan marinig ito 👇"
 
 
 def generate_viral_story_segments(story_title: str, story_description: str, duration: float) -> list:
     """
-    Rewrite a Reddit story into viral Tagalog/Taglish text cards that fill the
-    entire video duration. Returns a list of short strings (one per on-screen card).
+    Rewrite a PH trending news story into viral Tagalog text cards for the full video duration.
+    Returns a list of short strings (one per on-screen card).
 
     Target: ~1 card per 5 seconds (e.g. 270s → ~54 cards).
     """
     target_cards = max(20, min(60, int(duration / 5)))
 
     fallback = [
-        f"📖 {story_title[:60]}" if story_title else "📖 Isang tunay na kwento...",
-        "Maniwala ka man o hindi, nangyari talaga ito...",
-        "Handa ka na ba? 👇",
+        f"TRENDING: {story_title[:60]}" if story_title else "Trending ngayon sa Pilipinas...",
+        "Ito ang usap-usapan ng buong bansa ngayon.",
+        "Alamin natin kung bakit. 👇",
     ]
 
     api_key = os.getenv("OPENROUTER_API_KEY", "")
@@ -352,23 +386,22 @@ def generate_viral_story_segments(story_title: str, story_description: str, dura
         {
             "role": "user",
             "content": (
-                f"Reddit post title: \"{story_title}\"\n"
-                f"Full story:\n{context}\n\n"
-                "You are writing text cards for a VIRAL Filipino YouTube channel in the style of "
-                "'Reddit Story + OPM music' videos that get 1-5 million views each.\n\n"
+                f"Trending news in the Philippines: \"{story_title}\"\n"
+                f"News details:\n{context}\n\n"
+                "You are writing text cards for a VIRAL Filipino YouTube channel that covers trending PH news "
+                "set to OPM music — like a news explainer but emotional and conversational.\n\n"
                 "YOUR TASK:\n"
-                f"1. Rewrite this story into EXACTLY {target_cards} short text cards.\n"
-                "2. LANGUAGE: TAGALOG ONLY. Pure Filipino — NOT English, NOT Taglish. "
-                "Use natural Filipino internet slang (e.g. 'grabe', 'shet', 'naman', 'talaga', 'char', 'luh', 'hindi ko alam'). "
-                "Keep it conversational, like a friend retelling the story sa grupong chat.\n"
-                "3. Each card = 1-2 punchy sentences, MAX 15 words total. Easy to read in 4 seconds.\n"
-                "4. Card 1 = SHOCKING HOOK na pampatigil ng scroll. Simulan sa pinaka-emotional/dramatic na detalye.\n"
-                "5. Cards 2-5 = Ipaliwanag nang mabilis. Sino, ano, kailan.\n"
-                f"6. Cards 6-{target_cards - 4} = Ikwento nang may LUMALAKING TENSION. Mag-cliffhanger tuwing ika-5 card.\n"
-                f"7. Cards {target_cards - 3}-{target_cards} = Emotional climax + punchline + hugot reflection.\n"
-                "8. Emojis (💔 😭 😤 👀 🙃) — max 1 per card, gamitin nang maingat.\n"
+                f"1. Explain this news story in EXACTLY {target_cards} short text cards.\n"
+                "2. LANGUAGE: TAGALOG ONLY. Conversational Filipino — like telling the news to a friend on chat. "
+                "Use Filipino internet slang naturally ('grabe', 'shet', 'totoo ba to', 'luh', 'talaga', 'naman').\n"
+                "3. Each card = 1-2 punchy sentences, MAX 15 words. Easy to read in 4 seconds.\n"
+                "4. Card 1 = HOOK: Start with the most shocking or surprising part of the news.\n"
+                "5. Cards 2-5 = Background: Sino, ano, kailan, saan.\n"
+                f"6. Cards 6-{target_cards - 4} = Full story with rising tension and key details.\n"
+                f"7. Cards {target_cards - 3}-{target_cards} = Reaction + emotional punchline + Filipino resilience/call to action.\n"
+                "8. Emojis (😤 😱 🇵🇭 💪 🔥 👀) — max 1 per card, gamitin nang maingat.\n"
                 "9. WALANG hashtag. WALANG 'Part 1/2'. WALANG card numbers. WALANG bullet points.\n\n"
-                f"OUTPUT FORMAT: Exactly {target_cards} linya, isa lang bawat card, wala nang iba:\n"
+                f"OUTPUT FORMAT: Exactly {target_cards} linya, isa lang bawat card:\n"
                 "line1\nline2\nline3\n..."
             ),
         }
@@ -411,18 +444,18 @@ def generate_story_cards(story_title: str, story_description: str) -> dict:
     Returns {"intro": [str x5], "mid": [str x2]}
 
     These cards play over the instrumental intro (0-22s) to hook the viewer
-    with the real Reddit story before the vocals kick in.
+    with the trending news story before the vocals kick in.
     """
     fallback_intro = [
-        "Isang tunay na kwento...",
-        story_title[:60] if story_title else "Sabi niya mahal niya ako.",
-        "Pero pinili niya pa rin ang iba.",
-        "Ganito ang mahalin ang taong hindi mo mapipigilan.",
-        "Ang kantang ito ay para sa lahat ng nasaktan.",
+        "Trending ngayon sa Pilipinas...",
+        story_title[:60] if story_title else "Ito ang usap-usapan ng bansa.",
+        "Ito ang nararamdaman ng bawat Pilipino.",
+        "Handa ka na bang marinig ang buong kwento?",
+        "Ang kantang ito ay para sa lahat ng Pilipino.",
     ]
     fallback_mid = [
-        "Hindi mo kasalanan ang umasa.",
-        "Mahal ka ng taong hindi mo pa nakilala.",
+        "Hindi tayo titigil sa pakikipaglaban.",
+        "Sama-sama tayong babangon.",
     ]
 
     api_key = os.getenv("OPENROUTER_API_KEY", "")
@@ -434,16 +467,16 @@ def generate_story_cards(story_title: str, story_description: str) -> dict:
         {
             "role": "user",
             "content": (
-                f"Reddit story: \"{story_title}\"\n"
-                f"Context: {context}\n\n"
-                "Gumawa ng text cards para sa Filipino viral hugot music video.\n"
+                f"Trending news topic in the Philippines: \"{story_title}\"\n"
+                f"Details: {context}\n\n"
+                "Gumawa ng text cards para sa Filipino viral news + OPM music video.\n"
                 "3 intro cards (max 8 words bawat isa) at 2 mid-video quotes (max 8 words).\n"
                 "Tagalog/Taglish. Walang hashtag. Emotional at relatable.\n\n"
-                "Card 1: Ang painful na nangyari (short, punchy — the hook)\n"
-                "Card 2: Kung paano nasaktan (the emotional gut-punch)\n"
-                "Card 3: Dedication ('Ang kantang ito ay para sa...')\n"
-                "Mid 1: Pinaka-masakit na linya (most painful insight, max 8 words)\n"
-                "Mid 2: Pang-aaliw o closure (comforting close, max 8 words)\n\n"
+                "Card 1: Ang pinaka-shocking na detalye ng balita (short, punchy hook)\n"
+                "Card 2: Kung bakit mahalaga ito sa bawat Pilipino\n"
+                "Card 3: Dedication ('Ang kantang ito ay para sa lahat ng Pilipino...')\n"
+                "Mid 1: Pinaka-makapangyarihang insight tungkol sa balita (max 8 words)\n"
+                "Mid 2: Pag-asa o tawag sa aksyon (max 8 words)\n\n"
                 "EXACTLY this format, nothing else:\n"
                 "INTRO:\ncard1\ncard2\ncard3\nMID:\nquote1\nquote2"
             ),

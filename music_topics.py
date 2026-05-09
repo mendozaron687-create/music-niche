@@ -218,12 +218,66 @@ GENRES = {
         "video_style": "nature",
         "lang": "tl",
     },
+
+    # ── Political / Rant / Social Commentary genres ─────────────────────────
+    # Triggered by political/social trending topics on YouTube PH.
+    # Inspired by Filipino frustration with government, corruption, daily struggles.
+
+    "pinoy_rant": {
+        "style": "Pinoy rant rap, angry Tagalog hip hop, social commentary, spoken word, trap beat, frustrated Filipino, political satire, raw vocals",
+        "title_templates": [
+            "{song_title} 🔥 | Pinoy Rant Song",
+            "{song_title} — Galit na Galit na Pilipino 😤",
+            "{song_title} | OPM Social Commentary 2026",
+            "{song_title} — Boses ng Bayan 🇵🇭",
+            "{song_title} | Pinoy Protest Song 2026",
+        ],
+        "lyric_prompt": (
+            "angry Pinoy rant rap/spoken word in Tagalog about government corruption, "
+            "rising prices, broken promises, and everyday Filipino struggles. "
+            "Blunt, sarcastic, but emotionally raw — the kind of song a frustrated "
+            "Filipino worker sings after a long terrible day. Strong hook, quotable lines."
+        ),
+        "mood_tags": ["protest crowd", "night street manila", "traffic", "construction", "poverty urban"],
+        "youtube_tags": ["PinoyRant", "SocialCommentary", "PinoyRap", "TagalogRap",
+                         "PolitikaPH", "BosBayan", "OPM2026", "viral", "trending",
+                         "PhilippinesNews", "Hugot", "PinoyHiphop", "rantmusic",
+                         "PinoyProtestSong", "galit", "FrustratedFilipino"],
+        "video_style": "city",
+        "lang": "tl",
+    },
+    "pinoy_protest_anthem": {
+        "style": "Filipino protest anthem, OPM rock, powerful choir, emotional, Pinoy rally music, Noel Cabangon style, call to action, acoustic to electric build",
+        "title_templates": [
+            "{song_title} 🇵🇭 | Pinoy Protest Anthem",
+            "{song_title} — Laban Tayo! OPM 2026",
+            "{song_title} | Filipino Rally Song 🔊",
+            "{song_title} — Boses ng Sambayanan",
+            "{song_title} | OPM Protest Music 2026",
+        ],
+        "lyric_prompt": (
+            "a powerful Filipino protest anthem in Tagalog about standing up for truth, "
+            "fighting corruption, and the resilience of the Filipino people. "
+            "Inspired by Noel Cabangon, APO Hiking Society, and Freddie Aguilar. "
+            "Starts soft and builds to a rousing chorus that makes you want to raise your fist."
+        ),
+        "mood_tags": ["protest rally", "Philippine flag", "sunset Philippines", "crowd power", "fist raised"],
+        "youtube_tags": ["PinoyProtest", "ProtestAnthem", "OPMrock", "PinoyRock",
+                         "FreddieAguilar", "NoelCabangon", "Bayan", "LKB", "OPM2026",
+                         "PinoyPride", "TagalogRock", "FightingSpirit", "Philippines2026",
+                         "sambayanan", "laban", "PatrioticOPM"],
+        "video_style": "cinematic",
+        "lang": "tl",
+    },
 }
 
 
 def get_random_genre() -> tuple[str, dict]:
     """Return (genre_key, genre_dict) randomly — hugot/OPM genres only."""
-    hugot_keys = ["hugot_ballad", "hugot_opm_pop", "pinoy_rap_hugot", "opm_rnb_hugot", "pamana_folk_opm"]
+    hugot_keys = [
+        "hugot_ballad", "hugot_opm_pop", "pinoy_rap_hugot",
+        "opm_rnb_hugot", "pamana_folk_opm",
+    ]
     key = random.choice(hugot_keys)
     return key, GENRES[key]
 

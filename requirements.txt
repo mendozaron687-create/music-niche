@@ -12,3 +12,4 @@ flask
 apscheduler
 faster-whisper
 groq
+pytrends

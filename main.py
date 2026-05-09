@@ -346,6 +346,7 @@ _FIRST_COMMENTS = [
 OPM_GENRES = {
     "hugot_ballad", "hugot_opm_pop", "pinoy_rap_hugot",
     "opm_rnb_hugot", "pamana_folk_opm",
+    "pinoy_rant", "pinoy_protest_anthem",       # political/rant genres
 }
 
 # ── Main pipeline ───────────────────────────────────────────────────────────
@@ -465,6 +466,7 @@ async def create_music_video(
             output_path=thumbnail_path,
             video_path=final_path,
             story_hook=hook_text or None,
+            pexels_key=os.getenv("PEXELS_API_KEY", ""),
         )
 
         result = {
@@ -509,12 +511,15 @@ async def create_music_video(
     print(f"Style: {genre_dict['style'][:80]}")
     print(f"{'='*55}\n")
 
-    # Check credits
+    # Check credits (kie.ai may not expose this endpoint — treat -1 as unknown/skip)
     try:
         credits = get_credits()
-        print(f"[suno] Credits remaining: {credits}")
-        if credits < 30:
-            raise RuntimeError(f"[suno] Insufficient credits ({credits}) — need at least 30. Aborting before spending any.")
+        if credits == -1:
+            print("[suno] Credits endpoint unavailable — skipping credit check")
+        else:
+            print(f"[suno] Credits remaining: {credits}")
+            if credits < 10:
+                raise RuntimeError(f"[suno] Insufficient credits ({credits}) — need at least 10. Aborting before spending any.")
     except RuntimeError:
         raise
     except Exception as e:
@@ -534,15 +539,27 @@ async def create_music_video(
     trend_story = {}
 
     if genre_key in OPM_GENRES:
-        # OPM path: fetch real PH love stories from Reddit → OpenRouter LLM → Tagalog lyrics
-        from trending_ph import get_ph_love_stories, pick_hugot_story, format_story_context
+        # OPM/Rant path: fetch YouTube PH trending → classify genre → LLM lyrics
+        from trending_ph import (
+            get_ph_news_trending, pick_trending_story, format_trending_context,
+        )
         from lyrics_generator import generate_tagalog_lyrics, generate_song_title, GENRE_PROMPTS
 
-        print("[pipeline] Fetching PH love stories from Reddit...")
-        stories = get_ph_love_stories(max_results=15)
-        trend_story = pick_hugot_story(stories)
-        trend_context = format_story_context(trend_story)
-        print(f"[pipeline] Trending: {trend_story['title']}")
+        print("[pipeline] Fetching PH trending news...")
+        news_stories = get_ph_news_trending(max_results=20)
+
+        # Auto-select genre from trending topic (unless genre was explicitly passed)
+        if genre_key not in ("pinoy_rant", "pinoy_protest_anthem"):
+            trend_story, detected_genre = pick_trending_story(news_stories)
+            genre_key = detected_genre
+            genre_dict = get_genre(genre_key)
+            print(f"[pipeline] Auto-detected genre: {genre_key}")
+        else:
+            trend_story, _ = pick_trending_story(news_stories)
+        trend_context = format_trending_context(trend_story)
+
+        print(f"[pipeline] Trending topic: {trend_story['title']}")
+        print(f"[pipeline] Genre: {genre_key}")
 
         print("[pipeline] Generating Tagalog lyrics via OpenRouter...")
         lyrics, suno_style_override = generate_tagalog_lyrics(trend_context, genre_key=genre_key)
@@ -560,7 +577,7 @@ async def create_music_video(
         # Pinned first comment — LLM-generated emotional hook
         first_comment = generate_pinned_comment(trend_story["title"], lyrics)
 
-        # Story intro cards + mid-video pull quotes for the "Story + Soundtrack" format
+        # Story intro cards + mid-video pull quotes
         from lyrics_generator import generate_story_cards
         _sc_data = generate_story_cards(trend_story["title"], trend_story.get("description", ""))
         story_card_list = _sc_data.get("intro", [])
@@ -627,34 +644,26 @@ async def create_music_video(
         }, _cf, indent=2)
     print(f"[pipeline] Suno checkpoint saved → {_checkpoint_path}")
 
-    # Use the lyrics Suno actually sang (from task response) for captions.
+    # Always use our original lyrics for captions — never Suno's modified version.
+    # Suno may rewrite or paraphrase lyrics; our written lyrics are the canonical text
+    # for captions/subtitles. Suno's version is saved for reference only.
+    caption_lyrics = lyrics
     suno_lyrics = track.get("suno_lyrics", "").strip()
-    caption_lyrics = suno_lyrics if suno_lyrics else lyrics
     if suno_lyrics and suno_lyrics != lyrics:
         suno_lyrics_path = os.path.join(output_dir, "lyrics_suno.txt")
         with open(suno_lyrics_path, "w", encoding="utf-8") as f:
             f.write(suno_lyrics)
-        print(f"[pipeline] Suno lyrics saved ({len(suno_lyrics)} chars) → lyrics_suno.txt")
+        print(f"[pipeline] Suno drifted from our lyrics — saved to lyrics_suno.txt (not used for captions)")
     else:
-        print("[pipeline] Suno lyrics match our input (no drift)")
+        print("[pipeline] Suno lyrics match our input")
 
     # 4. Download audio then trim to max 270s (4.5 min) for watchability
     audio_path = os.path.join(output_dir, "music.mp3")
     download_audio(audio_url, audio_path)
     actual_duration = _trim_audio(audio_path, max_sec=270, fade_sec=5)
 
-    # 4b. Generate full-duration Tagalog story segments (replaces captions entirely)
+    # 4b. Story segments disabled — lyrics are shown on screen via segment-level Whisper sync.
     story_segments_list = None
-    is_opm_genre = genre_key in OPM_GENRES
-    if is_opm_genre and trend_story:
-        from lyrics_generator import generate_viral_story_segments
-        print("[pipeline] Generating viral story segments...")
-        story_segments_list = generate_viral_story_segments(
-            story_title=trend_story["title"],
-            story_description=trend_story.get("description", ""),
-            duration=actual_duration,
-        )
-        print(f"[pipeline] Story segments: {len(story_segments_list)} cards across {actual_duration:.0f}s")
 
     # 5. Build music video
     print("[pipeline] Building music video...")
@@ -669,7 +678,7 @@ async def create_music_video(
         hook_text=hook_text,
         story_cards=story_card_list or None,
         pull_quotes=pull_quote_list or None,
-        story_segments=story_segments_list or None,
+        story_segments=None,
         song_title=song_title or title,
     )
 
@@ -686,6 +695,7 @@ async def create_music_video(
         output_path=thumbnail_path,
         video_path=final_path,
         story_hook=hook_text or None,
+        pexels_key=os.getenv("PEXELS_API_KEY", ""),
     )
 
     # 7. Build metadata (chapters from subtitle file + Filipino CTA for OPM)
