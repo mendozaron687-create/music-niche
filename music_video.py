@@ -350,15 +350,15 @@ def _whisper_word_captions(audio_path: str, words_per_line: int = 6, lyrics_hint
     #   condition_on_previous_text=False — prevents repetition loops
     #   no_speech_threshold=0.1  — don't skip quiet/melodic segments
     #   temperature=0.0  — deterministic; combined with above avoids loops
+    # Check model cache BEFORE importing faster_whisper to avoid onnxruntime init hang in CI
+    model_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "models", "whisper-small")
+    if not os.path.isdir(os.path.join(model_dir, "models--Systran--faster-whisper-small")):
+        print("[whisper] Small model not cached locally — skipping local transcription (CI mode)")
+        return None
     try:
         from faster_whisper import WhisperModel  # noqa: F401 (checked via _make_whisper_model)
     except ImportError:
         print("[whisper] faster-whisper not installed")
-        return None
-
-    model_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "models", "whisper-small")
-    if not os.path.isdir(os.path.join(model_dir, "models--Systran--faster-whisper-small")):
-        print("[whisper] Small model not cached locally — skipping local transcription (CI mode)")
         return None
     try:
         print("[whisper] Local faster-whisper (small, tl, anti-hallucination)...")
@@ -418,14 +418,14 @@ def _detect_vocal_onset(audio_path: str) -> float | None:
     Returns the start time of the first detected word, or None on failure.
     Downloads 'base' model (~150MB) to models/whisper-base/ on first run.
     """
-    try:
-        from faster_whisper import WhisperModel
-    except ImportError:
-        return None
-
+    # Check model cache BEFORE importing faster_whisper to avoid onnxruntime init hang in CI
     model_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "models", "whisper-base")
     if not os.path.isdir(os.path.join(model_dir, "models--Systran--faster-whisper-base")):
         print("[whisper] Base model not cached locally — skipping vocal onset detection (CI mode)")
+        return None
+    try:
+        from faster_whisper import WhisperModel
+    except ImportError:
         return None
     try:
         print("[whisper] Detecting vocal onset...")
@@ -517,12 +517,14 @@ def _get_whisper_segment_times(audio_path: str, lyrics_hint: str = "") -> list[t
             print(f"[subs] Groq timing failed: {e}")
 
     # ── Local faster-whisper (word_timestamps=True) ───────────────────────
+    # Check model cache BEFORE importing faster_whisper to avoid onnxruntime init hang in CI
+    _wst_model_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "models", "whisper-small")
+    if not os.path.isdir(os.path.join(_wst_model_dir, "models--Systran--faster-whisper-small")):
+        print("[whisper] Small model not cached locally — skipping segment timing (CI mode)")
+        return None
     try:
         from faster_whisper import WhisperModel  # noqa: F401
-        model_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "models", "whisper-small")
-        if not os.path.isdir(os.path.join(model_dir, "models--Systran--faster-whisper-small")):
-            print("[whisper] Small model not cached locally — skipping segment timing (CI mode)")
-            return None
+        model_dir = _wst_model_dir
         os.environ.setdefault("HF_HUB_DISABLE_SYMLINKS_WARNING", "1")
         model = _make_whisper_model("small", model_dir)
         seg_gen, _ = model.transcribe(

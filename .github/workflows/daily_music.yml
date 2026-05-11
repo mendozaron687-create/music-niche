@@ -87,6 +87,8 @@ jobs:
           restore-keys: used-stories-
 
       - name: Generate and post music video
+        env:
+          CUDA_VISIBLE_DEVICES: ""   # prevent onnxruntime from probing CUDA and hanging
         run: |
           # Use manually specified genre, or let main.py pick randomly
           if [ -n "${{ github.event.inputs.genre }}" ]; then
