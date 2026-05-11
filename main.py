@@ -566,12 +566,12 @@ async def create_music_video(
 
         # Short Tagalog song title (for Suno music generation)
         print("[pipeline] Generating song title...")
-        song_title = generate_song_title(lyrics, trend_story["title"])
+        song_title = generate_song_title(lyrics, trend_story["title"], genre_key=genre_key)
         print(f"[pipeline] Song title: {song_title}")
 
         # Viral YouTube title — story-driven hook in Tagalog (for upload & thumbnail)
         from lyrics_generator import generate_viral_yt_title, generate_pinned_comment
-        yt_title = generate_viral_yt_title(trend_story["title"], lyrics)
+        yt_title = generate_viral_yt_title(trend_story["title"], lyrics, genre_key=genre_key)
         print(f"[pipeline] YouTube title: {yt_title}")
 
         # Pinned first comment — LLM-generated emotional hook

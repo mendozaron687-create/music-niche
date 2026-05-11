@@ -263,27 +263,36 @@ def _extract_title(text: str, fallback: str) -> str:
     return text.strip()[:60]
 
 
-def generate_song_title(lyrics: str, trend_title: str) -> str:
-    """Ask the LLM to suggest a catchy OPM song title based on the lyrics."""
+_RANT_GENRES = {"pinoy_rant", "pinoy_protest_anthem"}
+
+
+def generate_song_title(lyrics: str, trend_title: str, genre_key: str = "") -> str:
+    """Ask the LLM to suggest a catchy OPM song title based on the lyrics and topic."""
     api_key = os.getenv("OPENROUTER_API_KEY", "")
     if not api_key:
-        # Fallback: extract first memorable line
         for line in lyrics.splitlines():
             line = line.strip()
             if line and not line.startswith("[") and len(line) > 10:
                 return line[:60]
         return trend_title
 
-    messages = [
-        {
-            "role": "user",
-            "content": (
-                f"Given these OPM song lyrics:\n\n{lyrics[:800]}\n\n"
-                f"Suggest ONE short, catchy, viral OPM song title in Tagalog or Taglish. "
-                f"Should be 3-7 words max. Emotionally punchy. No quotes, just the title."
-            ),
-        }
-    ]
+    is_rant = genre_key in _RANT_GENRES
+    if is_rant:
+        title_instruction = (
+            f"Trending news topic: \"{trend_title}\"\n"
+            f"Song lyrics inspired by this topic:\n\n{lyrics[:600]}\n\n"
+            "Suggest ONE short, powerful Filipino song title in Tagalog or Taglish "
+            "that hints at the news topic (political frustration, protest, social issue). "
+            "Should be 3-6 words max. Bold and defiant. No quotes, just the title."
+        )
+    else:
+        title_instruction = (
+            f"Given these OPM song lyrics:\n\n{lyrics[:600]}\n\n"
+            "Suggest ONE short, catchy, viral OPM song title in Tagalog or Taglish. "
+            "Should be 3-7 words max. Emotionally punchy. No quotes, just the title."
+        )
+
+    messages = [{"role": "user", "content": title_instruction}]
     try:
         raw = _call_openrouter(messages, _MODELS[0])
         return _extract_title(raw, trend_title)
@@ -295,36 +304,51 @@ def generate_song_title(lyrics: str, trend_title: str) -> str:
         return trend_title
 
 
-def generate_viral_yt_title(story_title: str, lyrics: str) -> str:
+def generate_viral_yt_title(story_title: str, lyrics: str, genre_key: str = "") -> str:
     """
-    Generate a punchy story-driven YouTube title in Tagalog/Taglish.
-    These hook-style titles get clicked — not generic "— Filipino Heartbreak Song" suffixes.
+    Generate a punchy YouTube title in Tagalog/Taglish anchored to the trending topic.
+    Rant/protest genres: title must directly reference the news event.
+    Hugot/love genres: emotional hook style that reflects the story's theme.
     """
     api_key = os.getenv("OPENROUTER_API_KEY", "")
     if not api_key:
         return story_title[:92].rstrip() + " | Music"
 
-    messages = [
-        {
-            "role": "user",
-            "content": (
-                f"Reddit story inspiration: \"{story_title}\"\n"
-                f"First lyric lines:\n{lyrics[:300]}\n\n"
-                "Write ONE viral YouTube title in Tagalog or Taglish for this OPM hugot music video. "
-                "Style: emotional story hook, the kind Filipinos share on social media. "
-                "Examples of the right vibe:\n"
-                "- 'Sabi Niya Mahal Niya Ako... Tapos Pinili Niya Pa Rin Ang Iba'\n"
-                "- 'Isang Taon Na Hinintay Kita... Hindi Ka Naman Bumalik'\n"
-                "- 'Iniwanan Mo Ako Para Sa Iyong Ex... Tapos Nagsorry Ka Nang Matagal Na'\n"
-                "Max 90 characters. No hashtags. No quotes around the title. Just the title."
-            ),
-        }
-    ]
+    is_rant = genre_key in _RANT_GENRES
+
+    if is_rant:
+        content = (
+            f"Trending news topic: \"{story_title}\"\n"
+            f"Sample lyrics about this topic:\n{lyrics[:300]}\n\n"
+            "Write ONE punchy YouTube video title in Tagalog or Taglish that DIRECTLY references "
+            "this specific news topic — a Filipino viewer must instantly recognize what news event this is about. "
+            "Style: outraged, emotional, or eye-opening commentary — the kind shared on Facebook. "
+            "Examples for political/social topics:\n"
+            "- 'Bakit Nilaban Nila si Sara? Ang Boto Na Nagpagalit sa Pilipinas'\n"
+            "- 'Nagkamali Ba ang Kongreso? Ito ang Katotohanang Ayaw Nilang Marinig'\n"
+            "- 'Ang Boses ng Sambayanan — Laban o Talo ang mga Mamamayan?'\n"
+            "Max 90 characters. No hashtags. No markdown. No quotes around the title. Just the title."
+        )
+    else:
+        content = (
+            f"Trending story: \"{story_title}\"\n"
+            f"First lyric lines:\n{lyrics[:300]}\n\n"
+            "Write ONE viral YouTube title in Tagalog or Taglish for this OPM hugot music video. "
+            "The title should reflect the emotional theme of the trending story above — not generic romance. "
+            "Style: emotional story hook, the kind Filipinos share on social media. "
+            "Examples:\n"
+            "- 'Sabi Niya Mahal Niya Ako... Tapos Pinili Niya Pa Rin Ang Iba'\n"
+            "- 'Isang Taon Na Hinintay Kita... Hindi Ka Naman Bumalik'\n"
+            "- 'Iniwanan Mo Ako Para Sa Iyong Ex... Tapos Nagsorry Ka Nang Matagal Na'\n"
+            "Max 90 characters. No hashtags. No markdown. No quotes around the title. Just the title."
+        )
+
+    messages = [{"role": "user", "content": content}]
     try:
         raw = _call_openrouter(messages, _MODELS[0])
-        title = raw.strip().strip('"\'').split("\n")[0].strip()
+        # Strip markdown bold (**text**), quotes, and leading/trailing symbols
+        title = re.sub(r'\*+', '', raw).strip().strip('"\'').split("\n")[0].strip()
         base = title if title else story_title
-        # Trim to leave room for " | Music" suffix (8 chars)
         return base[:92].rstrip() + " | Music"
     except Exception:
         return story_title[:92].rstrip() + " | Music"
