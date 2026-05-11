@@ -924,11 +924,20 @@ def _preprocess_clips(clip_paths: list, work_dir: str, ffmpeg: str,
 
     for i, src in enumerate(clip_paths):
         dst = os.path.join(work_dir, f"_proc{i}.mp4")
-        # Skip if already done (crash recovery)
-        if os.path.exists(dst) and os.path.getsize(dst) > 100_000:
-            print(f"[video] Clip {i+1}/{len(clip_paths)} already preprocessed, skipping")
-            proc_paths.append(dst)
-            continue
+        # Skip if already done (crash recovery) — but delete if it looks corrupt
+        if os.path.exists(dst):
+            if os.path.getsize(dst) > 100_000:
+                # Quick sanity check: can ffmpeg read it?
+                probe = subprocess.run(
+                    [ffmpeg, "-v", "error", "-i", dst, "-f", "null", "-"],
+                    capture_output=True, timeout=15
+                )
+                if probe.returncode == 0:
+                    print(f"[video] Clip {i+1}/{len(clip_paths)} already preprocessed, skipping")
+                    proc_paths.append(dst)
+                    continue
+            print(f"[video] Clip {i+1}/{len(clip_paths)} cache corrupt, re-processing...")
+            os.remove(dst)
 
         pan = i % 4
         if pan == 0:
@@ -958,7 +967,7 @@ def _preprocess_clips(clip_paths: list, work_dir: str, ffmpeg: str,
             cmd += ["-an", "-pix_fmt", "yuv420p", dst]
             print(f"[video] Pre-processing clip {i+1}/{len(clip_paths)} ({label})...")
             with open(log_path, "a") as lf:
-                r = subprocess.run(cmd, stdout=lf, stderr=lf, timeout=180)
+                r = subprocess.run(cmd, stdout=lf, stderr=lf, timeout=600)
             if r.returncode == 0:
                 break
 
