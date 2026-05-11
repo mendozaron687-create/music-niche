@@ -357,6 +357,9 @@ def _whisper_word_captions(audio_path: str, words_per_line: int = 6, lyrics_hint
         return None
 
     model_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "models", "whisper-small")
+    if not os.path.isdir(os.path.join(model_dir, "models--Systran--faster-whisper-small")):
+        print("[whisper] Small model not cached locally — skipping local transcription (CI mode)")
+        return None
     try:
         print("[whisper] Local faster-whisper (small, tl, anti-hallucination)...")
         os.environ.setdefault("HF_HUB_DISABLE_SYMLINKS_WARNING", "1")
@@ -421,6 +424,9 @@ def _detect_vocal_onset(audio_path: str) -> float | None:
         return None
 
     model_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "models", "whisper-base")
+    if not os.path.isdir(os.path.join(model_dir, "models--Systran--faster-whisper-base")):
+        print("[whisper] Base model not cached locally — skipping vocal onset detection (CI mode)")
+        return None
     try:
         print("[whisper] Detecting vocal onset...")
         os.environ.setdefault("HF_HUB_DISABLE_SYMLINKS_WARNING", "1")
@@ -514,6 +520,9 @@ def _get_whisper_segment_times(audio_path: str, lyrics_hint: str = "") -> list[t
     try:
         from faster_whisper import WhisperModel  # noqa: F401
         model_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "models", "whisper-small")
+        if not os.path.isdir(os.path.join(model_dir, "models--Systran--faster-whisper-small")):
+            print("[whisper] Small model not cached locally — skipping segment timing (CI mode)")
+            return None
         os.environ.setdefault("HF_HUB_DISABLE_SYMLINKS_WARNING", "1")
         model = _make_whisper_model("small", model_dir)
         seg_gen, _ = model.transcribe(
