@@ -135,8 +135,11 @@ def get_audio_duration(audio_path: str) -> float:
 def _pexels_best_file(video: dict) -> dict | None:
     files = video.get("video_files", [])
     landscape = [f for f in files if f.get("width", 0) >= f.get("height", 0)]
-    hd = sorted(landscape or files, key=lambda x: x.get("width", 0), reverse=True)
-    return hd[0] if hd else None
+    pool = landscape or files
+    # Prefer SD/HD (≤1280px wide) to keep CI downloads fast; fall back to anything
+    small = [f for f in pool if 0 < f.get("width", 9999) <= 1280]
+    candidates = sorted(small or pool, key=lambda x: x.get("width", 0), reverse=True)
+    return candidates[0] if candidates else None
 
 
 def fetch_background_clips(
@@ -194,7 +197,7 @@ def fetch_background_clips(
         dest = os.path.join(output_dir, f"_clip{i}.mp4")
         print(f"[bg] Downloading clip {i+1}/{len(chosen)}...")
         try:
-            r = requests.get(vf["link"], stream=True, timeout=120)
+            r = requests.get(vf["link"], stream=True, timeout=(15, 30))
             with open(dest, "wb") as f:
                 for chunk in r.iter_content(8192):
                     f.write(chunk)
