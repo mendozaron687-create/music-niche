@@ -174,13 +174,21 @@ def upload_to_youtube(
     token_path = os.path.join(os.path.dirname(__file__), "token.json")
     creds_path = os.path.join(os.path.dirname(__file__), "credentials.json")
 
+    creds = None
     if os.path.exists(token_path):
         creds = Credentials.from_authorized_user_file(token_path, SCOPES)
-    else:
-        flow = InstalledAppFlow.from_client_secrets_file(creds_path, SCOPES)
-        creds = flow.run_local_server(port=0)
-        with open(token_path, "w") as f:
-            f.write(creds.to_json())
+
+    if not creds or not creds.valid:
+        if creds and creds.expired and creds.refresh_token:
+            from google.auth.transport.requests import Request
+            creds.refresh(Request())
+            with open(token_path, "w") as f:
+                f.write(creds.to_json())
+        else:
+            flow = InstalledAppFlow.from_client_secrets_file(creds_path, SCOPES)
+            creds = flow.run_local_server(port=0)
+            with open(token_path, "w") as f:
+                f.write(creds.to_json())
 
     youtube = build("youtube", "v3", credentials=creds)
     print("[yt] Uploading video...")
