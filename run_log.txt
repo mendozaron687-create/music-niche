@@ -1,0 +1,1283 @@
+﻿generate-and-post	Set up job	∩╗┐2026-05-04T17:08:07.1863913Z Current runner version: '2.334.0'
+generate-and-post	Set up job	2026-05-04T17:08:07.1900740Z ##[group]Runner Image Provisioner
+generate-and-post	Set up job	2026-05-04T17:08:07.1902081Z Hosted Compute Agent
+generate-and-post	Set up job	2026-05-04T17:08:07.1903206Z Version: 20260213.493
+generate-and-post	Set up job	2026-05-04T17:08:07.1904457Z Commit: 5c115507f6dd24b8de37d8bbe0bb4509d0cc0fa3
+generate-and-post	Set up job	2026-05-04T17:08:07.1905830Z Build Date: 2026-02-13T00:28:41Z
+generate-and-post	Set up job	2026-05-04T17:08:07.1906992Z Worker ID: {a0cda9cc-3927-401b-b8b9-409d2f27c974}
+generate-and-post	Set up job	2026-05-04T17:08:07.1908175Z Azure Region: westus
+generate-and-post	Set up job	2026-05-04T17:08:07.1909221Z ##[endgroup]
+generate-and-post	Set up job	2026-05-04T17:08:07.1911891Z ##[group]Operating System
+generate-and-post	Set up job	2026-05-04T17:08:07.1913018Z Ubuntu
+generate-and-post	Set up job	2026-05-04T17:08:07.1913954Z 24.04.4
+generate-and-post	Set up job	2026-05-04T17:08:07.1914863Z LTS
+generate-and-post	Set up job	2026-05-04T17:08:07.1915836Z ##[endgroup]
+generate-and-post	Set up job	2026-05-04T17:08:07.1916818Z ##[group]Runner Image
+generate-and-post	Set up job	2026-05-04T17:08:07.1917838Z Image: ubuntu-24.04
+generate-and-post	Set up job	2026-05-04T17:08:07.1918994Z Version: 20260413.86.1
+generate-and-post	Set up job	2026-05-04T17:08:07.1921439Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20260413.86/images/ubuntu/Ubuntu2404-Readme.md
+generate-and-post	Set up job	2026-05-04T17:08:07.1924729Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20260413.86
+generate-and-post	Set up job	2026-05-04T17:08:07.1926493Z ##[endgroup]
+generate-and-post	Set up job	2026-05-04T17:08:07.1928543Z ##[group]GITHUB_TOKEN Permissions
+generate-and-post	Set up job	2026-05-04T17:08:07.1931806Z Contents: write
+generate-and-post	Set up job	2026-05-04T17:08:07.1932983Z Metadata: read
+generate-and-post	Set up job	2026-05-04T17:08:07.1934115Z ##[endgroup]
+generate-and-post	Set up job	2026-05-04T17:08:07.1937248Z Secret source: Actions
+generate-and-post	Set up job	2026-05-04T17:08:07.1938523Z Prepare workflow directory
+generate-and-post	Set up job	2026-05-04T17:08:07.2719123Z Prepare all required actions
+generate-and-post	Set up job	2026-05-04T17:08:07.2776774Z Getting action download info
+generate-and-post	Set up job	2026-05-04T17:08:07.7837058Z Download action repository 'actions/checkout@v4' (SHA:34e114876b0b11c390a56381ad16ebd13914f8d5)
+generate-and-post	Set up job	2026-05-04T17:08:07.9195225Z Download action repository 'actions/setup-python@v5' (SHA:a26af69be951a213d495a4c3e4e4022e16d87065)
+generate-and-post	Set up job	2026-05-04T17:08:08.0049620Z Download action repository 'actions/cache@v4' (SHA:0057852bfaa89a56745cba8c7296529d2fc39830)
+generate-and-post	Set up job	2026-05-04T17:08:08.2117666Z Complete job name: generate-and-post
+generate-and-post	Checkout repo	∩╗┐2026-05-04T17:08:08.2821212Z ##[group]Run actions/checkout@v4
+generate-and-post	Checkout repo	2026-05-04T17:08:08.2822099Z with:
+generate-and-post	Checkout repo	2026-05-04T17:08:08.2822559Z   repository: youronlycoder001/llalalala
+generate-and-post	Checkout repo	2026-05-04T17:08:08.2823275Z   token: ***
+generate-and-post	Checkout repo	2026-05-04T17:08:08.2823697Z   ssh-strict: true
+generate-and-post	Checkout repo	2026-05-04T17:08:08.2824127Z   ssh-user: git
+generate-and-post	Checkout repo	2026-05-04T17:08:08.2824591Z   persist-credentials: true
+generate-and-post	Checkout repo	2026-05-04T17:08:08.2825074Z   clean: true
+generate-and-post	Checkout repo	2026-05-04T17:08:08.2825542Z   sparse-checkout-cone-mode: true
+generate-and-post	Checkout repo	2026-05-04T17:08:08.2826048Z   fetch-depth: 1
+generate-and-post	Checkout repo	2026-05-04T17:08:08.2826463Z   fetch-tags: false
+generate-and-post	Checkout repo	2026-05-04T17:08:08.2826891Z   show-progress: true
+generate-and-post	Checkout repo	2026-05-04T17:08:08.2827337Z   lfs: false
+generate-and-post	Checkout repo	2026-05-04T17:08:08.2827769Z   submodules: false
+generate-and-post	Checkout repo	2026-05-04T17:08:08.2828212Z   set-safe-directory: true
+generate-and-post	Checkout repo	2026-05-04T17:08:08.2828881Z env:
+generate-and-post	Checkout repo	2026-05-04T17:08:08.2829324Z   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+generate-and-post	Checkout repo	2026-05-04T17:08:08.2830091Z ##[endgroup]
+generate-and-post	Checkout repo	2026-05-04T17:08:08.3926605Z Syncing repository: youronlycoder001/llalalala
+generate-and-post	Checkout repo	2026-05-04T17:08:08.3928526Z ##[group]Getting Git version info
+generate-and-post	Checkout repo	2026-05-04T17:08:08.3929363Z Working directory is '/home/runner/work/llalalala/llalalala'
+generate-and-post	Checkout repo	2026-05-04T17:08:08.3930896Z [command]/usr/bin/git version
+generate-and-post	Checkout repo	2026-05-04T17:08:08.3978369Z git version 2.53.0
+generate-and-post	Checkout repo	2026-05-04T17:08:08.4003105Z ##[endgroup]
+generate-and-post	Checkout repo	2026-05-04T17:08:08.4020664Z Temporarily overriding HOME='/home/runner/work/_temp/5b714373-ebfc-409a-af05-ff6baffe0e6b' before making global git config changes
+generate-and-post	Checkout repo	2026-05-04T17:08:08.4023547Z Adding repository directory to the temporary git global config as a safe directory
+generate-and-post	Checkout repo	2026-05-04T17:08:08.4028008Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/llalalala/llalalala
+generate-and-post	Checkout repo	2026-05-04T17:08:08.4070466Z Deleting the contents of '/home/runner/work/llalalala/llalalala'
+generate-and-post	Checkout repo	2026-05-04T17:08:08.4075118Z ##[group]Initializing the repository
+generate-and-post	Checkout repo	2026-05-04T17:08:08.4082580Z [command]/usr/bin/git init /home/runner/work/llalalala/llalalala
+generate-and-post	Checkout repo	2026-05-04T17:08:08.4177875Z hint: Using 'master' as the name for the initial branch. This default branch name
+generate-and-post	Checkout repo	2026-05-04T17:08:08.4180475Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+generate-and-post	Checkout repo	2026-05-04T17:08:08.4182542Z hint: to use in all of your new repositories, which will suppress this warning,
+generate-and-post	Checkout repo	2026-05-04T17:08:08.4184085Z hint: call:
+generate-and-post	Checkout repo	2026-05-04T17:08:08.4184928Z hint:
+generate-and-post	Checkout repo	2026-05-04T17:08:08.4186431Z hint: 	git config --global init.defaultBranch <name>
+generate-and-post	Checkout repo	2026-05-04T17:08:08.4187828Z hint:
+generate-and-post	Checkout repo	2026-05-04T17:08:08.4189130Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+generate-and-post	Checkout repo	2026-05-04T17:08:08.4191475Z hint: 'development'. The just-created branch can be renamed via this command:
+generate-and-post	Checkout repo	2026-05-04T17:08:08.4192983Z hint:
+generate-and-post	Checkout repo	2026-05-04T17:08:08.4193817Z hint: 	git branch -m <name>
+generate-and-post	Checkout repo	2026-05-04T17:08:08.4194813Z hint:
+generate-and-post	Checkout repo	2026-05-04T17:08:08.4196277Z hint: Disable this message with "git config set advice.defaultBranchName false"
+generate-and-post	Checkout repo	2026-05-04T17:08:08.4199234Z Initialized empty Git repository in /home/runner/work/llalalala/llalalala/.git/
+generate-and-post	Checkout repo	2026-05-04T17:08:08.4203107Z [command]/usr/bin/git remote add origin https://github.com/youronlycoder001/llalalala
+generate-and-post	Checkout repo	2026-05-04T17:08:08.4263773Z ##[endgroup]
+generate-and-post	Checkout repo	2026-05-04T17:08:08.4267029Z ##[group]Disabling automatic garbage collection
+generate-and-post	Checkout repo	2026-05-04T17:08:08.4270884Z [command]/usr/bin/git config --local gc.auto 0
+generate-and-post	Checkout repo	2026-05-04T17:08:08.4274665Z ##[endgroup]
+generate-and-post	Checkout repo	2026-05-04T17:08:08.4276342Z ##[group]Setting up auth
+generate-and-post	Checkout repo	2026-05-04T17:08:08.4284525Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+generate-and-post	Checkout repo	2026-05-04T17:08:08.4322208Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+generate-and-post	Checkout repo	2026-05-04T17:08:08.4633402Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+generate-and-post	Checkout repo	2026-05-04T17:08:08.4678594Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+generate-and-post	Checkout repo	2026-05-04T17:08:08.4913201Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+generate-and-post	Checkout repo	2026-05-04T17:08:08.4948991Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+generate-and-post	Checkout repo	2026-05-04T17:08:08.5194981Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+generate-and-post	Checkout repo	2026-05-04T17:08:08.5231512Z ##[endgroup]
+generate-and-post	Checkout repo	2026-05-04T17:08:08.5233596Z ##[group]Fetching the repository
+generate-and-post	Checkout repo	2026-05-04T17:08:08.5245319Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +04cfbaa8008374c64f0defbef43c15f93a33f334:refs/remotes/origin/main
+generate-and-post	Checkout repo	2026-05-04T17:08:08.9916451Z From https://github.com/youronlycoder001/llalalala
+generate-and-post	Checkout repo	2026-05-04T17:08:08.9921044Z  * [new ref]         04cfbaa8008374c64f0defbef43c15f93a33f334 -> origin/main
+generate-and-post	Checkout repo	2026-05-04T17:08:08.9948374Z ##[endgroup]
+generate-and-post	Checkout repo	2026-05-04T17:08:08.9951059Z ##[group]Determining the checkout info
+generate-and-post	Checkout repo	2026-05-04T17:08:08.9953596Z ##[endgroup]
+generate-and-post	Checkout repo	2026-05-04T17:08:08.9956405Z [command]/usr/bin/git sparse-checkout disable
+generate-and-post	Checkout repo	2026-05-04T17:08:09.0011858Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+generate-and-post	Checkout repo	2026-05-04T17:08:09.0053718Z ##[group]Checking out the ref
+generate-and-post	Checkout repo	2026-05-04T17:08:09.0060904Z [command]/usr/bin/git checkout --progress --force -B main refs/remotes/origin/main
+generate-and-post	Checkout repo	2026-05-04T17:08:09.0165241Z Switched to a new branch 'main'
+generate-and-post	Checkout repo	2026-05-04T17:08:09.0171546Z branch 'main' set up to track 'origin/main'.
+generate-and-post	Checkout repo	2026-05-04T17:08:09.0185369Z ##[endgroup]
+generate-and-post	Checkout repo	2026-05-04T17:08:09.0237974Z [command]/usr/bin/git log -1 --format=%H
+generate-and-post	Checkout repo	2026-05-04T17:08:09.0279695Z 04cfbaa8008374c64f0defbef43c15f93a33f334
+generate-and-post	Set up Python 3.11	∩╗┐2026-05-04T17:08:09.0766107Z ##[group]Run actions/setup-python@v5
+generate-and-post	Set up Python 3.11	2026-05-04T17:08:09.0768006Z with:
+generate-and-post	Set up Python 3.11	2026-05-04T17:08:09.0769301Z   python-version: 3.11
+generate-and-post	Set up Python 3.11	2026-05-04T17:08:09.0770986Z   check-latest: false
+generate-and-post	Set up Python 3.11	2026-05-04T17:08:09.0772652Z   token: ***
+generate-and-post	Set up Python 3.11	2026-05-04T17:08:09.0774062Z   update-environment: true
+generate-and-post	Set up Python 3.11	2026-05-04T17:08:09.0775981Z   allow-prereleases: false
+generate-and-post	Set up Python 3.11	2026-05-04T17:08:09.0777296Z   freethreaded: false
+generate-and-post	Set up Python 3.11	2026-05-04T17:08:09.0778806Z env:
+generate-and-post	Set up Python 3.11	2026-05-04T17:08:09.0780319Z   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+generate-and-post	Set up Python 3.11	2026-05-04T17:08:09.0782164Z ##[endgroup]
+generate-and-post	Set up Python 3.11	2026-05-04T17:08:09.2563979Z (node:2035) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+generate-and-post	Set up Python 3.11	2026-05-04T17:08:09.2581769Z (Use `node --trace-deprecation ...` to show where the warning was created)
+generate-and-post	Set up Python 3.11	2026-05-04T17:08:09.2585182Z ##[group]Installed versions
+generate-and-post	Set up Python 3.11	2026-05-04T17:08:09.2602674Z Successfully set up CPython (3.11.15)
+generate-and-post	Set up Python 3.11	2026-05-04T17:08:09.2605283Z ##[endgroup]
+generate-and-post	Install system deps (ffmpeg + fonts)	∩╗┐2026-05-04T17:08:09.2855591Z ##[group]Run sudo apt-get update -qq
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:09.2857741Z ^[[36;1msudo apt-get update -qq^[[0m
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:09.2859693Z ^[[36;1msudo apt-get install -y ffmpeg \^[[0m
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:09.2863106Z ^[[36;1m  fonts-liberation fonts-liberation2 fonts-dejavu-core fonts-dejavu \^[[0m
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:09.2866030Z ^[[36;1m  libsndfile1 libsndfile1-dev^[[0m
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:09.2867912Z ^[[36;1mfc-cache -f -v^[[0m
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:09.2921099Z shell: /usr/bin/bash -e {0}
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:09.2922672Z env:
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:09.2924023Z   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:09.2926401Z   pythonLocation: /opt/hostedtoolcache/Python/3.11.15/x64
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:09.2929471Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.11.15/x64/lib/pkgconfig
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:09.2932736Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.15/x64
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:09.2935484Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.15/x64
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:09.2938267Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.15/x64
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:09.2941542Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.11.15/x64/lib
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:09.2943876Z ##[endgroup]
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:21.1149681Z Reading package lists...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:21.3022633Z Building dependency tree...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:21.3031478Z Reading state information...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:21.4796438Z fonts-liberation is already the newest version (1:2.1.5-3).
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:21.4797355Z fonts-liberation set to manually installed.
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:21.4798065Z fonts-dejavu-core is already the newest version (2.37-8).
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:21.4798799Z fonts-dejavu-core set to manually installed.
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:21.4799496Z fonts-dejavu is already the newest version (2.37-8).
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:21.4800414Z fonts-dejavu set to manually installed.
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:21.4801122Z The following additional packages will be installed:
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:21.4801972Z   i965-va-driver intel-media-va-driver libaacs0 libass9 libasyncns0
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:21.4802967Z   libavc1394-0 libavcodec60 libavdevice60 libavfilter9 libavformat60
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:21.4803858Z   libavutil58 libbdplus0 libblas3 libbluray2 libbs2b0 libcaca0
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:21.4804953Z   libcdio-cdda2t64 libcdio-paranoia2t64 libcdio19t64 libchromaprint1 libcjson1
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:21.4805987Z   libcodec2-1.2 libdav1d7 libdc1394-25 libdecor-0-0 libdecor-0-plugin-1-gtk
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:21.4806995Z   libflac-dev libflac12t64 libflite1 libgme0 libgsm1 libhwy1t64 libiec61883-0
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:21.4807907Z   libigdgmm12 libjack-jackd2-0 libjxl0.7 liblapack3 liblilv-0-0
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:21.4808874Z   libmbedcrypto7t64 libmp3lame0 libmpg123-0t64 libmpg123-dev libmysofa1
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:21.4809860Z   libogg-dev libopenal-data libopenal1 libopenmpt0t64 libopus-dev libopus0
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:21.4819575Z   libout123-0t64 libplacebo338 libpocketsphinx3 libpostproc57 libpulse0
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:21.4820967Z   librav1e0 libraw1394-11 librist4 librsvg2-2 librsvg2-common librubberband2
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:21.4822289Z   libsamplerate0 libsdl2-2.0-0 libserd-0-0 libshine3 libsndio7.0 libsord-0-0
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:21.4823394Z   libsoxr0 libspeex1 libsphinxbase3t64 libsratom-0-0 libsrt1.5-gnutls
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:21.4824452Z   libssh-gcrypt-4 libsvtav1enc1d1 libswresample4 libswscale7 libsyn123-0t64
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:21.4825530Z   libtheora0 libtwolame0 libudfread0 libunibreak5 libva-drm2 libva-x11-2
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:21.4827052Z   libva2 libvdpau1 libvidstab1.1 libvorbis-dev libvorbisenc2 libvpl2 libvpx9
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:21.4828077Z   libx264-164 libx265-199 libxcb-shape0 libxv1 libxvidcore4 libzimg2
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:21.4829045Z   libzix-0-0 libzvbi-common libzvbi0t64 mesa-va-drivers mesa-vdpau-drivers
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:21.4830447Z   ocl-icd-libopencl1 pocketsphinx-en-us va-driver-all vdpau-driver-all
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:21.4831334Z Suggested packages:
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:21.4832120Z   ffmpeg-doc i965-va-driver-shaders libcuda1 libnvcuvid1 libnvidia-encode1
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:21.4833157Z   libbluray-bdj jackd2 libportaudio2 opus-tools pulseaudio libraw1394-doc
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:21.4834469Z   librsvg2-bin serdi sndiod sordi speex opencl-icd libvdpau-va-gl1
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:21.5569455Z The following NEW packages will be installed:
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:21.5571138Z   ffmpeg fonts-liberation2 i965-va-driver intel-media-va-driver libaacs0
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:21.5572566Z   libass9 libasyncns0 libavc1394-0 libavcodec60 libavdevice60 libavfilter9
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:21.5574296Z   libavformat60 libavutil58 libbdplus0 libblas3 libbluray2 libbs2b0 libcaca0
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:21.5575744Z   libcdio-cdda2t64 libcdio-paranoia2t64 libcdio19t64 libchromaprint1 libcjson1
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:21.5577262Z   libcodec2-1.2 libdav1d7 libdc1394-25 libdecor-0-0 libdecor-0-plugin-1-gtk
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:21.5578612Z   libflac-dev libflac12t64 libflite1 libgme0 libgsm1 libhwy1t64 libiec61883-0
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:21.5579798Z   libigdgmm12 libjack-jackd2-0 libjxl0.7 liblapack3 liblilv-0-0
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:21.5581261Z   libmbedcrypto7t64 libmp3lame0 libmpg123-0t64 libmpg123-dev libmysofa1
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:21.5582638Z   libogg-dev libopenal-data libopenal1 libopenmpt0t64 libopus-dev libopus0
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:21.5584073Z   libout123-0t64 libplacebo338 libpocketsphinx3 libpostproc57 libpulse0
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:21.5585369Z   librav1e0 libraw1394-11 librist4 librsvg2-2 librsvg2-common librubberband2
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:21.5586691Z   libsamplerate0 libsdl2-2.0-0 libserd-0-0 libshine3 libsndfile1
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:21.5588013Z   libsndfile1-dev libsndio7.0 libsord-0-0 libsoxr0 libspeex1 libsphinxbase3t64
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:21.5589292Z   libsratom-0-0 libsrt1.5-gnutls libssh-gcrypt-4 libsvtav1enc1d1
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:21.5590864Z   libswresample4 libswscale7 libsyn123-0t64 libtheora0 libtwolame0 libudfread0
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:21.5592041Z   libunibreak5 libva-drm2 libva-x11-2 libva2 libvdpau1 libvidstab1.1
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:21.5593225Z   libvorbis-dev libvorbisenc2 libvpl2 libvpx9 libx264-164 libx265-199
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:21.5594463Z   libxcb-shape0 libxv1 libxvidcore4 libzimg2 libzix-0-0 libzvbi-common
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:21.5595719Z   libzvbi0t64 mesa-va-drivers mesa-vdpau-drivers ocl-icd-libopencl1
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:21.5596955Z   pocketsphinx-en-us va-driver-all vdpau-driver-all
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:21.5798555Z 0 upgraded, 108 newly installed, 0 to remove and 58 not upgraded.
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:21.5799797Z Need to get 95.6 MB of archives.
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:21.5801318Z After this operation, 233 MB of additional disk space will be used.
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:21.5802554Z Get:1 file:/etc/apt/apt-mirrors.txt Mirrorlist [144 B]
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:21.8704436Z Get:2 http://azure.archive.ubuntu.com/ubuntu noble-updates/universe amd64 libva2 amd64 2.20.0-2ubuntu0.1 [66.3 kB]
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:22.0939563Z Get:3 http://azure.archive.ubuntu.com/ubuntu noble-updates/universe amd64 libva-drm2 amd64 2.20.0-2ubuntu0.1 [7132 B]
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:22.1621361Z Get:4 http://azure.archive.ubuntu.com/ubuntu noble-updates/universe amd64 libva-x11-2 amd64 2.20.0-2ubuntu0.1 [12.0 kB]
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:22.2383742Z Get:5 http://azure.archive.ubuntu.com/ubuntu noble/main amd64 libvdpau1 amd64 1.5-2build1 [27.8 kB]
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:22.3086408Z Get:6 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libvpl2 amd64 2023.3.0-1build1 [99.8 kB]
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:22.3756677Z Get:7 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 ocl-icd-libopencl1 amd64 2.3.2-1build1 [38.5 kB]
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:22.4497226Z Get:8 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libavutil58 amd64 7:6.1.1-3ubuntu5 [401 kB]
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:22.6412114Z Get:9 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libcodec2-1.2 amd64 1.2.0-2build1 [8998 kB]
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:22.9924103Z Get:10 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libdav1d7 amd64 1.4.1-1build1 [604 kB]
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:23.0808057Z Get:11 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libgsm1 amd64 1.0.22-1build1 [27.8 kB]
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:23.1485041Z Get:12 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libhwy1t64 amd64 1.0.7-8.1build1 [584 kB]
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:23.2452348Z Get:13 http://azure.archive.ubuntu.com/ubuntu noble-updates/universe amd64 libjxl0.7 amd64 0.7.0-10.2ubuntu6.1 [1001 kB]
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:23.3290487Z Get:14 http://azure.archive.ubuntu.com/ubuntu noble/main amd64 libmp3lame0 amd64 3.100-6build1 [142 kB]
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:23.3975607Z Get:15 http://azure.archive.ubuntu.com/ubuntu noble/main amd64 libopus0 amd64 1.4-1build1 [208 kB]
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:23.4643158Z Get:16 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 librav1e0 amd64 0.7.1-2 [1022 kB]
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:23.5585393Z Get:17 http://azure.archive.ubuntu.com/ubuntu noble/main amd64 librsvg2-2 amd64 2.58.0+dfsg-1build1 [2135 kB]
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:23.6928001Z Get:18 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libshine3 amd64 3.1.1-2build1 [23.2 kB]
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:23.7589369Z Get:19 http://azure.archive.ubuntu.com/ubuntu noble-updates/main amd64 libspeex1 amd64 1.2.1-2ubuntu2.24.04.1 [59.6 kB]
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:23.8280500Z Get:20 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libsvtav1enc1d1 amd64 1.7.0+dfsg-2build1 [2425 kB]
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:23.9599071Z Get:21 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libsoxr0 amd64 0.1.3-4build3 [80.0 kB]
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:24.0307710Z Get:22 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libswresample4 amd64 7:6.1.1-3ubuntu5 [63.8 kB]
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:24.0972521Z Get:23 http://azure.archive.ubuntu.com/ubuntu noble/main amd64 libtheora0 amd64 1.1.1+dfsg.1-16.1build3 [211 kB]
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:24.1696236Z Get:24 http://azure.archive.ubuntu.com/ubuntu noble/main amd64 libtwolame0 amd64 0.4.0-2build3 [52.3 kB]
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:24.2358380Z Get:25 http://azure.archive.ubuntu.com/ubuntu noble/main amd64 libvorbisenc2 amd64 1.3.7-1build3 [80.8 kB]
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:24.3021402Z Get:26 http://azure.archive.ubuntu.com/ubuntu noble-updates/main amd64 libvpx9 amd64 1.14.0-1ubuntu2.3 [1143 kB]
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:24.4021363Z Get:27 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libx264-164 amd64 2:0.164.3108+git31e19f9-1 [604 kB]
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:24.4733011Z Get:28 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libx265-199 amd64 3.5-2build1 [1226 kB]
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:24.5854279Z Get:29 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libxvidcore4 amd64 2:1.3.7-1build1 [219 kB]
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:24.6635903Z Get:30 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libzvbi-common all 0.2.42-2 [42.4 kB]
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:24.7291263Z Get:31 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libzvbi0t64 amd64 0.2.42-2 [261 kB]
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:24.7998455Z Get:32 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libavcodec60 amd64 7:6.1.1-3ubuntu5 [5851 kB]
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:24.9957525Z Get:33 http://azure.archive.ubuntu.com/ubuntu noble/main amd64 libraw1394-11 amd64 2.1.2-2build3 [26.2 kB]
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:25.0613279Z Get:34 http://azure.archive.ubuntu.com/ubuntu noble/main amd64 libavc1394-0 amd64 0.5.4-5build3 [15.4 kB]
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:25.1376754Z Get:35 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libunibreak5 amd64 5.1-2build1 [25.0 kB]
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:25.2097795Z Get:36 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libass9 amd64 1:0.17.1-2build1 [104 kB]
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:25.2829018Z Get:37 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libudfread0 amd64 1.1.2-1build1 [19.0 kB]
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:25.3552830Z Get:38 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libbluray2 amd64 1:1.3.4-1build1 [159 kB]
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:25.4264766Z Get:39 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libchromaprint1 amd64 1.5.1-5 [30.5 kB]
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:25.4921296Z Get:40 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libgme0 amd64 0.6.3-7build1 [134 kB]
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:25.5607171Z Get:41 http://azure.archive.ubuntu.com/ubuntu noble-updates/main amd64 libmpg123-0t64 amd64 1.32.5-1ubuntu1.1 [169 kB]
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:25.6321945Z Get:42 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libopenmpt0t64 amd64 0.7.3-1.1build3 [647 kB]
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:25.7161454Z Get:43 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libcjson1 amd64 1.7.17-1 [24.8 kB]
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:25.7915420Z Get:44 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libmbedcrypto7t64 amd64 2.28.8-1 [209 kB]
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:25.8688809Z Get:45 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 librist4 amd64 0.2.10+dfsg-2 [74.9 kB]
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:25.9354180Z Get:46 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libsrt1.5-gnutls amd64 1.5.3-1build2 [316 kB]
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:26.0116204Z Get:47 http://azure.archive.ubuntu.com/ubuntu noble-updates/main amd64 libssh-gcrypt-4 amd64 0.10.6-2ubuntu0.4 [225 kB]
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:26.0815764Z Get:48 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libavformat60 amd64 7:6.1.1-3ubuntu5 [1153 kB]
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:26.1956343Z Get:49 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libbs2b0 amd64 3.1.0+dfsg-7build1 [10.6 kB]
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:26.2619221Z Get:50 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libflite1 amd64 2.2-6build3 [13.6 MB]
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:26.6896735Z Get:51 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libserd-0-0 amd64 0.32.2-1 [43.6 kB]
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:26.7575312Z Get:52 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libzix-0-0 amd64 0.4.2-2build1 [23.6 kB]
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:26.8224905Z Get:53 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libsord-0-0 amd64 0.16.16-2build1 [15.8 kB]
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:26.8889765Z Get:54 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libsratom-0-0 amd64 0.6.16-1build1 [17.3 kB]
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:26.9566079Z Get:55 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 liblilv-0-0 amd64 0.24.22-1build1 [41.0 kB]
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:27.0232923Z Get:56 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libmysofa1 amd64 1.3.2+dfsg-2ubuntu2 [1158 kB]
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:27.1494713Z Get:57 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libplacebo338 amd64 6.338.2-2build1 [2654 kB]
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:27.3107017Z Get:58 http://azure.archive.ubuntu.com/ubuntu noble-updates/main amd64 libblas3 amd64 3.12.0-3build1.1 [238 kB]
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:27.3872338Z Get:59 http://azure.archive.ubuntu.com/ubuntu noble-updates/main amd64 liblapack3 amd64 3.12.0-3build1.1 [2646 kB]
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:27.5171047Z Get:60 http://azure.archive.ubuntu.com/ubuntu noble/main amd64 libasyncns0 amd64 0.8-6build4 [11.3 kB]
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:27.5847314Z Get:61 http://azure.archive.ubuntu.com/ubuntu noble/main amd64 libflac12t64 amd64 1.4.3+ds-2.1ubuntu2 [197 kB]
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:27.6648269Z Get:62 http://azure.archive.ubuntu.com/ubuntu noble-updates/main amd64 libsndfile1 amd64 1.2.2-1ubuntu5.24.04.1 [209 kB]
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:27.7369364Z Get:63 http://azure.archive.ubuntu.com/ubuntu noble-updates/main amd64 libpulse0 amd64 1:16.1+dfsg1-2ubuntu10.1 [292 kB]
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:27.8093712Z Get:64 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libsphinxbase3t64 amd64 0.8+5prealpha+1-17build2 [126 kB]
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:27.8770371Z Get:65 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libpocketsphinx3 amd64 0.8.0+real5prealpha+1-15ubuntu5 [133 kB]
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:27.9528006Z Get:66 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libpostproc57 amd64 7:6.1.1-3ubuntu5 [49.9 kB]
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:28.0206096Z Get:67 http://azure.archive.ubuntu.com/ubuntu noble/main amd64 libsamplerate0 amd64 0.2.2-4build1 [1344 kB]
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:28.1781341Z Get:68 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 librubberband2 amd64 3.3.0+dfsg-2build1 [130 kB]
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:28.2514324Z Get:69 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libswscale7 amd64 7:6.1.1-3ubuntu5 [193 kB]
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:28.3318095Z Get:70 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libvidstab1.1 amd64 1.1.0-2build1 [38.5 kB]
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:28.4024734Z Get:71 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libzimg2 amd64 3.0.5+ds1-1build1 [254 kB]
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:28.4957329Z Get:72 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libavfilter9 amd64 7:6.1.1-3ubuntu5 [4235 kB]
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:29.0793366Z Get:73 http://azure.archive.ubuntu.com/ubuntu noble-updates/main amd64 libcaca0 amd64 0.99.beta20-4ubuntu0.1 [209 kB]
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:29.1616401Z Get:74 http://azure.archive.ubuntu.com/ubuntu noble-updates/main amd64 libcdio19t64 amd64 2.1.0-4.1ubuntu1.2 [62.4 kB]
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:29.2345080Z Get:75 http://azure.archive.ubuntu.com/ubuntu noble/main amd64 libcdio-cdda2t64 amd64 10.2+2.0.1-1.1build2 [16.5 kB]
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:29.3035136Z Get:76 http://azure.archive.ubuntu.com/ubuntu noble/main amd64 libcdio-paranoia2t64 amd64 10.2+2.0.1-1.1build2 [16.6 kB]
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:29.3783511Z Get:77 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libdc1394-25 amd64 2.2.6-4build1 [90.1 kB]
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:29.4534222Z Get:78 http://azure.archive.ubuntu.com/ubuntu noble/main amd64 libiec61883-0 amd64 1.2.0-6build1 [24.5 kB]
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:29.5243267Z Get:79 http://azure.archive.ubuntu.com/ubuntu noble/main amd64 libjack-jackd2-0 amd64 1.9.21~dfsg-3ubuntu3 [289 kB]
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:29.5964871Z Get:80 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libopenal-data all 1:1.23.1-4build1 [161 kB]
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:29.6685780Z Get:81 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libsndio7.0 amd64 1.9.0-0.3build3 [29.6 kB]
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:29.7343195Z Get:82 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libopenal1 amd64 1:1.23.1-4build1 [540 kB]
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:29.8118256Z Get:83 http://azure.archive.ubuntu.com/ubuntu noble/main amd64 libdecor-0-0 amd64 0.2.2-1build2 [16.5 kB]
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:29.8776411Z Get:84 http://azure.archive.ubuntu.com/ubuntu noble-updates/main amd64 libsdl2-2.0-0 amd64 2.30.0+dfsg-1ubuntu3.1 [686 kB]
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:29.9614799Z Get:85 http://azure.archive.ubuntu.com/ubuntu noble/main amd64 libxcb-shape0 amd64 1.15-1ubuntu2 [6100 B]
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:30.0337230Z Get:86 http://azure.archive.ubuntu.com/ubuntu noble/main amd64 libxv1 amd64 2:1.0.11-1.1build1 [10.7 kB]
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:30.1039568Z Get:87 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libavdevice60 amd64 7:6.1.1-3ubuntu5 [82.3 kB]
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:30.1755161Z Get:88 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 ffmpeg amd64 7:6.1.1-3ubuntu5 [1879 kB]
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:30.3017826Z Get:89 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 fonts-liberation2 all 1:2.1.5-3 [3418 B]
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:30.3721669Z Get:90 http://azure.archive.ubuntu.com/ubuntu noble-updates/universe amd64 libigdgmm12 amd64 22.3.17+ds1-1ubuntu1 [145 kB]
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:30.4413333Z Get:91 http://azure.archive.ubuntu.com/ubuntu noble-updates/universe amd64 intel-media-va-driver amd64 24.1.0+dfsg1-1ubuntu0.2 [3163 kB]
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:30.5742260Z Get:92 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libaacs0 amd64 0.11.1-2build1 [62.9 kB]
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:30.6423947Z Get:93 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libbdplus0 amd64 0.2.0-3build1 [52.2 kB]
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:30.7102735Z Get:94 http://azure.archive.ubuntu.com/ubuntu noble/main amd64 libdecor-0-plugin-1-gtk amd64 0.2.2-1build2 [22.2 kB]
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:30.7912009Z Get:95 http://azure.archive.ubuntu.com/ubuntu noble/main amd64 libogg-dev amd64 1.3.5-3build1 [161 kB]
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:30.8610860Z Get:96 http://azure.archive.ubuntu.com/ubuntu noble/main amd64 libflac-dev amd64 1.4.3+ds-2.1ubuntu2 [247 kB]
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:30.9299052Z Get:97 http://azure.archive.ubuntu.com/ubuntu noble-updates/main amd64 libout123-0t64 amd64 1.32.5-1ubuntu1.1 [31.1 kB]
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:31.0021588Z Get:98 http://azure.archive.ubuntu.com/ubuntu noble-updates/main amd64 libsyn123-0t64 amd64 1.32.5-1ubuntu1.1 [95.4 kB]
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:31.0739011Z Get:99 http://azure.archive.ubuntu.com/ubuntu noble-updates/main amd64 libmpg123-dev amd64 1.32.5-1ubuntu1.1 [60.9 kB]
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:31.1422224Z Get:100 http://azure.archive.ubuntu.com/ubuntu noble/main amd64 libopus-dev amd64 1.4-1build1 [267 kB]
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:31.2240674Z Get:101 http://azure.archive.ubuntu.com/ubuntu noble/main amd64 librsvg2-common amd64 2.58.0+dfsg-1build1 [11.8 kB]
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:31.2921952Z Get:102 http://azure.archive.ubuntu.com/ubuntu noble/main amd64 libvorbis-dev amd64 1.3.7-1build3 [342 kB]
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:31.3876275Z Get:103 http://azure.archive.ubuntu.com/ubuntu noble-updates/main amd64 libsndfile1-dev amd64 1.2.2-1ubuntu5.24.04.1 [287 kB]
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:31.4617834Z Get:104 http://azure.archive.ubuntu.com/ubuntu noble-updates/universe amd64 mesa-va-drivers amd64 25.2.8-0ubuntu0.24.04.1 [6776 B]
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:31.5313963Z Get:105 http://azure.archive.ubuntu.com/ubuntu noble-updates/main amd64 mesa-vdpau-drivers amd64 25.2.8-0ubuntu0.24.04.1 [23.0 kB]
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:31.6001713Z Get:106 http://azure.archive.ubuntu.com/ubuntu noble-updates/universe amd64 i965-va-driver amd64 2.4.1+dfsg1-1ubuntu0.1 [332 kB]
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:31.6746543Z Get:107 http://azure.archive.ubuntu.com/ubuntu noble-updates/universe amd64 va-driver-all amd64 2.20.0-2ubuntu0.1 [4946 B]
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:31.7394268Z Get:108 http://azure.archive.ubuntu.com/ubuntu noble/main amd64 vdpau-driver-all amd64 1.5-2build1 [4414 B]
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:31.8053105Z Get:109 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 pocketsphinx-en-us all 0.8.0+real5prealpha+1-15ubuntu5 [27.4 MB]
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:32.7235686Z Fetched 95.6 MB in 11s (8848 kB/s)
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:32.7496615Z Selecting previously unselected package libva2:amd64.
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:32.7781857Z (Reading database ... 
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:32.7782422Z (Reading database ... 5%
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:32.7783233Z (Reading database ... 10%
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:32.7784019Z (Reading database ... 15%
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:32.7784425Z (Reading database ... 20%
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:32.7784829Z (Reading database ... 25%
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:32.7785327Z (Reading database ... 30%
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:32.7785871Z (Reading database ... 35%
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:32.7786286Z (Reading database ... 40%
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:32.7787029Z (Reading database ... 45%
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:32.7787430Z (Reading database ... 50%
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:32.7864283Z (Reading database ... 55%
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:32.9410444Z (Reading database ... 60%
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:33.0812950Z (Reading database ... 65%
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:33.2833825Z (Reading database ... 70%
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:33.4874247Z (Reading database ... 75%
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:33.6360049Z (Reading database ... 80%
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:33.8515766Z (Reading database ... 85%
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:34.0907025Z (Reading database ... 90%
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:34.1940859Z (Reading database ... 95%
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:34.1944229Z (Reading database ... 100%
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:34.1945115Z (Reading database ... 220764 files and directories currently installed.)
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:34.1990543Z Preparing to unpack .../000-libva2_2.20.0-2ubuntu0.1_amd64.deb ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:34.2037677Z Unpacking libva2:amd64 (2.20.0-2ubuntu0.1) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:34.2432069Z Selecting previously unselected package libva-drm2:amd64.
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:34.2570743Z Preparing to unpack .../001-libva-drm2_2.20.0-2ubuntu0.1_amd64.deb ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:34.2583646Z Unpacking libva-drm2:amd64 (2.20.0-2ubuntu0.1) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:34.2871473Z Selecting previously unselected package libva-x11-2:amd64.
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:34.3011172Z Preparing to unpack .../002-libva-x11-2_2.20.0-2ubuntu0.1_amd64.deb ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:34.3022253Z Unpacking libva-x11-2:amd64 (2.20.0-2ubuntu0.1) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:34.3265422Z Selecting previously unselected package libvdpau1:amd64.
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:34.3408068Z Preparing to unpack .../003-libvdpau1_1.5-2build1_amd64.deb ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:34.3421006Z Unpacking libvdpau1:amd64 (1.5-2build1) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:34.3671586Z Selecting previously unselected package libvpl2.
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:34.3811699Z Preparing to unpack .../004-libvpl2_2023.3.0-1build1_amd64.deb ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:34.3823023Z Unpacking libvpl2 (2023.3.0-1build1) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:34.4171507Z Selecting previously unselected package ocl-icd-libopencl1:amd64.
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:34.4310826Z Preparing to unpack .../005-ocl-icd-libopencl1_2.3.2-1build1_amd64.deb ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:34.4322853Z Unpacking ocl-icd-libopencl1:amd64 (2.3.2-1build1) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:34.4686062Z Selecting previously unselected package libavutil58:amd64.
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:34.4828391Z Preparing to unpack .../006-libavutil58_7%3a6.1.1-3ubuntu5_amd64.deb ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:34.4840581Z Unpacking libavutil58:amd64 (7:6.1.1-3ubuntu5) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:34.5151478Z Selecting previously unselected package libcodec2-1.2:amd64.
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:34.5274760Z Preparing to unpack .../007-libcodec2-1.2_1.2.0-2build1_amd64.deb ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:34.5287318Z Unpacking libcodec2-1.2:amd64 (1.2.0-2build1) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:34.6144344Z Selecting previously unselected package libdav1d7:amd64.
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:34.6285647Z Preparing to unpack .../008-libdav1d7_1.4.1-1build1_amd64.deb ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:34.6297749Z Unpacking libdav1d7:amd64 (1.4.1-1build1) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:34.6631196Z Selecting previously unselected package libgsm1:amd64.
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:34.6763119Z Preparing to unpack .../009-libgsm1_1.0.22-1build1_amd64.deb ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:34.6775651Z Unpacking libgsm1:amd64 (1.0.22-1build1) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:34.7027687Z Selecting previously unselected package libhwy1t64:amd64.
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:34.7171649Z Preparing to unpack .../010-libhwy1t64_1.0.7-8.1build1_amd64.deb ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:34.7184925Z Unpacking libhwy1t64:amd64 (1.0.7-8.1build1) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:34.7554010Z Selecting previously unselected package libjxl0.7:amd64.
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:34.7693105Z Preparing to unpack .../011-libjxl0.7_0.7.0-10.2ubuntu6.1_amd64.deb ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:34.7705315Z Unpacking libjxl0.7:amd64 (0.7.0-10.2ubuntu6.1) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:34.8111528Z Selecting previously unselected package libmp3lame0:amd64.
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:34.8246176Z Preparing to unpack .../012-libmp3lame0_3.100-6build1_amd64.deb ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:34.8257497Z Unpacking libmp3lame0:amd64 (3.100-6build1) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:34.8519134Z Selecting previously unselected package libopus0:amd64.
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:34.8659116Z Preparing to unpack .../013-libopus0_1.4-1build1_amd64.deb ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:34.8673247Z Unpacking libopus0:amd64 (1.4-1build1) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:34.8945179Z Selecting previously unselected package librav1e0:amd64.
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:34.9086041Z Preparing to unpack .../014-librav1e0_0.7.1-2_amd64.deb ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:34.9098939Z Unpacking librav1e0:amd64 (0.7.1-2) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:34.9489144Z Selecting previously unselected package librsvg2-2:amd64.
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:34.9630544Z Preparing to unpack .../015-librsvg2-2_2.58.0+dfsg-1build1_amd64.deb ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:34.9643302Z Unpacking librsvg2-2:amd64 (2.58.0+dfsg-1build1) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:35.0168164Z Selecting previously unselected package libshine3:amd64.
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:35.0308045Z Preparing to unpack .../016-libshine3_3.1.1-2build1_amd64.deb ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:35.0319622Z Unpacking libshine3:amd64 (3.1.1-2build1) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:35.0548227Z Selecting previously unselected package libspeex1:amd64.
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:35.0688339Z Preparing to unpack .../017-libspeex1_1.2.1-2ubuntu2.24.04.1_amd64.deb ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:35.0700763Z Unpacking libspeex1:amd64 (1.2.1-2ubuntu2.24.04.1) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:35.0958664Z Selecting previously unselected package libsvtav1enc1d1:amd64.
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:35.1101538Z Preparing to unpack .../018-libsvtav1enc1d1_1.7.0+dfsg-2build1_amd64.deb ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:35.1116393Z Unpacking libsvtav1enc1d1:amd64 (1.7.0+dfsg-2build1) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:35.1691259Z Selecting previously unselected package libsoxr0:amd64.
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:35.1814484Z Preparing to unpack .../019-libsoxr0_0.1.3-4build3_amd64.deb ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:35.1828098Z Unpacking libsoxr0:amd64 (0.1.3-4build3) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:35.2084302Z Selecting previously unselected package libswresample4:amd64.
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:35.2226562Z Preparing to unpack .../020-libswresample4_7%3a6.1.1-3ubuntu5_amd64.deb ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:35.2241782Z Unpacking libswresample4:amd64 (7:6.1.1-3ubuntu5) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:35.2487339Z Selecting previously unselected package libtheora0:amd64.
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:35.2628535Z Preparing to unpack .../021-libtheora0_1.1.1+dfsg.1-16.1build3_amd64.deb ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:35.2640506Z Unpacking libtheora0:amd64 (1.1.1+dfsg.1-16.1build3) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:35.2911739Z Selecting previously unselected package libtwolame0:amd64.
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:35.3049476Z Preparing to unpack .../022-libtwolame0_0.4.0-2build3_amd64.deb ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:35.3061594Z Unpacking libtwolame0:amd64 (0.4.0-2build3) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:35.3299252Z Selecting previously unselected package libvorbisenc2:amd64.
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:35.3439720Z Preparing to unpack .../023-libvorbisenc2_1.3.7-1build3_amd64.deb ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:35.3465753Z Unpacking libvorbisenc2:amd64 (1.3.7-1build3) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:35.3735940Z Selecting previously unselected package libvpx9:amd64.
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:35.3889260Z Preparing to unpack .../024-libvpx9_1.14.0-1ubuntu2.3_amd64.deb ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:35.3902555Z Unpacking libvpx9:amd64 (1.14.0-1ubuntu2.3) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:35.4290598Z Selecting previously unselected package libx264-164:amd64.
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:35.4429554Z Preparing to unpack .../025-libx264-164_2%3a0.164.3108+git31e19f9-1_amd64.deb ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:35.4440401Z Unpacking libx264-164:amd64 (2:0.164.3108+git31e19f9-1) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:35.4752843Z Selecting previously unselected package libx265-199:amd64.
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:35.4892680Z Preparing to unpack .../026-libx265-199_3.5-2build1_amd64.deb ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:35.4902737Z Unpacking libx265-199:amd64 (3.5-2build1) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:35.5623063Z Selecting previously unselected package libxvidcore4:amd64.
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:35.5765396Z Preparing to unpack .../027-libxvidcore4_2%3a1.3.7-1build1_amd64.deb ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:35.5780959Z Unpacking libxvidcore4:amd64 (2:1.3.7-1build1) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:35.6070889Z Selecting previously unselected package libzvbi-common.
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:35.6212332Z Preparing to unpack .../028-libzvbi-common_0.2.42-2_all.deb ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:35.6227931Z Unpacking libzvbi-common (0.2.42-2) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:35.6846284Z Selecting previously unselected package libzvbi0t64:amd64.
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:35.6987151Z Preparing to unpack .../029-libzvbi0t64_0.2.42-2_amd64.deb ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:35.6995603Z Unpacking libzvbi0t64:amd64 (0.2.42-2) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:35.7276019Z Selecting previously unselected package libavcodec60:amd64.
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:35.7418628Z Preparing to unpack .../030-libavcodec60_7%3a6.1.1-3ubuntu5_amd64.deb ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:35.7428035Z Unpacking libavcodec60:amd64 (7:6.1.1-3ubuntu5) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:35.8349248Z Selecting previously unselected package libraw1394-11:amd64.
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:35.8490420Z Preparing to unpack .../031-libraw1394-11_2.1.2-2build3_amd64.deb ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:35.8512159Z Unpacking libraw1394-11:amd64 (2.1.2-2build3) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:35.8739027Z Selecting previously unselected package libavc1394-0:amd64.
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:35.8887938Z Preparing to unpack .../032-libavc1394-0_0.5.4-5build3_amd64.deb ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:35.8896318Z Unpacking libavc1394-0:amd64 (0.5.4-5build3) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:35.9132908Z Selecting previously unselected package libunibreak5:amd64.
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:35.9272744Z Preparing to unpack .../033-libunibreak5_5.1-2build1_amd64.deb ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:35.9282525Z Unpacking libunibreak5:amd64 (5.1-2build1) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:35.9518158Z Selecting previously unselected package libass9:amd64.
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:35.9659177Z Preparing to unpack .../034-libass9_1%3a0.17.1-2build1_amd64.deb ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:35.9669819Z Unpacking libass9:amd64 (1:0.17.1-2build1) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:35.9921527Z Selecting previously unselected package libudfread0:amd64.
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:36.0063284Z Preparing to unpack .../035-libudfread0_1.1.2-1build1_amd64.deb ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:36.0076049Z Unpacking libudfread0:amd64 (1.1.2-1build1) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:36.0311182Z Selecting previously unselected package libbluray2:amd64.
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:36.0444054Z Preparing to unpack .../036-libbluray2_1%3a1.3.4-1build1_amd64.deb ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:36.0462044Z Unpacking libbluray2:amd64 (1:1.3.4-1build1) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:36.0708211Z Selecting previously unselected package libchromaprint1:amd64.
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:36.0850932Z Preparing to unpack .../037-libchromaprint1_1.5.1-5_amd64.deb ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:36.0864102Z Unpacking libchromaprint1:amd64 (1.5.1-5) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:36.1094699Z Selecting previously unselected package libgme0:amd64.
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:36.1232882Z Preparing to unpack .../038-libgme0_0.6.3-7build1_amd64.deb ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:36.1242157Z Unpacking libgme0:amd64 (0.6.3-7build1) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:36.1510914Z Selecting previously unselected package libmpg123-0t64:amd64.
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:36.1637116Z Preparing to unpack .../039-libmpg123-0t64_1.32.5-1ubuntu1.1_amd64.deb ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:36.1646108Z Unpacking libmpg123-0t64:amd64 (1.32.5-1ubuntu1.1) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:36.1921613Z Selecting previously unselected package libopenmpt0t64:amd64.
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:36.2050729Z Preparing to unpack .../040-libopenmpt0t64_0.7.3-1.1build3_amd64.deb ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:36.2059693Z Unpacking libopenmpt0t64:amd64 (0.7.3-1.1build3) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:36.2361410Z Selecting previously unselected package libcjson1:amd64.
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:36.2501415Z Preparing to unpack .../041-libcjson1_1.7.17-1_amd64.deb ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:36.2511247Z Unpacking libcjson1:amd64 (1.7.17-1) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:36.2749030Z Selecting previously unselected package libmbedcrypto7t64:amd64.
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:36.2889335Z Preparing to unpack .../042-libmbedcrypto7t64_2.28.8-1_amd64.deb ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:36.2898635Z Unpacking libmbedcrypto7t64:amd64 (2.28.8-1) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:36.3152365Z Selecting previously unselected package librist4:amd64.
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:36.3291202Z Preparing to unpack .../043-librist4_0.2.10+dfsg-2_amd64.deb ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:36.3302130Z Unpacking librist4:amd64 (0.2.10+dfsg-2) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:36.3555479Z Selecting previously unselected package libsrt1.5-gnutls:amd64.
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:36.3696657Z Preparing to unpack .../044-libsrt1.5-gnutls_1.5.3-1build2_amd64.deb ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:36.3705649Z Unpacking libsrt1.5-gnutls:amd64 (1.5.3-1build2) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:36.4012638Z Selecting previously unselected package libssh-gcrypt-4:amd64.
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:36.4153916Z Preparing to unpack .../045-libssh-gcrypt-4_0.10.6-2ubuntu0.4_amd64.deb ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:36.4163012Z Unpacking libssh-gcrypt-4:amd64 (0.10.6-2ubuntu0.4) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:36.4434844Z Selecting previously unselected package libavformat60:amd64.
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:36.4574437Z Preparing to unpack .../046-libavformat60_7%3a6.1.1-3ubuntu5_amd64.deb ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:36.4583431Z Unpacking libavformat60:amd64 (7:6.1.1-3ubuntu5) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:36.4936263Z Selecting previously unselected package libbs2b0:amd64.
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:36.5078703Z Preparing to unpack .../047-libbs2b0_3.1.0+dfsg-7build1_amd64.deb ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:36.5091303Z Unpacking libbs2b0:amd64 (3.1.0+dfsg-7build1) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:36.5356766Z Selecting previously unselected package libflite1:amd64.
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:36.5498478Z Preparing to unpack .../048-libflite1_2.2-6build3_amd64.deb ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:36.5507246Z Unpacking libflite1:amd64 (2.2-6build3) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:36.6733848Z Selecting previously unselected package libserd-0-0:amd64.
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:36.6876912Z Preparing to unpack .../049-libserd-0-0_0.32.2-1_amd64.deb ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:36.6885723Z Unpacking libserd-0-0:amd64 (0.32.2-1) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:36.7115704Z Selecting previously unselected package libzix-0-0:amd64.
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:36.7259832Z Preparing to unpack .../050-libzix-0-0_0.4.2-2build1_amd64.deb ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:36.7270722Z Unpacking libzix-0-0:amd64 (0.4.2-2build1) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:36.7503196Z Selecting previously unselected package libsord-0-0:amd64.
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:36.7642294Z Preparing to unpack .../051-libsord-0-0_0.16.16-2build1_amd64.deb ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:36.7651801Z Unpacking libsord-0-0:amd64 (0.16.16-2build1) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:36.7911478Z Selecting previously unselected package libsratom-0-0:amd64.
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:36.8024650Z Preparing to unpack .../052-libsratom-0-0_0.6.16-1build1_amd64.deb ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:36.8035302Z Unpacking libsratom-0-0:amd64 (0.6.16-1build1) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:36.8264440Z Selecting previously unselected package liblilv-0-0:amd64.
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:36.8404034Z Preparing to unpack .../053-liblilv-0-0_0.24.22-1build1_amd64.deb ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:36.8413009Z Unpacking liblilv-0-0:amd64 (0.24.22-1build1) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:36.8637435Z Selecting previously unselected package libmysofa1:amd64.
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:36.8778328Z Preparing to unpack .../054-libmysofa1_1.3.2+dfsg-2ubuntu2_amd64.deb ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:36.8792842Z Unpacking libmysofa1:amd64 (1.3.2+dfsg-2ubuntu2) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:36.9081468Z Selecting previously unselected package libplacebo338:amd64.
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:36.9232579Z Preparing to unpack .../055-libplacebo338_6.338.2-2build1_amd64.deb ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:36.9240544Z Unpacking libplacebo338:amd64 (6.338.2-2build1) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:36.9854841Z Selecting previously unselected package libblas3:amd64.
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:36.9992574Z Preparing to unpack .../056-libblas3_3.12.0-3build1.1_amd64.deb ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:37.0025891Z Unpacking libblas3:amd64 (3.12.0-3build1.1) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:37.0311121Z Selecting previously unselected package liblapack3:amd64.
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:37.0436269Z Preparing to unpack .../057-liblapack3_3.12.0-3build1.1_amd64.deb ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:37.0478327Z Unpacking liblapack3:amd64 (3.12.0-3build1.1) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:37.1021448Z Selecting previously unselected package libasyncns0:amd64.
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:37.1158566Z Preparing to unpack .../058-libasyncns0_0.8-6build4_amd64.deb ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:37.1168012Z Unpacking libasyncns0:amd64 (0.8-6build4) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:37.1407181Z Selecting previously unselected package libflac12t64:amd64.
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:37.1548952Z Preparing to unpack .../059-libflac12t64_1.4.3+ds-2.1ubuntu2_amd64.deb ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:37.1566433Z Unpacking libflac12t64:amd64 (1.4.3+ds-2.1ubuntu2) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:37.2546901Z Selecting previously unselected package libsndfile1:amd64.
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:37.2689385Z Preparing to unpack .../060-libsndfile1_1.2.2-1ubuntu5.24.04.1_amd64.deb ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:37.2697433Z Unpacking libsndfile1:amd64 (1.2.2-1ubuntu5.24.04.1) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:37.2977424Z Selecting previously unselected package libpulse0:amd64.
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:37.3119120Z Preparing to unpack .../061-libpulse0_1%3a16.1+dfsg1-2ubuntu10.1_amd64.deb ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:37.3243069Z Unpacking libpulse0:amd64 (1:16.1+dfsg1-2ubuntu10.1) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:37.3518268Z Selecting previously unselected package libsphinxbase3t64:amd64.
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:37.3660719Z Preparing to unpack .../062-libsphinxbase3t64_0.8+5prealpha+1-17build2_amd64.deb ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:37.3671499Z Unpacking libsphinxbase3t64:amd64 (0.8+5prealpha+1-17build2) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:37.3916266Z Selecting previously unselected package libpocketsphinx3:amd64.
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:37.4054229Z Preparing to unpack .../063-libpocketsphinx3_0.8.0+real5prealpha+1-15ubuntu5_amd64.deb ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:37.4064430Z Unpacking libpocketsphinx3:amd64 (0.8.0+real5prealpha+1-15ubuntu5) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:37.4302071Z Selecting previously unselected package libpostproc57:amd64.
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:37.4442091Z Preparing to unpack .../064-libpostproc57_7%3a6.1.1-3ubuntu5_amd64.deb ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:37.4458897Z Unpacking libpostproc57:amd64 (7:6.1.1-3ubuntu5) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:37.4683119Z Selecting previously unselected package libsamplerate0:amd64.
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:37.4824182Z Preparing to unpack .../065-libsamplerate0_0.2.2-4build1_amd64.deb ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:37.4833760Z Unpacking libsamplerate0:amd64 (0.2.2-4build1) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:37.5117505Z Selecting previously unselected package librubberband2:amd64.
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:37.5258987Z Preparing to unpack .../066-librubberband2_3.3.0+dfsg-2build1_amd64.deb ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:37.5270859Z Unpacking librubberband2:amd64 (3.3.0+dfsg-2build1) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:37.5531732Z Selecting previously unselected package libswscale7:amd64.
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:37.5654557Z Preparing to unpack .../067-libswscale7_7%3a6.1.1-3ubuntu5_amd64.deb ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:37.5663265Z Unpacking libswscale7:amd64 (7:6.1.1-3ubuntu5) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:37.5919639Z Selecting previously unselected package libvidstab1.1:amd64.
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:37.6060978Z Preparing to unpack .../068-libvidstab1.1_1.1.0-2build1_amd64.deb ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:37.6070724Z Unpacking libvidstab1.1:amd64 (1.1.0-2build1) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:37.6317878Z Selecting previously unselected package libzimg2:amd64.
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:37.6460496Z Preparing to unpack .../069-libzimg2_3.0.5+ds1-1build1_amd64.deb ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:37.6470725Z Unpacking libzimg2:amd64 (3.0.5+ds1-1build1) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:37.6739622Z Selecting previously unselected package libavfilter9:amd64.
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:37.6881418Z Preparing to unpack .../070-libavfilter9_7%3a6.1.1-3ubuntu5_amd64.deb ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:37.6891165Z Unpacking libavfilter9:amd64 (7:6.1.1-3ubuntu5) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:37.7661655Z Selecting previously unselected package libcaca0:amd64.
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:37.7801855Z Preparing to unpack .../071-libcaca0_0.99.beta20-4ubuntu0.1_amd64.deb ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:37.7812468Z Unpacking libcaca0:amd64 (0.99.beta20-4ubuntu0.1) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:37.8091384Z Selecting previously unselected package libcdio19t64:amd64.
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:37.8233208Z Preparing to unpack .../072-libcdio19t64_2.1.0-4.1ubuntu1.2_amd64.deb ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:37.8242527Z Unpacking libcdio19t64:amd64 (2.1.0-4.1ubuntu1.2) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:37.8483484Z Selecting previously unselected package libcdio-cdda2t64:amd64.
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:37.8622566Z Preparing to unpack .../073-libcdio-cdda2t64_10.2+2.0.1-1.1build2_amd64.deb ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:37.8632285Z Unpacking libcdio-cdda2t64:amd64 (10.2+2.0.1-1.1build2) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:37.8888023Z Selecting previously unselected package libcdio-paranoia2t64:amd64.
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:37.9029024Z Preparing to unpack .../074-libcdio-paranoia2t64_10.2+2.0.1-1.1build2_amd64.deb ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:37.9041723Z Unpacking libcdio-paranoia2t64:amd64 (10.2+2.0.1-1.1build2) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:37.9290216Z Selecting previously unselected package libdc1394-25:amd64.
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:37.9428446Z Preparing to unpack .../075-libdc1394-25_2.2.6-4build1_amd64.deb ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:37.9438327Z Unpacking libdc1394-25:amd64 (2.2.6-4build1) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:37.9673450Z Selecting previously unselected package libiec61883-0:amd64.
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:37.9814119Z Preparing to unpack .../076-libiec61883-0_1.2.0-6build1_amd64.deb ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:37.9828988Z Unpacking libiec61883-0:amd64 (1.2.0-6build1) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:38.0089199Z Selecting previously unselected package libjack-jackd2-0:amd64.
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:38.0228362Z Preparing to unpack .../077-libjack-jackd2-0_1.9.21~dfsg-3ubuntu3_amd64.deb ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:38.0238419Z Unpacking libjack-jackd2-0:amd64 (1.9.21~dfsg-3ubuntu3) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:38.0511946Z Selecting previously unselected package libopenal-data.
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:38.0651884Z Preparing to unpack .../078-libopenal-data_1%3a1.23.1-4build1_all.deb ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:38.0660389Z Unpacking libopenal-data (1:1.23.1-4build1) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:38.0910714Z Selecting previously unselected package libsndio7.0:amd64.
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:38.1051155Z Preparing to unpack .../079-libsndio7.0_1.9.0-0.3build3_amd64.deb ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:38.1065191Z Unpacking libsndio7.0:amd64 (1.9.0-0.3build3) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:38.1321651Z Selecting previously unselected package libopenal1:amd64.
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:38.1450981Z Preparing to unpack .../080-libopenal1_1%3a1.23.1-4build1_amd64.deb ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:38.1465954Z Unpacking libopenal1:amd64 (1:1.23.1-4build1) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:38.1790895Z Selecting previously unselected package libdecor-0-0:amd64.
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:38.1934703Z Preparing to unpack .../081-libdecor-0-0_0.2.2-1build2_amd64.deb ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:38.1953313Z Unpacking libdecor-0-0:amd64 (0.2.2-1build2) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:38.2191916Z Selecting previously unselected package libsdl2-2.0-0:amd64.
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:38.2335821Z Preparing to unpack .../082-libsdl2-2.0-0_2.30.0+dfsg-1ubuntu3.1_amd64.deb ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:38.2354807Z Unpacking libsdl2-2.0-0:amd64 (2.30.0+dfsg-1ubuntu3.1) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:38.2838371Z Selecting previously unselected package libxcb-shape0:amd64.
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:38.2980197Z Preparing to unpack .../083-libxcb-shape0_1.15-1ubuntu2_amd64.deb ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:38.2987900Z Unpacking libxcb-shape0:amd64 (1.15-1ubuntu2) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:38.3213040Z Selecting previously unselected package libxv1:amd64.
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:38.3355026Z Preparing to unpack .../084-libxv1_2%3a1.0.11-1.1build1_amd64.deb ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:38.3370981Z Unpacking libxv1:amd64 (2:1.0.11-1.1build1) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:38.3606139Z Selecting previously unselected package libavdevice60:amd64.
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:38.3748694Z Preparing to unpack .../085-libavdevice60_7%3a6.1.1-3ubuntu5_amd64.deb ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:38.3760861Z Unpacking libavdevice60:amd64 (7:6.1.1-3ubuntu5) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:38.4004031Z Selecting previously unselected package ffmpeg.
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:38.4144717Z Preparing to unpack .../086-ffmpeg_7%3a6.1.1-3ubuntu5_amd64.deb ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:38.4153174Z Unpacking ffmpeg (7:6.1.1-3ubuntu5) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:38.4855473Z Selecting previously unselected package fonts-liberation2.
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:38.4999252Z Preparing to unpack .../087-fonts-liberation2_1%3a2.1.5-3_all.deb ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:38.5009731Z Unpacking fonts-liberation2 (1:2.1.5-3) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:38.5252296Z Selecting previously unselected package libigdgmm12:amd64.
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:38.5375771Z Preparing to unpack .../088-libigdgmm12_22.3.17+ds1-1ubuntu1_amd64.deb ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:38.5387544Z Unpacking libigdgmm12:amd64 (22.3.17+ds1-1ubuntu1) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:38.5642191Z Selecting previously unselected package intel-media-va-driver:amd64.
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:38.5786156Z Preparing to unpack .../089-intel-media-va-driver_24.1.0+dfsg1-1ubuntu0.2_amd64.deb ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:38.5795695Z Unpacking intel-media-va-driver:amd64 (24.1.0+dfsg1-1ubuntu0.2) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:38.6561786Z Selecting previously unselected package libaacs0:amd64.
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:38.6685619Z Preparing to unpack .../090-libaacs0_0.11.1-2build1_amd64.deb ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:38.6701511Z Unpacking libaacs0:amd64 (0.11.1-2build1) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:38.6935680Z Selecting previously unselected package libbdplus0:amd64.
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:38.7077769Z Preparing to unpack .../091-libbdplus0_0.2.0-3build1_amd64.deb ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:38.7090840Z Unpacking libbdplus0:amd64 (0.2.0-3build1) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:38.7345775Z Selecting previously unselected package libdecor-0-plugin-1-gtk:amd64.
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:38.7486656Z Preparing to unpack .../092-libdecor-0-plugin-1-gtk_0.2.2-1build2_amd64.deb ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:38.7496649Z Unpacking libdecor-0-plugin-1-gtk:amd64 (0.2.2-1build2) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:38.7713537Z Selecting previously unselected package libogg-dev:amd64.
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:38.7858413Z Preparing to unpack .../093-libogg-dev_1.3.5-3build1_amd64.deb ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:38.7867310Z Unpacking libogg-dev:amd64 (1.3.5-3build1) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:38.8312228Z Selecting previously unselected package libflac-dev:amd64.
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:38.8452174Z Preparing to unpack .../094-libflac-dev_1.4.3+ds-2.1ubuntu2_amd64.deb ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:38.8462279Z Unpacking libflac-dev:amd64 (1.4.3+ds-2.1ubuntu2) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:38.8770717Z Selecting previously unselected package libout123-0t64:amd64.
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:38.8915233Z Preparing to unpack .../095-libout123-0t64_1.32.5-1ubuntu1.1_amd64.deb ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:38.8925085Z Unpacking libout123-0t64:amd64 (1.32.5-1ubuntu1.1) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:38.9166607Z Selecting previously unselected package libsyn123-0t64:amd64.
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:38.9311787Z Preparing to unpack .../096-libsyn123-0t64_1.32.5-1ubuntu1.1_amd64.deb ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:38.9321009Z Unpacking libsyn123-0t64:amd64 (1.32.5-1ubuntu1.1) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:38.9555983Z Selecting previously unselected package libmpg123-dev:amd64.
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:38.9711541Z Preparing to unpack .../097-libmpg123-dev_1.32.5-1ubuntu1.1_amd64.deb ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:38.9729613Z Unpacking libmpg123-dev:amd64 (1.32.5-1ubuntu1.1) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:39.0000697Z Selecting previously unselected package libopus-dev:amd64.
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:39.0143992Z Preparing to unpack .../098-libopus-dev_1.4-1build1_amd64.deb ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:39.0152925Z Unpacking libopus-dev:amd64 (1.4-1build1) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:39.0426842Z Selecting previously unselected package librsvg2-common:amd64.
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:39.0573766Z Preparing to unpack .../099-librsvg2-common_2.58.0+dfsg-1build1_amd64.deb ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:39.0582006Z Unpacking librsvg2-common:amd64 (2.58.0+dfsg-1build1) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:39.0829070Z Selecting previously unselected package libvorbis-dev:amd64.
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:39.0976117Z Preparing to unpack .../100-libvorbis-dev_1.3.7-1build3_amd64.deb ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:39.0985461Z Unpacking libvorbis-dev:amd64 (1.3.7-1build3) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:39.1513326Z Selecting previously unselected package libsndfile1-dev:amd64.
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:39.1654873Z Preparing to unpack .../101-libsndfile1-dev_1.2.2-1ubuntu5.24.04.1_amd64.deb ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:39.1663838Z Unpacking libsndfile1-dev:amd64 (1.2.2-1ubuntu5.24.04.1) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:39.2044284Z Selecting previously unselected package mesa-va-drivers:amd64.
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:39.2186508Z Preparing to unpack .../102-mesa-va-drivers_25.2.8-0ubuntu0.24.04.1_amd64.deb ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:39.2196377Z Unpacking mesa-va-drivers:amd64 (25.2.8-0ubuntu0.24.04.1) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:39.2413097Z Selecting previously unselected package mesa-vdpau-drivers:amd64.
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:39.2557150Z Preparing to unpack .../103-mesa-vdpau-drivers_25.2.8-0ubuntu0.24.04.1_amd64.deb ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:39.2567721Z Unpacking mesa-vdpau-drivers:amd64 (25.2.8-0ubuntu0.24.04.1) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:39.2796728Z Selecting previously unselected package i965-va-driver:amd64.
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:39.2937610Z Preparing to unpack .../104-i965-va-driver_2.4.1+dfsg1-1ubuntu0.1_amd64.deb ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:39.2946079Z Unpacking i965-va-driver:amd64 (2.4.1+dfsg1-1ubuntu0.1) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:39.3251429Z Selecting previously unselected package va-driver-all:amd64.
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:39.3376398Z Preparing to unpack .../105-va-driver-all_2.20.0-2ubuntu0.1_amd64.deb ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:39.3384862Z Unpacking va-driver-all:amd64 (2.20.0-2ubuntu0.1) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:39.3611740Z Selecting previously unselected package vdpau-driver-all:amd64.
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:39.3740975Z Preparing to unpack .../106-vdpau-driver-all_1.5-2build1_amd64.deb ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:39.3833246Z Unpacking vdpau-driver-all:amd64 (1.5-2build1) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:39.4052201Z Selecting previously unselected package pocketsphinx-en-us.
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:39.4199243Z Preparing to unpack .../107-pocketsphinx-en-us_0.8.0+real5prealpha+1-15ubuntu5_all.deb ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:39.4206570Z Unpacking pocketsphinx-en-us (0.8.0+real5prealpha+1-15ubuntu5) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:39.6354729Z Setting up libgme0:amd64 (0.6.3-7build1) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:39.6385631Z Setting up libchromaprint1:amd64 (1.5.1-5) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:39.6410395Z Setting up libssh-gcrypt-4:amd64 (0.10.6-2ubuntu0.4) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:39.6435980Z Setting up libhwy1t64:amd64 (1.0.7-8.1build1) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:39.6456892Z Setting up libudfread0:amd64 (1.1.2-1build1) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:39.6479393Z Setting up libraw1394-11:amd64 (2.1.2-2build3) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:39.6501602Z Setting up libspeex1:amd64 (1.2.1-2ubuntu2.24.04.1) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:39.6522084Z Setting up libshine3:amd64 (3.1.1-2build1) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:39.6543370Z Setting up libcaca0:amd64 (0.99.beta20-4ubuntu0.1) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:39.6565857Z Setting up libvpl2 (2023.3.0-1build1) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:39.6588762Z Setting up libx264-164:amd64 (2:0.164.3108+git31e19f9-1) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:39.6615109Z Setting up libtwolame0:amd64 (0.4.0-2build3) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:39.6640154Z Setting up libmbedcrypto7t64:amd64 (2.28.8-1) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:39.6663912Z Setting up libgsm1:amd64 (1.0.22-1build1) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:39.6687599Z Setting up libsoxr0:amd64 (0.1.3-4build3) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:39.6711077Z Setting up libzix-0-0:amd64 (0.4.2-2build1) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:39.6733105Z Setting up libcodec2-1.2:amd64 (1.2.0-2build1) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:39.6762221Z Setting up libmysofa1:amd64 (1.3.2+dfsg-2ubuntu2) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:39.6785016Z Setting up libxcb-shape0:amd64 (1.15-1ubuntu2) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:39.6807626Z Setting up libcdio19t64:amd64 (2.1.0-4.1ubuntu1.2) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:39.6832899Z Setting up libsvtav1enc1d1:amd64 (1.7.0+dfsg-2build1) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:39.6855697Z Setting up libigdgmm12:amd64 (22.3.17+ds1-1ubuntu1) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:39.6878787Z Setting up libogg-dev:amd64 (1.3.5-3build1) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:39.6903250Z Setting up libmpg123-0t64:amd64 (1.32.5-1ubuntu1.1) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:39.6925188Z Setting up libcjson1:amd64 (1.7.17-1) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:39.6953183Z Setting up libxvidcore4:amd64 (2:1.3.7-1build1) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:39.6975764Z Setting up librav1e0:amd64 (0.7.1-2) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:39.6997948Z Setting up libcdio-cdda2t64:amd64 (10.2+2.0.1-1.1build2) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:39.7020715Z Setting up librist4:amd64 (0.2.10+dfsg-2) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:39.7042247Z Setting up librsvg2-2:amd64 (2.58.0+dfsg-1build1) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:39.7068603Z Setting up libblas3:amd64 (3.12.0-3build1.1) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:39.7135943Z update-alternatives: using /usr/lib/x86_64-linux-gnu/blas/libblas.so.3 to provide /usr/lib/x86_64-linux-gnu/libblas.so.3 (libblas.so.3-x86_64-linux-gnu) in auto mode
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:39.7155716Z Setting up libplacebo338:amd64 (6.338.2-2build1) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:39.7177881Z Setting up libva2:amd64 (2.20.0-2ubuntu0.1) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:39.7202665Z Setting up libsyn123-0t64:amd64 (1.32.5-1ubuntu1.1) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:39.7224743Z Setting up fonts-liberation2 (1:2.1.5-3) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:39.7247721Z Setting up libopus0:amd64 (1.4-1build1) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:39.7272651Z Setting up libcdio-paranoia2t64:amd64 (10.2+2.0.1-1.1build2) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:39.7295245Z Setting up libdc1394-25:amd64 (2.2.6-4build1) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:39.7318455Z Setting up intel-media-va-driver:amd64 (24.1.0+dfsg1-1ubuntu0.2) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:39.7342879Z Setting up libxv1:amd64 (2:1.0.11-1.1build1) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:39.7364065Z Setting up libunibreak5:amd64 (5.1-2build1) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:39.7392609Z Setting up libaacs0:amd64 (0.11.1-2build1) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:39.7417784Z Setting up libjxl0.7:amd64 (0.7.0-10.2ubuntu6.1) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:39.7442290Z Setting up librsvg2-common:amd64 (2.58.0+dfsg-1build1) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:39.7625475Z Setting up pocketsphinx-en-us (0.8.0+real5prealpha+1-15ubuntu5) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:39.7647867Z Setting up libx265-199:amd64 (3.5-2build1) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:39.7675654Z Setting up libsndio7.0:amd64 (1.9.0-0.3build3) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:39.7703303Z Setting up libout123-0t64:amd64 (1.32.5-1ubuntu1.1) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:39.7726755Z Setting up libbdplus0:amd64 (0.2.0-3build1) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:39.7752558Z Setting up libvidstab1.1:amd64 (1.1.0-2build1) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:39.7777091Z Setting up libvpx9:amd64 (1.14.0-1ubuntu2.3) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:39.7800623Z Setting up libsrt1.5-gnutls:amd64 (1.5.3-1build2) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:39.7822629Z Setting up libflite1:amd64 (2.2-6build3) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:39.7848122Z Setting up libdav1d7:amd64 (1.4.1-1build1) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:39.7871508Z Setting up libva-drm2:amd64 (2.20.0-2ubuntu0.1) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:39.7895675Z Setting up ocl-icd-libopencl1:amd64 (2.3.2-1build1) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:39.7922664Z Setting up libasyncns0:amd64 (0.8-6build4) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:39.7948374Z Setting up libvdpau1:amd64 (1.5-2build1) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:39.7981177Z Setting up libbs2b0:amd64 (3.1.0+dfsg-7build1) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:39.8007842Z Setting up libtheora0:amd64 (1.1.1+dfsg.1-16.1build3) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:39.8032769Z Setting up libdecor-0-0:amd64 (0.2.2-1build2) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:39.8057280Z Setting up libzimg2:amd64 (3.0.5+ds1-1build1) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:39.8082397Z Setting up libopenal-data (1:1.23.1-4build1) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:39.8113500Z Setting up libflac12t64:amd64 (1.4.3+ds-2.1ubuntu2) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:39.8137968Z Setting up mesa-va-drivers:amd64 (25.2.8-0ubuntu0.24.04.1) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:39.8163190Z Setting up libbluray2:amd64 (1:1.3.4-1build1) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:39.8186629Z Setting up libsamplerate0:amd64 (0.2.2-4build1) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:39.8212751Z Setting up libva-x11-2:amd64 (2.20.0-2ubuntu0.1) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:39.8236994Z Setting up libdecor-0-plugin-1-gtk:amd64 (0.2.2-1build2) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:39.8260278Z Setting up libopenmpt0t64:amd64 (0.7.3-1.1build3) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:39.8286036Z Setting up libzvbi-common (0.2.42-2) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:39.8309859Z Setting up libmp3lame0:amd64 (3.100-6build1) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:39.8338031Z Setting up i965-va-driver:amd64 (2.4.1+dfsg1-1ubuntu0.1) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:39.8362596Z Setting up libvorbisenc2:amd64 (1.3.7-1build3) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:39.8386126Z Setting up libiec61883-0:amd64 (1.2.0-6build1) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:39.8409437Z Setting up libserd-0-0:amd64 (0.32.2-1) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:39.8442239Z Setting up libvorbis-dev:amd64 (1.3.7-1build3) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:39.8465356Z Setting up libavc1394-0:amd64 (0.5.4-5build3) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:39.8490914Z Setting up mesa-vdpau-drivers:amd64 (25.2.8-0ubuntu0.24.04.1) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:39.8515286Z Setting up libflac-dev:amd64 (1.4.3+ds-2.1ubuntu2) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:39.8537907Z Setting up liblapack3:amd64 (3.12.0-3build1.1) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:39.8603101Z update-alternatives: using /usr/lib/x86_64-linux-gnu/lapack/liblapack.so.3 to provide /usr/lib/x86_64-linux-gnu/liblapack.so.3 (liblapack.so.3-x86_64-linux-gnu) in auto mode
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:39.8621607Z Setting up libzvbi0t64:amd64 (0.2.42-2) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:39.8652047Z Setting up libavutil58:amd64 (7:6.1.1-3ubuntu5) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:39.8787064Z Setting up libopenal1:amd64 (1:1.23.1-4build1) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:39.8835142Z Setting up libopus-dev:amd64 (1.4-1build1) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:39.8861963Z Setting up libmpg123-dev:amd64 (1.32.5-1ubuntu1.1) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:39.8883665Z Setting up libass9:amd64 (1:0.17.1-2build1) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:39.8905278Z Setting up libswresample4:amd64 (7:6.1.1-3ubuntu5) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:39.8935714Z Setting up va-driver-all:amd64 (2.20.0-2ubuntu0.1) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:39.8960676Z Setting up libavcodec60:amd64 (7:6.1.1-3ubuntu5) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:39.8983734Z Setting up librubberband2:amd64 (3.3.0+dfsg-2build1) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:39.9009769Z Setting up libjack-jackd2-0:amd64 (1.9.21~dfsg-3ubuntu3) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:39.9033838Z Setting up vdpau-driver-all:amd64 (1.5-2build1) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:39.9056044Z Setting up libsord-0-0:amd64 (0.16.16-2build1) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:39.9079360Z Setting up libpostproc57:amd64 (7:6.1.1-3ubuntu5) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:39.9103433Z Setting up libsratom-0-0:amd64 (0.6.16-1build1) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:39.9128354Z Setting up libsndfile1:amd64 (1.2.2-1ubuntu5.24.04.1) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:39.9153550Z Setting up liblilv-0-0:amd64 (0.24.22-1build1) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:39.9178220Z Setting up libswscale7:amd64 (7:6.1.1-3ubuntu5) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:39.9202094Z Setting up libpulse0:amd64 (1:16.1+dfsg1-2ubuntu10.1) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:39.9283974Z Setting up libavformat60:amd64 (7:6.1.1-3ubuntu5) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:39.9307094Z Setting up libsphinxbase3t64:amd64 (0.8+5prealpha+1-17build2) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:39.9330869Z Setting up libsndfile1-dev:amd64 (1.2.2-1ubuntu5.24.04.1) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:39.9354802Z Setting up libsdl2-2.0-0:amd64 (2.30.0+dfsg-1ubuntu3.1) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:39.9378319Z Setting up libpocketsphinx3:amd64 (0.8.0+real5prealpha+1-15ubuntu5) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:39.9401757Z Setting up libavfilter9:amd64 (7:6.1.1-3ubuntu5) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:39.9427626Z Setting up libavdevice60:amd64 (7:6.1.1-3ubuntu5) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:39.9451386Z Setting up ffmpeg (7:6.1.1-3ubuntu5) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:39.9480352Z Processing triggers for man-db (2.12.0-4build2) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:39.9502656Z Not building database; man-db/auto-update is not 'true'.
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:39.9518761Z Processing triggers for libgdk-pixbuf-2.0-0:amd64 (2.42.10+dfsg-3ubuntu3.3) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:40.0221090Z Processing triggers for libc-bin (2.39-0ubuntu8.7) ...
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:40.8214018Z 
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:40.8214804Z Running kernel seems to be up-to-date.
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:40.8215531Z 
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:40.8215894Z No services need to be restarted.
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:40.8216427Z 
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:40.8216765Z No containers need to be restarted.
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:40.8217243Z 
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:40.8217602Z No user sessions are running outdated binaries.
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:40.8218105Z 
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:40.8218556Z No VM guests are running outdated hypervisor (qemu) binaries on this host.
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:42.2872070Z Font directories:
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:42.2872794Z 	/home/runner/.local/share/fonts
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:42.2873398Z 	/usr/local/share/fonts
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:42.2873917Z 	/usr/share/fonts
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:42.2874399Z 	/home/runner/.fonts
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:42.2874914Z 	/usr/share/fonts/truetype
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:42.2875492Z 	/usr/share/fonts/truetype/dejavu
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:42.2876114Z 	/usr/share/fonts/truetype/lato
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:42.2876715Z 	/usr/share/fonts/truetype/liberation
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:42.2877368Z 	/usr/share/fonts/truetype/noto
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:42.2878123Z /home/runner/.local/share/fonts: skipping, no such directory
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:42.2879191Z /usr/local/share/fonts: caching, new cache contents: 0 fonts, 0 dirs
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:42.2880541Z /usr/share/fonts: caching, new cache contents: 0 fonts, 1 dirs
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:42.2881687Z /usr/share/fonts/truetype: caching, new cache contents: 0 fonts, 4 dirs
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:42.3421496Z /usr/share/fonts/truetype/dejavu: caching, new cache contents: 22 fonts, 0 dirs
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:42.3906522Z /usr/share/fonts/truetype/lato: caching, new cache contents: 18 fonts, 0 dirs
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:42.3991946Z /usr/share/fonts/truetype/liberation: caching, new cache contents: 12 fonts, 0 dirs
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:42.4541587Z /usr/share/fonts/truetype/noto: caching, new cache contents: 1 fonts, 0 dirs
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:42.4542866Z /home/runner/.fonts: skipping, no such directory
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:42.4543994Z /usr/share/fonts/truetype: skipping, looped directory detected
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:42.4545552Z /usr/share/fonts/truetype/dejavu: skipping, looped directory detected
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:42.4546847Z /usr/share/fonts/truetype/lato: skipping, looped directory detected
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:42.4548199Z /usr/share/fonts/truetype/liberation: skipping, looped directory detected
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:44.4549778Z /usr/share/fonts/truetype/noto: skipping, looped directory detected
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:44.4551344Z /var/cache/fontconfig: not cleaning unwritable cache directory
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:44.4552310Z /home/runner/.cache/fontconfig: cleaning cache directory
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:44.4553182Z /home/runner/.fontconfig: not cleaning non-existent cache directory
+generate-and-post	Install system deps (ffmpeg + fonts)	2026-05-04T17:08:44.4554900Z fc-cache: succeeded
+generate-and-post	Install Python deps	∩╗┐2026-05-04T17:08:44.4594670Z ##[group]Run pip install --upgrade pip
+generate-and-post	Install Python deps	2026-05-04T17:08:44.4595023Z ^[[36;1mpip install --upgrade pip^[[0m
+generate-and-post	Install Python deps	2026-05-04T17:08:44.4595538Z ^[[36;1mpip install -r requirements.txt^[[0m
+generate-and-post	Install Python deps	2026-05-04T17:08:44.4618523Z shell: /usr/bin/bash -e {0}
+generate-and-post	Install Python deps	2026-05-04T17:08:44.4618774Z env:
+generate-and-post	Install Python deps	2026-05-04T17:08:44.4618990Z   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+generate-and-post	Install Python deps	2026-05-04T17:08:44.4619498Z   pythonLocation: /opt/hostedtoolcache/Python/3.11.15/x64
+generate-and-post	Install Python deps	2026-05-04T17:08:44.4620380Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.11.15/x64/lib/pkgconfig
+generate-and-post	Install Python deps	2026-05-04T17:08:44.4620982Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.15/x64
+generate-and-post	Install Python deps	2026-05-04T17:08:44.4621368Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.15/x64
+generate-and-post	Install Python deps	2026-05-04T17:08:44.4621752Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.15/x64
+generate-and-post	Install Python deps	2026-05-04T17:08:44.4622138Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.11.15/x64/lib
+generate-and-post	Install Python deps	2026-05-04T17:08:44.4622459Z ##[endgroup]
+generate-and-post	Install Python deps	2026-05-04T17:08:45.4640733Z Requirement already satisfied: pip in /opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages (26.0.1)
+generate-and-post	Install Python deps	2026-05-04T17:08:45.5584599Z Collecting pip
+generate-and-post	Install Python deps	2026-05-04T17:08:45.6171204Z   Downloading pip-26.1-py3-none-any.whl.metadata (4.6 kB)
+generate-and-post	Install Python deps	2026-05-04T17:08:45.6243648Z Downloading pip-26.1-py3-none-any.whl (1.8 MB)
+generate-and-post	Install Python deps	2026-05-04T17:08:45.6801199Z    ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü 1.8/1.8 MB 92.9 MB/s  0:00:00
+generate-and-post	Install Python deps	2026-05-04T17:08:45.6999524Z Installing collected packages: pip
+generate-and-post	Install Python deps	2026-05-04T17:08:45.7002476Z   Attempting uninstall: pip
+generate-and-post	Install Python deps	2026-05-04T17:08:45.7018675Z     Found existing installation: pip 26.0.1
+generate-and-post	Install Python deps	2026-05-04T17:08:45.7701863Z     Uninstalling pip-26.0.1:
+generate-and-post	Install Python deps	2026-05-04T17:08:45.7762773Z       Successfully uninstalled pip-26.0.1
+generate-and-post	Install Python deps	2026-05-04T17:08:46.5959282Z Successfully installed pip-26.1
+generate-and-post	Install Python deps	2026-05-04T17:08:47.1672024Z Collecting google-api-python-client (from -r requirements.txt (line 1))
+generate-and-post	Install Python deps	2026-05-04T17:08:47.2202169Z   Downloading google_api_python_client-2.195.0-py3-none-any.whl.metadata (7.0 kB)
+generate-and-post	Install Python deps	2026-05-04T17:08:47.2336924Z Collecting google-auth-oauthlib (from -r requirements.txt (line 2))
+generate-and-post	Install Python deps	2026-05-04T17:08:47.2368463Z   Downloading google_auth_oauthlib-1.3.1-py3-none-any.whl.metadata (2.6 kB)
+generate-and-post	Install Python deps	2026-05-04T17:08:47.2473390Z Collecting google-auth-httplib2 (from -r requirements.txt (line 3))
+generate-and-post	Install Python deps	2026-05-04T17:08:47.2528923Z   Downloading google_auth_httplib2-0.3.1-py3-none-any.whl.metadata (3.0 kB)
+generate-and-post	Install Python deps	2026-05-04T17:08:47.2865649Z Collecting requests (from -r requirements.txt (line 4))
+generate-and-post	Install Python deps	2026-05-04T17:08:47.2900265Z   Downloading requests-2.33.1-py3-none-any.whl.metadata (4.8 kB)
+generate-and-post	Install Python deps	2026-05-04T17:08:47.3049559Z Collecting python-dotenv (from -r requirements.txt (line 5))
+generate-and-post	Install Python deps	2026-05-04T17:08:47.3084294Z   Downloading python_dotenv-1.2.2-py3-none-any.whl.metadata (27 kB)
+generate-and-post	Install Python deps	2026-05-04T17:08:47.3264835Z Collecting moviepy (from -r requirements.txt (line 6))
+generate-and-post	Install Python deps	2026-05-04T17:08:47.3304253Z   Downloading moviepy-2.2.1-py3-none-any.whl.metadata (6.9 kB)
+generate-and-post	Install Python deps	2026-05-04T17:08:47.4827480Z Collecting Pillow (from -r requirements.txt (line 7))
+generate-and-post	Install Python deps	2026-05-04T17:08:47.4871329Z   Downloading pillow-12.2.0-cp311-cp311-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl.metadata (8.8 kB)
+generate-and-post	Install Python deps	2026-05-04T17:08:47.5084510Z Collecting imageio (from -r requirements.txt (line 8))
+generate-and-post	Install Python deps	2026-05-04T17:08:47.5118785Z   Downloading imageio-2.37.3-py3-none-any.whl.metadata (9.7 kB)
+generate-and-post	Install Python deps	2026-05-04T17:08:47.5339838Z Collecting imageio-ffmpeg (from -r requirements.txt (line 9))
+generate-and-post	Install Python deps	2026-05-04T17:08:47.5370162Z   Downloading imageio_ffmpeg-0.6.0-py3-none-manylinux2014_x86_64.whl.metadata (1.5 kB)
+generate-and-post	Install Python deps	2026-05-04T17:08:47.7017569Z Collecting numpy (from -r requirements.txt (line 10))
+generate-and-post	Install Python deps	2026-05-04T17:08:47.7049872Z   Downloading numpy-2.4.4-cp311-cp311-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl.metadata (6.6 kB)
+generate-and-post	Install Python deps	2026-05-04T17:08:47.7202741Z Collecting flask (from -r requirements.txt (line 11))
+generate-and-post	Install Python deps	2026-05-04T17:08:47.7235160Z   Downloading flask-3.1.3-py3-none-any.whl.metadata (3.2 kB)
+generate-and-post	Install Python deps	2026-05-04T17:08:47.7391444Z Collecting apscheduler (from -r requirements.txt (line 12))
+generate-and-post	Install Python deps	2026-05-04T17:08:47.7423673Z   Downloading apscheduler-3.11.2-py3-none-any.whl.metadata (6.4 kB)
+generate-and-post	Install Python deps	2026-05-04T17:08:47.7557703Z Collecting faster-whisper (from -r requirements.txt (line 13))
+generate-and-post	Install Python deps	2026-05-04T17:08:47.7588210Z   Downloading faster_whisper-1.2.1-py3-none-any.whl.metadata (16 kB)
+generate-and-post	Install Python deps	2026-05-04T17:08:47.7739290Z Collecting groq (from -r requirements.txt (line 14))
+generate-and-post	Install Python deps	2026-05-04T17:08:47.7769986Z   Downloading groq-1.2.0-py3-none-any.whl.metadata (16 kB)
+generate-and-post	Install Python deps	2026-05-04T17:08:47.7909442Z Collecting httplib2<1.0.0,>=0.19.0 (from google-api-python-client->-r requirements.txt (line 1))
+generate-and-post	Install Python deps	2026-05-04T17:08:47.7942302Z   Downloading httplib2-0.31.2-py3-none-any.whl.metadata (2.2 kB)
+generate-and-post	Install Python deps	2026-05-04T17:08:47.8227085Z Collecting google-auth!=2.24.0,!=2.25.0,<3.0.0,>=1.32.0 (from google-api-python-client->-r requirements.txt (line 1))
+generate-and-post	Install Python deps	2026-05-04T17:08:47.8261476Z   Downloading google_auth-2.50.0-py3-none-any.whl.metadata (6.2 kB)
+generate-and-post	Install Python deps	2026-05-04T17:08:47.8721214Z Collecting google-api-core!=2.0.*,!=2.1.*,!=2.2.*,!=2.3.0,<3.0.0,>=1.31.5 (from google-api-python-client->-r requirements.txt (line 1))
+generate-and-post	Install Python deps	2026-05-04T17:08:47.8753519Z   Downloading google_api_core-2.30.3-py3-none-any.whl.metadata (3.1 kB)
+generate-and-post	Install Python deps	2026-05-04T17:08:47.8864267Z Collecting uritemplate<5,>=3.0.1 (from google-api-python-client->-r requirements.txt (line 1))
+generate-and-post	Install Python deps	2026-05-04T17:08:47.8896959Z   Downloading uritemplate-4.2.0-py3-none-any.whl.metadata (2.6 kB)
+generate-and-post	Install Python deps	2026-05-04T17:08:47.9052622Z Collecting googleapis-common-protos<2.0.0,>=1.63.2 (from google-api-core!=2.0.*,!=2.1.*,!=2.2.*,!=2.3.0,<3.0.0,>=1.31.5->google-api-python-client->-r requirements.txt (line 1))
+generate-and-post	Install Python deps	2026-05-04T17:08:47.9083148Z   Downloading googleapis_common_protos-1.74.0-py3-none-any.whl.metadata (9.2 kB)
+generate-and-post	Install Python deps	2026-05-04T17:08:48.0395515Z Collecting protobuf<8.0.0,>=4.25.8 (from google-api-core!=2.0.*,!=2.1.*,!=2.2.*,!=2.3.0,<3.0.0,>=1.31.5->google-api-python-client->-r requirements.txt (line 1))
+generate-and-post	Install Python deps	2026-05-04T17:08:48.0432052Z   Downloading protobuf-7.34.1-cp310-abi3-manylinux2014_x86_64.whl.metadata (595 bytes)
+generate-and-post	Install Python deps	2026-05-04T17:08:48.0574499Z Collecting proto-plus<2.0.0,>=1.22.3 (from google-api-core!=2.0.*,!=2.1.*,!=2.2.*,!=2.3.0,<3.0.0,>=1.31.5->google-api-python-client->-r requirements.txt (line 1))
+generate-and-post	Install Python deps	2026-05-04T17:08:48.0607934Z   Downloading proto_plus-1.27.2-py3-none-any.whl.metadata (2.2 kB)
+generate-and-post	Install Python deps	2026-05-04T17:08:48.1524262Z Collecting charset_normalizer<4,>=2 (from requests->-r requirements.txt (line 4))
+generate-and-post	Install Python deps	2026-05-04T17:08:48.1568486Z   Downloading charset_normalizer-3.4.7-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (40 kB)
+generate-and-post	Install Python deps	2026-05-04T17:08:48.1717948Z Collecting idna<4,>=2.5 (from requests->-r requirements.txt (line 4))
+generate-and-post	Install Python deps	2026-05-04T17:08:48.1748097Z   Downloading idna-3.13-py3-none-any.whl.metadata (8.0 kB)
+generate-and-post	Install Python deps	2026-05-04T17:08:48.1935200Z Collecting urllib3<3,>=1.26 (from requests->-r requirements.txt (line 4))
+generate-and-post	Install Python deps	2026-05-04T17:08:48.1966916Z   Downloading urllib3-2.6.3-py3-none-any.whl.metadata (6.9 kB)
+generate-and-post	Install Python deps	2026-05-04T17:08:48.2131461Z Collecting certifi>=2023.5.7 (from requests->-r requirements.txt (line 4))
+generate-and-post	Install Python deps	2026-05-04T17:08:48.2163127Z   Downloading certifi-2026.4.22-py3-none-any.whl.metadata (2.5 kB)
+generate-and-post	Install Python deps	2026-05-04T17:08:48.2338977Z Collecting pyasn1-modules>=0.2.1 (from google-auth!=2.24.0,!=2.25.0,<3.0.0,>=1.32.0->google-api-python-client->-r requirements.txt (line 1))
+generate-and-post	Install Python deps	2026-05-04T17:08:48.2376605Z   Downloading pyasn1_modules-0.4.2-py3-none-any.whl.metadata (3.5 kB)
+generate-and-post	Install Python deps	2026-05-04T17:08:48.4240333Z Collecting cryptography>=38.0.3 (from google-auth!=2.24.0,!=2.25.0,<3.0.0,>=1.32.0->google-api-python-client->-r requirements.txt (line 1))
+generate-and-post	Install Python deps	2026-05-04T17:08:48.4275455Z   Downloading cryptography-47.0.0-cp311-abi3-manylinux_2_34_x86_64.whl.metadata (4.5 kB)
+generate-and-post	Install Python deps	2026-05-04T17:08:48.4495271Z Collecting pyparsing<4,>=3.1 (from httplib2<1.0.0,>=0.19.0->google-api-python-client->-r requirements.txt (line 1))
+generate-and-post	Install Python deps	2026-05-04T17:08:48.4528611Z   Downloading pyparsing-3.3.2-py3-none-any.whl.metadata (5.8 kB)
+generate-and-post	Install Python deps	2026-05-04T17:08:48.4715618Z Collecting requests-oauthlib>=0.7.0 (from google-auth-oauthlib->-r requirements.txt (line 2))
+generate-and-post	Install Python deps	2026-05-04T17:08:48.4751750Z   Downloading requests_oauthlib-2.0.0-py2.py3-none-any.whl.metadata (11 kB)
+generate-and-post	Install Python deps	2026-05-04T17:08:48.4894069Z Collecting decorator<6.0,>=4.0.2 (from moviepy->-r requirements.txt (line 6))
+generate-and-post	Install Python deps	2026-05-04T17:08:48.4942178Z   Downloading decorator-5.2.1-py3-none-any.whl.metadata (3.9 kB)
+generate-and-post	Install Python deps	2026-05-04T17:08:48.5173143Z Collecting proglog<=1.0.0 (from moviepy->-r requirements.txt (line 6))
+generate-and-post	Install Python deps	2026-05-04T17:08:48.5205996Z   Downloading proglog-0.1.12-py3-none-any.whl.metadata (794 bytes)
+generate-and-post	Install Python deps	2026-05-04T17:08:48.5417724Z Collecting Pillow (from -r requirements.txt (line 7))
+generate-and-post	Install Python deps	2026-05-04T17:08:48.5460090Z   Downloading pillow-11.3.0-cp311-cp311-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl.metadata (9.0 kB)
+generate-and-post	Install Python deps	2026-05-04T17:08:48.5787209Z Collecting tqdm (from proglog<=1.0.0->moviepy->-r requirements.txt (line 6))
+generate-and-post	Install Python deps	2026-05-04T17:08:48.5820537Z   Downloading tqdm-4.67.3-py3-none-any.whl.metadata (57 kB)
+generate-and-post	Install Python deps	2026-05-04T17:08:48.5977364Z Collecting blinker>=1.9.0 (from flask->-r requirements.txt (line 11))
+generate-and-post	Install Python deps	2026-05-04T17:08:48.6006848Z   Downloading blinker-1.9.0-py3-none-any.whl.metadata (1.6 kB)
+generate-and-post	Install Python deps	2026-05-04T17:08:48.6144248Z Collecting click>=8.1.3 (from flask->-r requirements.txt (line 11))
+generate-and-post	Install Python deps	2026-05-04T17:08:48.6176568Z   Downloading click-8.3.3-py3-none-any.whl.metadata (2.6 kB)
+generate-and-post	Install Python deps	2026-05-04T17:08:48.6282721Z Collecting itsdangerous>=2.2.0 (from flask->-r requirements.txt (line 11))
+generate-and-post	Install Python deps	2026-05-04T17:08:48.6318003Z   Downloading itsdangerous-2.2.0-py3-none-any.whl.metadata (1.9 kB)
+generate-and-post	Install Python deps	2026-05-04T17:08:48.6561083Z Collecting jinja2>=3.1.2 (from flask->-r requirements.txt (line 11))
+generate-and-post	Install Python deps	2026-05-04T17:08:48.6595415Z   Downloading jinja2-3.1.6-py3-none-any.whl.metadata (2.9 kB)
+generate-and-post	Install Python deps	2026-05-04T17:08:48.7044637Z Collecting markupsafe>=2.1.1 (from flask->-r requirements.txt (line 11))
+generate-and-post	Install Python deps	2026-05-04T17:08:48.7078864Z   Downloading markupsafe-3.0.3-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (2.7 kB)
+generate-and-post	Install Python deps	2026-05-04T17:08:48.7243632Z Collecting werkzeug>=3.1.0 (from flask->-r requirements.txt (line 11))
+generate-and-post	Install Python deps	2026-05-04T17:08:48.7274855Z   Downloading werkzeug-3.1.8-py3-none-any.whl.metadata (4.0 kB)
+generate-and-post	Install Python deps	2026-05-04T17:08:48.7405749Z Collecting tzlocal>=3.0 (from apscheduler->-r requirements.txt (line 12))
+generate-and-post	Install Python deps	2026-05-04T17:08:48.7436091Z   Downloading tzlocal-5.3.1-py3-none-any.whl.metadata (7.6 kB)
+generate-and-post	Install Python deps	2026-05-04T17:08:48.8126751Z Collecting ctranslate2<5,>=4.0 (from faster-whisper->-r requirements.txt (line 13))
+generate-and-post	Install Python deps	2026-05-04T17:08:48.8169224Z   Downloading ctranslate2-4.7.1-cp311-cp311-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl.metadata (10 kB)
+generate-and-post	Install Python deps	2026-05-04T17:08:48.8518378Z Collecting huggingface-hub>=0.21 (from faster-whisper->-r requirements.txt (line 13))
+generate-and-post	Install Python deps	2026-05-04T17:08:48.8549035Z   Downloading huggingface_hub-1.13.0-py3-none-any.whl.metadata (14 kB)
+generate-and-post	Install Python deps	2026-05-04T17:08:48.9962878Z Collecting tokenizers<1,>=0.13 (from faster-whisper->-r requirements.txt (line 13))
+generate-and-post	Install Python deps	2026-05-04T17:08:48.9997422Z   Downloading tokenizers-0.23.1-cp310-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (9.8 kB)
+generate-and-post	Install Python deps	2026-05-04T17:08:49.0857673Z Collecting onnxruntime<2,>=1.14 (from faster-whisper->-r requirements.txt (line 13))
+generate-and-post	Install Python deps	2026-05-04T17:08:49.0908663Z   Downloading onnxruntime-1.25.1-cp311-cp311-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl.metadata (5.3 kB)
+generate-and-post	Install Python deps	2026-05-04T17:08:49.1302268Z Collecting av>=11 (from faster-whisper->-r requirements.txt (line 13))
+generate-and-post	Install Python deps	2026-05-04T17:08:49.1337661Z   Downloading av-17.0.1-cp311-abi3-manylinux_2_28_x86_64.whl.metadata (4.6 kB)
+generate-and-post	Install Python deps	2026-05-04T17:08:49.1384394Z Requirement already satisfied: setuptools in /opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages (from ctranslate2<5,>=4.0->faster-whisper->-r requirements.txt (line 13)) (79.0.1)
+generate-and-post	Install Python deps	2026-05-04T17:08:49.1680570Z Collecting pyyaml<7,>=5.3 (from ctranslate2<5,>=4.0->faster-whisper->-r requirements.txt (line 13))
+generate-and-post	Install Python deps	2026-05-04T17:08:49.1710806Z   Downloading pyyaml-6.0.3-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (2.4 kB)
+generate-and-post	Install Python deps	2026-05-04T17:08:49.1847844Z Collecting flatbuffers (from onnxruntime<2,>=1.14->faster-whisper->-r requirements.txt (line 13))
+generate-and-post	Install Python deps	2026-05-04T17:08:49.1877257Z   Downloading flatbuffers-25.12.19-py2.py3-none-any.whl.metadata (1.0 kB)
+generate-and-post	Install Python deps	2026-05-04T17:08:49.2041171Z Collecting packaging (from onnxruntime<2,>=1.14->faster-whisper->-r requirements.txt (line 13))
+generate-and-post	Install Python deps	2026-05-04T17:08:49.2069752Z   Downloading packaging-26.2-py3-none-any.whl.metadata (3.5 kB)
+generate-and-post	Install Python deps	2026-05-04T17:08:49.2318707Z Collecting filelock>=3.10.0 (from huggingface-hub>=0.21->faster-whisper->-r requirements.txt (line 13))
+generate-and-post	Install Python deps	2026-05-04T17:08:49.2347410Z   Downloading filelock-3.29.0-py3-none-any.whl.metadata (2.0 kB)
+generate-and-post	Install Python deps	2026-05-04T17:08:49.2516394Z Collecting fsspec>=2023.5.0 (from huggingface-hub>=0.21->faster-whisper->-r requirements.txt (line 13))
+generate-and-post	Install Python deps	2026-05-04T17:08:49.2545677Z   Downloading fsspec-2026.4.0-py3-none-any.whl.metadata (10 kB)
+generate-and-post	Install Python deps	2026-05-04T17:08:49.2960482Z Collecting hf-xet<2.0.0,>=1.4.3 (from huggingface-hub>=0.21->faster-whisper->-r requirements.txt (line 13))
+generate-and-post	Install Python deps	2026-05-04T17:08:49.2992274Z   Downloading hf_xet-1.4.3-cp37-abi3-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (4.9 kB)
+generate-and-post	Install Python deps	2026-05-04T17:08:49.3147469Z Collecting httpx<1,>=0.23.0 (from huggingface-hub>=0.21->faster-whisper->-r requirements.txt (line 13))
+generate-and-post	Install Python deps	2026-05-04T17:08:49.3178349Z   Downloading httpx-0.28.1-py3-none-any.whl.metadata (7.1 kB)
+generate-and-post	Install Python deps	2026-05-04T17:08:49.3405014Z Collecting typer (from huggingface-hub>=0.21->faster-whisper->-r requirements.txt (line 13))
+generate-and-post	Install Python deps	2026-05-04T17:08:49.3438540Z   Downloading typer-0.25.1-py3-none-any.whl.metadata (15 kB)
+generate-and-post	Install Python deps	2026-05-04T17:08:49.3589389Z Collecting typing-extensions>=4.1.0 (from huggingface-hub>=0.21->faster-whisper->-r requirements.txt (line 13))
+generate-and-post	Install Python deps	2026-05-04T17:08:49.3627926Z   Downloading typing_extensions-4.15.0-py3-none-any.whl.metadata (3.3 kB)
+generate-and-post	Install Python deps	2026-05-04T17:08:49.3830344Z Collecting anyio (from httpx<1,>=0.23.0->huggingface-hub>=0.21->faster-whisper->-r requirements.txt (line 13))
+generate-and-post	Install Python deps	2026-05-04T17:08:49.3866557Z   Downloading anyio-4.13.0-py3-none-any.whl.metadata (4.5 kB)
+generate-and-post	Install Python deps	2026-05-04T17:08:49.4012329Z Collecting httpcore==1.* (from httpx<1,>=0.23.0->huggingface-hub>=0.21->faster-whisper->-r requirements.txt (line 13))
+generate-and-post	Install Python deps	2026-05-04T17:08:49.4042470Z   Downloading httpcore-1.0.9-py3-none-any.whl.metadata (21 kB)
+generate-and-post	Install Python deps	2026-05-04T17:08:49.4160617Z Collecting h11>=0.16 (from httpcore==1.*->httpx<1,>=0.23.0->huggingface-hub>=0.21->faster-whisper->-r requirements.txt (line 13))
+generate-and-post	Install Python deps	2026-05-04T17:08:49.4190956Z   Downloading h11-0.16.0-py3-none-any.whl.metadata (8.3 kB)
+generate-and-post	Install Python deps	2026-05-04T17:08:49.4319411Z Collecting distro<2,>=1.7.0 (from groq->-r requirements.txt (line 14))
+generate-and-post	Install Python deps	2026-05-04T17:08:49.4351029Z   Downloading distro-1.9.0-py3-none-any.whl.metadata (6.8 kB)
+generate-and-post	Install Python deps	2026-05-04T17:08:49.5323280Z Collecting pydantic<3,>=1.9.0 (from groq->-r requirements.txt (line 14))
+generate-and-post	Install Python deps	2026-05-04T17:08:49.5357594Z   Downloading pydantic-2.13.3-py3-none-any.whl.metadata (108 kB)
+generate-and-post	Install Python deps	2026-05-04T17:08:49.5490317Z Collecting sniffio (from groq->-r requirements.txt (line 14))
+generate-and-post	Install Python deps	2026-05-04T17:08:49.5521990Z   Downloading sniffio-1.3.1-py3-none-any.whl.metadata (3.9 kB)
+generate-and-post	Install Python deps	2026-05-04T17:08:49.5659793Z Collecting annotated-types>=0.6.0 (from pydantic<3,>=1.9.0->groq->-r requirements.txt (line 14))
+generate-and-post	Install Python deps	2026-05-04T17:08:49.5690661Z   Downloading annotated_types-0.7.0-py3-none-any.whl.metadata (15 kB)
+generate-and-post	Install Python deps	2026-05-04T17:08:50.2364610Z Collecting pydantic-core==2.46.3 (from pydantic<3,>=1.9.0->groq->-r requirements.txt (line 14))
+generate-and-post	Install Python deps	2026-05-04T17:08:50.2401158Z   Downloading pydantic_core-2.46.3-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (6.6 kB)
+generate-and-post	Install Python deps	2026-05-04T17:08:50.2510448Z Collecting typing-inspection>=0.4.2 (from pydantic<3,>=1.9.0->groq->-r requirements.txt (line 14))
+generate-and-post	Install Python deps	2026-05-04T17:08:50.2544355Z   Downloading typing_inspection-0.4.2-py3-none-any.whl.metadata (2.6 kB)
+generate-and-post	Install Python deps	2026-05-04T17:08:50.3477300Z Collecting cffi>=2.0.0 (from cryptography>=38.0.3->google-auth!=2.24.0,!=2.25.0,<3.0.0,>=1.32.0->google-api-python-client->-r requirements.txt (line 1))
+generate-and-post	Install Python deps	2026-05-04T17:08:50.3513584Z   Downloading cffi-2.0.0-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (2.6 kB)
+generate-and-post	Install Python deps	2026-05-04T17:08:50.3622801Z Collecting pycparser (from cffi>=2.0.0->cryptography>=38.0.3->google-auth!=2.24.0,!=2.25.0,<3.0.0,>=1.32.0->google-api-python-client->-r requirements.txt (line 1))
+generate-and-post	Install Python deps	2026-05-04T17:08:50.3654705Z   Downloading pycparser-3.0-py3-none-any.whl.metadata (8.2 kB)
+generate-and-post	Install Python deps	2026-05-04T17:08:50.3904269Z Collecting pyasn1<0.7.0,>=0.6.1 (from pyasn1-modules>=0.2.1->google-auth!=2.24.0,!=2.25.0,<3.0.0,>=1.32.0->google-api-python-client->-r requirements.txt (line 1))
+generate-and-post	Install Python deps	2026-05-04T17:08:50.3938745Z   Downloading pyasn1-0.6.3-py3-none-any.whl.metadata (8.4 kB)
+generate-and-post	Install Python deps	2026-05-04T17:08:50.4073805Z Collecting oauthlib>=3.0.0 (from requests-oauthlib>=0.7.0->google-auth-oauthlib->-r requirements.txt (line 2))
+generate-and-post	Install Python deps	2026-05-04T17:08:50.4104976Z   Downloading oauthlib-3.3.1-py3-none-any.whl.metadata (7.9 kB)
+generate-and-post	Install Python deps	2026-05-04T17:08:50.4347631Z Collecting shellingham>=1.3.0 (from typer->huggingface-hub>=0.21->faster-whisper->-r requirements.txt (line 13))
+generate-and-post	Install Python deps	2026-05-04T17:08:50.4379249Z   Downloading shellingham-1.5.4-py2.py3-none-any.whl.metadata (3.5 kB)
+generate-and-post	Install Python deps	2026-05-04T17:08:50.4647856Z Collecting rich>=13.8.0 (from typer->huggingface-hub>=0.21->faster-whisper->-r requirements.txt (line 13))
+generate-and-post	Install Python deps	2026-05-04T17:08:50.4678322Z   Downloading rich-15.0.0-py3-none-any.whl.metadata (18 kB)
+generate-and-post	Install Python deps	2026-05-04T17:08:50.4782311Z Collecting annotated-doc>=0.0.2 (from typer->huggingface-hub>=0.21->faster-whisper->-r requirements.txt (line 13))
+generate-and-post	Install Python deps	2026-05-04T17:08:50.4820959Z   Downloading annotated_doc-0.0.4-py3-none-any.whl.metadata (6.6 kB)
+generate-and-post	Install Python deps	2026-05-04T17:08:50.4956618Z Collecting markdown-it-py>=2.2.0 (from rich>=13.8.0->typer->huggingface-hub>=0.21->faster-whisper->-r requirements.txt (line 13))
+generate-and-post	Install Python deps	2026-05-04T17:08:50.4992067Z   Downloading markdown_it_py-4.0.0-py3-none-any.whl.metadata (7.3 kB)
+generate-and-post	Install Python deps	2026-05-04T17:08:50.5164626Z Collecting pygments<3.0.0,>=2.13.0 (from rich>=13.8.0->typer->huggingface-hub>=0.21->faster-whisper->-r requirements.txt (line 13))
+generate-and-post	Install Python deps	2026-05-04T17:08:50.5196937Z   Downloading pygments-2.20.0-py3-none-any.whl.metadata (2.5 kB)
+generate-and-post	Install Python deps	2026-05-04T17:08:50.5301202Z Collecting mdurl~=0.1 (from markdown-it-py>=2.2.0->rich>=13.8.0->typer->huggingface-hub>=0.21->faster-whisper->-r requirements.txt (line 13))
+generate-and-post	Install Python deps	2026-05-04T17:08:50.5331858Z   Downloading mdurl-0.1.2-py3-none-any.whl.metadata (1.6 kB)
+generate-and-post	Install Python deps	2026-05-04T17:08:50.5443974Z Downloading google_api_python_client-2.195.0-py3-none-any.whl (15.2 MB)
+generate-and-post	Install Python deps	2026-05-04T17:08:50.6642678Z    ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü 15.2/15.2 MB 129.7 MB/s  0:00:00
+generate-and-post	Install Python deps	2026-05-04T17:08:50.6680620Z Downloading google_auth_httplib2-0.3.1-py3-none-any.whl (9.5 kB)
+generate-and-post	Install Python deps	2026-05-04T17:08:50.6732823Z Downloading google_api_core-2.30.3-py3-none-any.whl (173 kB)
+generate-and-post	Install Python deps	2026-05-04T17:08:50.6790377Z Downloading requests-2.33.1-py3-none-any.whl (64 kB)
+generate-and-post	Install Python deps	2026-05-04T17:08:50.6845212Z Downloading charset_normalizer-3.4.7-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (214 kB)
+generate-and-post	Install Python deps	2026-05-04T17:08:50.6902944Z Downloading google_auth-2.50.0-py3-none-any.whl (246 kB)
+generate-and-post	Install Python deps	2026-05-04T17:08:50.6959413Z Downloading googleapis_common_protos-1.74.0-py3-none-any.whl (300 kB)
+generate-and-post	Install Python deps	2026-05-04T17:08:50.7018841Z Downloading httplib2-0.31.2-py3-none-any.whl (91 kB)
+generate-and-post	Install Python deps	2026-05-04T17:08:50.7074303Z Downloading idna-3.13-py3-none-any.whl (68 kB)
+generate-and-post	Install Python deps	2026-05-04T17:08:50.7125955Z Downloading proto_plus-1.27.2-py3-none-any.whl (50 kB)
+generate-and-post	Install Python deps	2026-05-04T17:08:50.7180529Z Downloading protobuf-7.34.1-cp310-abi3-manylinux2014_x86_64.whl (324 kB)
+generate-and-post	Install Python deps	2026-05-04T17:08:50.7238060Z Downloading pyparsing-3.3.2-py3-none-any.whl (122 kB)
+generate-and-post	Install Python deps	2026-05-04T17:08:50.7292962Z Downloading uritemplate-4.2.0-py3-none-any.whl (11 kB)
+generate-and-post	Install Python deps	2026-05-04T17:08:50.7347535Z Downloading urllib3-2.6.3-py3-none-any.whl (131 kB)
+generate-and-post	Install Python deps	2026-05-04T17:08:50.7412312Z Downloading google_auth_oauthlib-1.3.1-py3-none-any.whl (19 kB)
+generate-and-post	Install Python deps	2026-05-04T17:08:50.7462295Z Downloading python_dotenv-1.2.2-py3-none-any.whl (22 kB)
+generate-and-post	Install Python deps	2026-05-04T17:08:50.7546226Z Downloading moviepy-2.2.1-py3-none-any.whl (129 kB)
+generate-and-post	Install Python deps	2026-05-04T17:08:50.7623007Z Downloading pillow-11.3.0-cp311-cp311-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (6.6 MB)
+generate-and-post	Install Python deps	2026-05-04T17:08:50.7911256Z    ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü 6.6/6.6 MB 248.4 MB/s  0:00:00
+generate-and-post	Install Python deps	2026-05-04T17:08:50.7945016Z Downloading imageio-2.37.3-py3-none-any.whl (317 kB)
+generate-and-post	Install Python deps	2026-05-04T17:08:50.8011040Z Downloading decorator-5.2.1-py3-none-any.whl (9.2 kB)
+generate-and-post	Install Python deps	2026-05-04T17:08:50.8056701Z Downloading proglog-0.1.12-py3-none-any.whl (6.3 kB)
+generate-and-post	Install Python deps	2026-05-04T17:08:50.8125116Z Downloading imageio_ffmpeg-0.6.0-py3-none-manylinux2014_x86_64.whl (29.5 MB)
+generate-and-post	Install Python deps	2026-05-04T17:08:51.0894009Z    ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü 29.5/29.5 MB 106.7 MB/s  0:00:00
+generate-and-post	Install Python deps	2026-05-04T17:08:51.0938347Z Downloading numpy-2.4.4-cp311-cp311-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (16.9 MB)
+generate-and-post	Install Python deps	2026-05-04T17:08:51.1487776Z    ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü 16.9/16.9 MB 319.1 MB/s  0:00:00
+generate-and-post	Install Python deps	2026-05-04T17:08:51.1524454Z Downloading flask-3.1.3-py3-none-any.whl (103 kB)
+generate-and-post	Install Python deps	2026-05-04T17:08:51.1584809Z Downloading apscheduler-3.11.2-py3-none-any.whl (64 kB)
+generate-and-post	Install Python deps	2026-05-04T17:08:51.1652546Z Downloading faster_whisper-1.2.1-py3-none-any.whl (1.1 MB)
+generate-and-post	Install Python deps	2026-05-04T17:08:51.1718153Z    ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü 1.1/1.1 MB 215.2 MB/s  0:00:00
+generate-and-post	Install Python deps	2026-05-04T17:08:51.1772110Z Downloading ctranslate2-4.7.1-cp311-cp311-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (38.8 MB)
+generate-and-post	Install Python deps	2026-05-04T17:08:51.4584514Z    ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü 38.8/38.8 MB 138.6 MB/s  0:00:00
+generate-and-post	Install Python deps	2026-05-04T17:08:51.4641129Z Downloading onnxruntime-1.25.1-cp311-cp311-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (18.0 MB)
+generate-and-post	Install Python deps	2026-05-04T17:08:51.5541549Z    ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü 18.0/18.0 MB 203.4 MB/s  0:00:00
+generate-and-post	Install Python deps	2026-05-04T17:08:51.5578191Z Downloading pyyaml-6.0.3-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (806 kB)
+generate-and-post	Install Python deps	2026-05-04T17:08:51.5633837Z    ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü 806.6/806.6 kB 170.1 MB/s  0:00:00
+generate-and-post	Install Python deps	2026-05-04T17:08:51.5664943Z Downloading tokenizers-0.23.1-cp310-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (3.3 MB)
+generate-and-post	Install Python deps	2026-05-04T17:08:51.5854965Z    ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü 3.3/3.3 MB 205.5 MB/s  0:00:00
+generate-and-post	Install Python deps	2026-05-04T17:08:51.5891946Z Downloading huggingface_hub-1.13.0-py3-none-any.whl (660 kB)
+generate-and-post	Install Python deps	2026-05-04T17:08:51.5944316Z    ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü 660.6/660.6 kB 132.0 MB/s  0:00:00
+generate-and-post	Install Python deps	2026-05-04T17:08:51.5982128Z Downloading hf_xet-1.4.3-cp37-abi3-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (4.2 MB)
+generate-and-post	Install Python deps	2026-05-04T17:08:51.6190861Z    ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü 4.2/4.2 MB 217.7 MB/s  0:00:00
+generate-and-post	Install Python deps	2026-05-04T17:08:51.6225895Z Downloading httpx-0.28.1-py3-none-any.whl (73 kB)
+generate-and-post	Install Python deps	2026-05-04T17:08:51.6280215Z Downloading httpcore-1.0.9-py3-none-any.whl (78 kB)
+generate-and-post	Install Python deps	2026-05-04T17:08:51.6348376Z Downloading groq-1.2.0-py3-none-any.whl (142 kB)
+generate-and-post	Install Python deps	2026-05-04T17:08:51.6406358Z Downloading anyio-4.13.0-py3-none-any.whl (114 kB)
+generate-and-post	Install Python deps	2026-05-04T17:08:51.6461575Z Downloading distro-1.9.0-py3-none-any.whl (20 kB)
+generate-and-post	Install Python deps	2026-05-04T17:08:51.6517756Z Downloading pydantic-2.13.3-py3-none-any.whl (471 kB)
+generate-and-post	Install Python deps	2026-05-04T17:08:51.6578951Z Downloading pydantic_core-2.46.3-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (2.1 MB)
+generate-and-post	Install Python deps	2026-05-04T17:08:51.6674876Z    ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü 2.1/2.1 MB 263.7 MB/s  0:00:00
+generate-and-post	Install Python deps	2026-05-04T17:08:51.6709487Z Downloading typing_extensions-4.15.0-py3-none-any.whl (44 kB)
+generate-and-post	Install Python deps	2026-05-04T17:08:51.6767393Z Downloading annotated_types-0.7.0-py3-none-any.whl (13 kB)
+generate-and-post	Install Python deps	2026-05-04T17:08:51.6841677Z Downloading av-17.0.1-cp311-abi3-manylinux_2_28_x86_64.whl (36.3 MB)
+generate-and-post	Install Python deps	2026-05-04T17:08:51.8851959Z    ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü 36.3/36.3 MB 182.0 MB/s  0:00:00
+generate-and-post	Install Python deps	2026-05-04T17:08:51.8887501Z Downloading blinker-1.9.0-py3-none-any.whl (8.5 kB)
+generate-and-post	Install Python deps	2026-05-04T17:08:51.8938503Z Downloading certifi-2026.4.22-py3-none-any.whl (135 kB)
+generate-and-post	Install Python deps	2026-05-04T17:08:51.8998117Z Downloading click-8.3.3-py3-none-any.whl (110 kB)
+generate-and-post	Install Python deps	2026-05-04T17:08:51.9057713Z Downloading cryptography-47.0.0-cp311-abi3-manylinux_2_34_x86_64.whl (4.7 MB)
+generate-and-post	Install Python deps	2026-05-04T17:08:51.9230531Z    ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü 4.7/4.7 MB 305.0 MB/s  0:00:00
+generate-and-post	Install Python deps	2026-05-04T17:08:51.9275517Z Downloading cffi-2.0.0-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (215 kB)
+generate-and-post	Install Python deps	2026-05-04T17:08:51.9331365Z Downloading filelock-3.29.0-py3-none-any.whl (39 kB)
+generate-and-post	Install Python deps	2026-05-04T17:08:51.9384557Z Downloading fsspec-2026.4.0-py3-none-any.whl (203 kB)
+generate-and-post	Install Python deps	2026-05-04T17:08:51.9438357Z Downloading h11-0.16.0-py3-none-any.whl (37 kB)
+generate-and-post	Install Python deps	2026-05-04T17:08:51.9492415Z Downloading itsdangerous-2.2.0-py3-none-any.whl (16 kB)
+generate-and-post	Install Python deps	2026-05-04T17:08:51.9542459Z Downloading jinja2-3.1.6-py3-none-any.whl (134 kB)
+generate-and-post	Install Python deps	2026-05-04T17:08:51.9600838Z Downloading markupsafe-3.0.3-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (22 kB)
+generate-and-post	Install Python deps	2026-05-04T17:08:51.9654365Z Downloading packaging-26.2-py3-none-any.whl (100 kB)
+generate-and-post	Install Python deps	2026-05-04T17:08:51.9719013Z Downloading pyasn1_modules-0.4.2-py3-none-any.whl (181 kB)
+generate-and-post	Install Python deps	2026-05-04T17:08:51.9789017Z Downloading pyasn1-0.6.3-py3-none-any.whl (83 kB)
+generate-and-post	Install Python deps	2026-05-04T17:08:51.9842494Z Downloading requests_oauthlib-2.0.0-py2.py3-none-any.whl (24 kB)
+generate-and-post	Install Python deps	2026-05-04T17:08:51.9895390Z Downloading oauthlib-3.3.1-py3-none-any.whl (160 kB)
+generate-and-post	Install Python deps	2026-05-04T17:08:51.9948541Z Downloading tqdm-4.67.3-py3-none-any.whl (78 kB)
+generate-and-post	Install Python deps	2026-05-04T17:08:52.0009840Z Downloading typing_inspection-0.4.2-py3-none-any.whl (14 kB)
+generate-and-post	Install Python deps	2026-05-04T17:08:52.0057136Z Downloading tzlocal-5.3.1-py3-none-any.whl (18 kB)
+generate-and-post	Install Python deps	2026-05-04T17:08:52.0106006Z Downloading werkzeug-3.1.8-py3-none-any.whl (226 kB)
+generate-and-post	Install Python deps	2026-05-04T17:08:52.0162526Z Downloading flatbuffers-25.12.19-py2.py3-none-any.whl (26 kB)
+generate-and-post	Install Python deps	2026-05-04T17:08:52.0218356Z Downloading pycparser-3.0-py3-none-any.whl (48 kB)
+generate-and-post	Install Python deps	2026-05-04T17:08:52.0267055Z Downloading sniffio-1.3.1-py3-none-any.whl (10 kB)
+generate-and-post	Install Python deps	2026-05-04T17:08:52.0320236Z Downloading typer-0.25.1-py3-none-any.whl (58 kB)
+generate-and-post	Install Python deps	2026-05-04T17:08:52.0375341Z Downloading annotated_doc-0.0.4-py3-none-any.whl (5.3 kB)
+generate-and-post	Install Python deps	2026-05-04T17:08:52.0901547Z Downloading rich-15.0.0-py3-none-any.whl (310 kB)
+generate-and-post	Install Python deps	2026-05-04T17:08:52.0966266Z Downloading pygments-2.20.0-py3-none-any.whl (1.2 MB)
+generate-and-post	Install Python deps	2026-05-04T17:08:52.1071003Z    ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü 1.2/1.2 MB 147.9 MB/s  0:00:00
+generate-and-post	Install Python deps	2026-05-04T17:08:52.1105940Z Downloading markdown_it_py-4.0.0-py3-none-any.whl (87 kB)
+generate-and-post	Install Python deps	2026-05-04T17:08:52.1157149Z Downloading mdurl-0.1.2-py3-none-any.whl (10.0 kB)
+generate-and-post	Install Python deps	2026-05-04T17:08:52.1207206Z Downloading shellingham-1.5.4-py2.py3-none-any.whl (9.8 kB)
+generate-and-post	Install Python deps	2026-05-04T17:08:52.4228554Z Installing collected packages: flatbuffers, urllib3, uritemplate, tzlocal, typing-extensions, tqdm, sniffio, shellingham, pyyaml, python-dotenv, pyparsing, pygments, pycparser, pyasn1, protobuf, Pillow, packaging, oauthlib, numpy, mdurl, markupsafe, itsdangerous, imageio-ffmpeg, idna, hf-xet, h11, fsspec, filelock, distro, decorator, click, charset_normalizer, certifi, blinker, av, annotated-types, annotated-doc, werkzeug, typing-inspection, requests, pydantic-core, pyasn1-modules, proto-plus, proglog, onnxruntime, markdown-it-py, jinja2, imageio, httplib2, httpcore, googleapis-common-protos, ctranslate2, cffi, apscheduler, anyio, rich, requests-oauthlib, pydantic, moviepy, httpx, flask, cryptography, typer, groq, google-auth, huggingface-hub, google-auth-oauthlib, google-auth-httplib2, google-api-core, tokenizers, google-api-python-client, faster-whisper
+generate-and-post	Install Python deps	2026-05-04T17:09:01.8267534Z 
+generate-and-post	Install Python deps	2026-05-04T17:09:01.8304776Z Successfully installed Pillow-11.3.0 annotated-doc-0.0.4 annotated-types-0.7.0 anyio-4.13.0 apscheduler-3.11.2 av-17.0.1 blinker-1.9.0 certifi-2026.4.22 cffi-2.0.0 charset_normalizer-3.4.7 click-8.3.3 cryptography-47.0.0 ctranslate2-4.7.1 decorator-5.2.1 distro-1.9.0 faster-whisper-1.2.1 filelock-3.29.0 flask-3.1.3 flatbuffers-25.12.19 fsspec-2026.4.0 google-api-core-2.30.3 google-api-python-client-2.195.0 google-auth-2.50.0 google-auth-httplib2-0.3.1 google-auth-oauthlib-1.3.1 googleapis-common-protos-1.74.0 groq-1.2.0 h11-0.16.0 hf-xet-1.4.3 httpcore-1.0.9 httplib2-0.31.2 httpx-0.28.1 huggingface-hub-1.13.0 idna-3.13 imageio-2.37.3 imageio-ffmpeg-0.6.0 itsdangerous-2.2.0 jinja2-3.1.6 markdown-it-py-4.0.0 markupsafe-3.0.3 mdurl-0.1.2 moviepy-2.2.1 numpy-2.4.4 oauthlib-3.3.1 onnxruntime-1.25.1 packaging-26.2 proglog-0.1.12 proto-plus-1.27.2 protobuf-7.34.1 pyasn1-0.6.3 pyasn1-modules-0.4.2 pycparser-3.0 pydantic-2.13.3 pydantic-core-2.46.3 pygments-2.20.0 pyparsing-3.3.2 python-dotenv-1.2.2 pyyaml-6.0.3 requests-2.33.1 requests-oauthlib-2.0.0 rich-15.0.0 shellingham-1.5.4 sniffio-1.3.1 tokenizers-0.23.1 tqdm-4.67.3 typer-0.25.1 typing-extensions-4.15.0 typing-inspection-0.4.2 tzlocal-5.3.1 uritemplate-4.2.0 urllib3-2.6.3 werkzeug-3.1.8
+generate-and-post	Write secret files	∩╗┐2026-05-04T17:09:02.0743669Z ##[group]Run echo "$YOUTUBE_TOKEN" > token.json
+generate-and-post	Write secret files	2026-05-04T17:09:02.0744076Z ^[[36;1mecho "$YOUTUBE_TOKEN" > token.json^[[0m
+generate-and-post	Write secret files	2026-05-04T17:09:02.0744398Z ^[[36;1mecho "$YOUTUBE_CREDS" > credentials.json^[[0m
+generate-and-post	Write secret files	2026-05-04T17:09:02.0766364Z shell: /usr/bin/bash -e {0}
+generate-and-post	Write secret files	2026-05-04T17:09:02.0766613Z env:
+generate-and-post	Write secret files	2026-05-04T17:09:02.0766832Z   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+generate-and-post	Write secret files	2026-05-04T17:09:02.0767198Z   pythonLocation: /opt/hostedtoolcache/Python/3.11.15/x64
+generate-and-post	Write secret files	2026-05-04T17:09:02.0767634Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.11.15/x64/lib/pkgconfig
+generate-and-post	Write secret files	2026-05-04T17:09:02.0768054Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.15/x64
+generate-and-post	Write secret files	2026-05-04T17:09:02.0768431Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.15/x64
+generate-and-post	Write secret files	2026-05-04T17:09:02.0768846Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.15/x64
+generate-and-post	Write secret files	2026-05-04T17:09:02.0769233Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.11.15/x64/lib
+generate-and-post	Write secret files	2026-05-04T17:09:02.0773427Z   YOUTUBE_TOKEN: ***
+generate-and-post	Write secret files	2026-05-04T17:09:02.0774997Z   YOUTUBE_CREDS: ***
+generate-and-post	Write secret files	2026-05-04T17:09:02.0775240Z ##[endgroup]
+generate-and-post	Write .env	∩╗┐2026-05-04T17:09:02.0902191Z ##[group]Run echo "SUNO_API_KEY=$SUNO_API_KEY"             > .env
+generate-and-post	Write .env	2026-05-04T17:09:02.0902664Z ^[[36;1mecho "SUNO_API_KEY=$SUNO_API_KEY"             > .env^[[0m
+generate-and-post	Write .env	2026-05-04T17:09:02.0903054Z ^[[36;1mecho "OPENROUTER_API_KEY=$OPENROUTER_API_KEY" >> .env^[[0m
+generate-and-post	Write .env	2026-05-04T17:09:02.0903460Z ^[[36;1mecho "PEXELS_API_KEY=$PEXELS_API_KEY"         >> .env^[[0m
+generate-and-post	Write .env	2026-05-04T17:09:02.0903843Z ^[[36;1mecho "GROQ_API_KEY=$GROQ_API_KEY"             >> .env^[[0m
+generate-and-post	Write .env	2026-05-04T17:09:02.0904212Z ^[[36;1mecho "GEMINI_API_KEY=$GEMINI_API_KEY"         >> .env^[[0m
+generate-and-post	Write .env	2026-05-04T17:09:02.0904580Z ^[[36;1mecho "HF_HUB_DISABLE_SYMLINKS_WARNING=1"      >> .env^[[0m
+generate-and-post	Write .env	2026-05-04T17:09:02.0926152Z shell: /usr/bin/bash -e {0}
+generate-and-post	Write .env	2026-05-04T17:09:02.0926410Z env:
+generate-and-post	Write .env	2026-05-04T17:09:02.0926627Z   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+generate-and-post	Write .env	2026-05-04T17:09:02.0926983Z   pythonLocation: /opt/hostedtoolcache/Python/3.11.15/x64
+generate-and-post	Write .env	2026-05-04T17:09:02.0927415Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.11.15/x64/lib/pkgconfig
+generate-and-post	Write .env	2026-05-04T17:09:02.0927839Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.15/x64
+generate-and-post	Write .env	2026-05-04T17:09:02.0928270Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.15/x64
+generate-and-post	Write .env	2026-05-04T17:09:02.0928686Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.15/x64
+generate-and-post	Write .env	2026-05-04T17:09:02.0929093Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.11.15/x64/lib
+generate-and-post	Write .env	2026-05-04T17:09:02.0929555Z   SUNO_API_KEY: ***
+generate-and-post	Write .env	2026-05-04T17:09:02.0930360Z   OPENROUTER_API_KEY: ***
+generate-and-post	Write .env	2026-05-04T17:09:02.0930775Z   PEXELS_API_KEY: ***
+generate-and-post	Write .env	2026-05-04T17:09:02.0931126Z   GROQ_API_KEY: ***
+generate-and-post	Write .env	2026-05-04T17:09:02.0931401Z   GEMINI_API_KEY: ***
+generate-and-post	Write .env	2026-05-04T17:09:02.0931601Z ##[endgroup]
+generate-and-post	Restore used_stories cache	∩╗┐2026-05-04T17:09:02.1059586Z ##[group]Run actions/cache@v4
+generate-and-post	Restore used_stories cache	2026-05-04T17:09:02.1060376Z with:
+generate-and-post	Restore used_stories cache	2026-05-04T17:09:02.1060585Z   path: used_stories.json
+generate-and-post	Restore used_stories cache	2026-05-04T17:09:02.1060821Z   key: used-stories-7
+generate-and-post	Restore used_stories cache	2026-05-04T17:09:02.1061044Z   restore-keys: used-stories-
+generate-and-post	Restore used_stories cache	2026-05-04T17:09:02.1061301Z   enableCrossOsArchive: false
+generate-and-post	Restore used_stories cache	2026-05-04T17:09:02.1061564Z   fail-on-cache-miss: false
+generate-and-post	Restore used_stories cache	2026-05-04T17:09:02.1061796Z   lookup-only: false
+generate-and-post	Restore used_stories cache	2026-05-04T17:09:02.1062006Z   save-always: false
+generate-and-post	Restore used_stories cache	2026-05-04T17:09:02.1062195Z env:
+generate-and-post	Restore used_stories cache	2026-05-04T17:09:02.1062393Z   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+generate-and-post	Restore used_stories cache	2026-05-04T17:09:02.1062734Z   pythonLocation: /opt/hostedtoolcache/Python/3.11.15/x64
+generate-and-post	Restore used_stories cache	2026-05-04T17:09:02.1063158Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.11.15/x64/lib/pkgconfig
+generate-and-post	Restore used_stories cache	2026-05-04T17:09:02.1063575Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.15/x64
+generate-and-post	Restore used_stories cache	2026-05-04T17:09:02.1063948Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.15/x64
+generate-and-post	Restore used_stories cache	2026-05-04T17:09:02.1064327Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.15/x64
+generate-and-post	Restore used_stories cache	2026-05-04T17:09:02.1064748Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.11.15/x64/lib
+generate-and-post	Restore used_stories cache	2026-05-04T17:09:02.1065068Z ##[endgroup]
+generate-and-post	Restore used_stories cache	2026-05-04T17:09:02.2199151Z (node:3708) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+generate-and-post	Restore used_stories cache	2026-05-04T17:09:02.2201303Z (Use `node --trace-deprecation ...` to show where the warning was created)
+generate-and-post	Restore used_stories cache	2026-05-04T17:09:02.4752751Z (node:3708) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+generate-and-post	Restore used_stories cache	2026-05-04T17:09:02.4756942Z Cache hit for restore-key: used-stories-5
+generate-and-post	Restore used_stories cache	2026-05-04T17:09:02.8480667Z Received 225 of 225 (100.0%), 0.0 MBs/sec
+generate-and-post	Restore used_stories cache	2026-05-04T17:09:02.8481720Z Cache Size: ~0 MB (225 B)
+generate-and-post	Restore used_stories cache	2026-05-04T17:09:02.8515395Z [command]/usr/bin/tar -xf /home/runner/work/_temp/4b93b0a1-ec36-422f-ad84-1146b8014e22/cache.tzst -P -C /home/runner/work/llalalala/llalalala --use-compress-program unzstd
+generate-and-post	Restore used_stories cache	2026-05-04T17:09:02.8577348Z Cache restored successfully
+generate-and-post	Restore used_stories cache	2026-05-04T17:09:02.8683374Z Cache restored from key: used-stories-5
+generate-and-post	Generate and post music video	∩╗┐2026-05-04T17:09:02.8755525Z ##[group]Run # If genre manually specified, use it. Otherwise rotate by UTC hour:
+generate-and-post	Generate and post music video	2026-05-04T17:09:02.8756129Z ^[[36;1m# If genre manually specified, use it. Otherwise rotate by UTC hour:^[[0m
+generate-and-post	Generate and post music video	2026-05-04T17:09:02.8756588Z ^[[36;1m# 21 UTC (5 AM PHT morning slot) ΓåÆ hugot_ballad^[[0m
+generate-and-post	Generate and post music video	2026-05-04T17:09:02.8756963Z ^[[36;1m# 10 UTC (6 PM PHT prime slot)   ΓåÆ hugot_opm_pop^[[0m
+generate-and-post	Generate and post music video	2026-05-04T17:09:02.8757330Z ^[[36;1m# 13 UTC (9 PM PHT late slot)    ΓåÆ opm_rnb_hugot^[[0m
+generate-and-post	Generate and post music video	2026-05-04T17:09:02.8757650Z ^[[36;1mif [ -n "" ]; then^[[0m
+generate-and-post	Generate and post music video	2026-05-04T17:09:02.8757891Z ^[[36;1m  GENRE=""^[[0m
+generate-and-post	Generate and post music video	2026-05-04T17:09:02.8758108Z ^[[36;1melse^[[0m
+generate-and-post	Generate and post music video	2026-05-04T17:09:02.8758315Z ^[[36;1m  HOUR=$(date -u +%H)^[[0m
+generate-and-post	Generate and post music video	2026-05-04T17:09:02.8758568Z ^[[36;1m  if [ "$HOUR" = "21" ]; then^[[0m
+generate-and-post	Generate and post music video	2026-05-04T17:09:02.8758838Z ^[[36;1m    GENRE="hugot_ballad"^[[0m
+generate-and-post	Generate and post music video	2026-05-04T17:09:02.8759101Z ^[[36;1m  elif [ "$HOUR" = "10" ]; then^[[0m
+generate-and-post	Generate and post music video	2026-05-04T17:09:02.8759381Z ^[[36;1m    GENRE="hugot_opm_pop"^[[0m
+generate-and-post	Generate and post music video	2026-05-04T17:09:02.8759645Z ^[[36;1m  else^[[0m
+generate-and-post	Generate and post music video	2026-05-04T17:09:02.8759856Z ^[[36;1m    GENRE="opm_rnb_hugot"^[[0m
+generate-and-post	Generate and post music video	2026-05-04T17:09:02.8760607Z ^[[36;1m  fi^[[0m
+generate-and-post	Generate and post music video	2026-05-04T17:09:02.8760914Z ^[[36;1mfi^[[0m
+generate-and-post	Generate and post music video	2026-05-04T17:09:02.8761255Z ^[[36;1mecho "Running genre: $GENRE"^[[0m
+generate-and-post	Generate and post music video	2026-05-04T17:09:02.8761728Z ^[[36;1mpython main.py --genre "$GENRE"^[[0m
+generate-and-post	Generate and post music video	2026-05-04T17:09:02.8784265Z shell: /usr/bin/bash -e {0}
+generate-and-post	Generate and post music video	2026-05-04T17:09:02.8784522Z env:
+generate-and-post	Generate and post music video	2026-05-04T17:09:02.8784740Z   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+generate-and-post	Generate and post music video	2026-05-04T17:09:02.8785104Z   pythonLocation: /opt/hostedtoolcache/Python/3.11.15/x64
+generate-and-post	Generate and post music video	2026-05-04T17:09:02.8785549Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.11.15/x64/lib/pkgconfig
+generate-and-post	Generate and post music video	2026-05-04T17:09:02.8785977Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.15/x64
+generate-and-post	Generate and post music video	2026-05-04T17:09:02.8786362Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.15/x64
+generate-and-post	Generate and post music video	2026-05-04T17:09:02.8786752Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.15/x64
+generate-and-post	Generate and post music video	2026-05-04T17:09:02.8787161Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.11.15/x64/lib
+generate-and-post	Generate and post music video	2026-05-04T17:09:02.8787672Z ##[endgroup]
+generate-and-post	Generate and post music video	2026-05-04T17:09:02.8846284Z Running genre: opm_rnb_hugot
+generate-and-post	Generate and post music video	2026-05-04T17:22:44.4663116Z Traceback (most recent call last):
+generate-and-post	Generate and post music video	2026-05-04T17:22:44.4950223Z   File "/home/runner/work/llalalala/llalalala/main.py", line 606, in <module>
+generate-and-post	Generate and post music video	2026-05-04T17:22:44.4955246Z 
+generate-and-post	Generate and post music video	2026-05-04T17:22:44.4956766Z =======================================================
+generate-and-post	Generate and post music video	2026-05-04T17:22:44.4971145Z Genre: opm_rnb_hugot
+generate-and-post	Generate and post music video	2026-05-04T17:22:44.4985497Z Style: OPM R&B, smooth Filipino soul, neo-soul, emotional Tagalog vocals, late night vi
+generate-and-post	Generate and post music video	2026-05-04T17:22:44.4991432Z =======================================================
+generate-and-post	Generate and post music video	2026-05-04T17:22:44.4991934Z 
+generate-and-post	Generate and post music video	2026-05-04T17:22:44.4995241Z [suno] Credits remaining: 1002.0
+generate-and-post	Generate and post music video	2026-05-04T17:22:44.4996023Z [pipeline] Fetching PH love stories from Reddit...
+generate-and-post	Generate and post music video	2026-05-04T17:22:44.4999207Z [trending_ph] Fetching PH love stories from Reddit...
+generate-and-post	Generate and post music video	2026-05-04T17:22:44.5012330Z [trending_ph] Reddit r/OffMyChestPH failed: 403 Client Error: Blocked for url: https://www.reddit.com/r/OffMyChestPH/hot.json?limit=30
+generate-and-post	Generate and post music video	2026-05-04T17:22:44.5019213Z [trending_ph] Reddit r/relationship_advice failed: 403 Client Error: Blocked for url: https://www.reddit.com/r/relationship_advice/hot.json?limit=30
+generate-and-post	Generate and post music video	2026-05-04T17:22:44.5031126Z [trending_ph] Reddit r/phlgbt failed: 403 Client Error: Blocked for url: https://www.reddit.com/r/phlgbt/hot.json?limit=30
+generate-and-post	Generate and post music video	2026-05-04T17:22:44.5041480Z [trending_ph] Reddit r/BreakUps failed: 403 Client Error: Blocked for url: https://www.reddit.com/r/BreakUps/hot.json?limit=30
+generate-and-post	Generate and post music video	2026-05-04T17:22:44.5049769Z [trending_ph] Reddit r/TrueOffMyChest failed: 403 Client Error: Blocked for url: https://www.reddit.com/r/TrueOffMyChest/hot.json?limit=30
+generate-and-post	Generate and post music video	2026-05-04T17:22:44.5055401Z [trending_ph] Reddit r/heartbreak failed: 403 Client Error: Blocked for url: https://www.reddit.com/r/heartbreak/hot.json?limit=30
+generate-and-post	Generate and post music video	2026-05-04T17:22:44.5059154Z [trending_ph] No story posts found, falling back to trending topics...
+generate-and-post	Generate and post music video	2026-05-04T17:22:44.5065072Z [trending_ph] Fetching Google Trends PH...
+generate-and-post	Generate and post music video	2026-05-04T17:22:44.5068136Z [trending_ph] Google Trends PH error: HTTP 404
+generate-and-post	Generate and post music video	2026-05-04T17:22:44.5069305Z [trending_ph] Fetching Reddit r/Philippines...
+generate-and-post	Generate and post music video	2026-05-04T17:22:44.5072769Z [trending_ph] Reddit r/Philippines failed: 403 Client Error: Blocked for url: https://www.reddit.com/r/Philippines/hot.json?limit=20
+generate-and-post	Generate and post music video	2026-05-04T17:22:44.5076771Z [trending_ph] Reddit r/OFW failed: 403 Client Error: Blocked for url: https://www.reddit.com/r/OFW/hot.json?limit=20
+generate-and-post	Generate and post music video	2026-05-04T17:22:44.5080700Z [trending_ph] Reddit r/phlgbt failed: 403 Client Error: Blocked for url: https://www.reddit.com/r/phlgbt/hot.json?limit=20
+generate-and-post	Generate and post music video	2026-05-04T17:22:44.5084560Z [pipeline] Trending: Pagmamahal na Walang Katumbas
+generate-and-post	Generate and post music video	2026-05-04T17:22:44.5085699Z [pipeline] Generating Tagalog lyrics via OpenRouter...
+generate-and-post	Generate and post music video	2026-05-04T17:22:44.5088528Z [lyrics_gen] Trying model: google/gemini-2.0-flash-001
+generate-and-post	Generate and post music video	2026-05-04T17:22:44.5092078Z [lyrics_gen] Lyrics generated (840 chars) via google/gemini-2.0-flash-001
+generate-and-post	Generate and post music video	2026-05-04T17:22:44.5094690Z [pipeline] Generating song title...
+generate-and-post	Generate and post music video	2026-05-04T17:22:44.5100458Z [pipeline] Song title: Sayo'ng Lahat, Wala Na
+generate-and-post	Generate and post music video	2026-05-04T17:22:44.5101493Z     result = asyncio.run(create_music_video(
+generate-and-post	Generate and post music video	2026-05-04T17:22:44.5106865Z              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+generate-and-post	Generate and post music video	2026-05-04T17:22:44.5111323Z   File "/opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/asyncio/runners.py", line 190, in run
+generate-and-post	Generate and post music video	2026-05-04T17:22:44.5113769Z     return runner.run(main)
+generate-and-post	Generate and post music video	2026-05-04T17:22:44.5116166Z            ^^^^^^^^^^^^^^^^
+generate-and-post	Generate and post music video	2026-05-04T17:22:44.5119067Z   File "/opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/asyncio/runners.py", line 118, in run
+generate-and-post	Generate and post music video	2026-05-04T17:22:44.5124694Z     return self._loop.run_until_complete(task)
+generate-and-post	Generate and post music video	2026-05-04T17:22:44.5125566Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+generate-and-post	Generate and post music video	2026-05-04T17:22:44.5128475Z   File "/opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/asyncio/base_events.py", line 654, in run_until_complete
+generate-and-post	Generate and post music video	2026-05-04T17:22:44.5396896Z [pipeline] YouTube title: Minahal Kita Nang Sobra... Iniwan Mo Pa Rin Ako ≡ƒÆö (Nakakaiyak!)
+generate-and-post	Generate and post music video	2026-05-04T17:22:44.5400813Z [pipeline] Story cards: 3 intro + 2 mid-quotes
+generate-and-post	Generate and post music video	2026-05-04T17:22:44.5404315Z [pipeline] Lyrics saved (840 chars)
+generate-and-post	Generate and post music video	2026-05-04T17:22:44.5406315Z [pipeline] Generating music via Suno: Minahal Kita Nang Sobra... Iniwan Mo Pa Rin Ako ≡ƒÆö (Nakakaiyak!)
+generate-and-post	Generate and post music video	2026-05-04T17:22:44.5411557Z [suno] Music task: 6f488b37dd10b3756d358dd1231711ef
+generate-and-post	Generate and post music video	2026-05-04T17:22:44.5414726Z [suno] Music status: PENDING
+generate-and-post	Generate and post music video	2026-05-04T17:22:44.5417262Z [suno] Music ready ΓÇö 2 track(s)
+generate-and-post	Generate and post music video	2026-05-04T17:22:44.5423122Z [pipeline] Track: 'Sayo'ng Lahat, Wala Na'
+generate-and-post	Generate and post music video	2026-05-04T17:22:44.5425886Z [pipeline] Suno lyrics match our input (no drift)
+generate-and-post	Generate and post music video	2026-05-04T17:22:44.5431892Z [suno] Downloading audio ΓåÆ /home/runner/work/llalalala/llalalala/output/opm_rnb_hugot_20260504_170903/music.mp3
+generate-and-post	Generate and post music video	2026-05-04T17:22:44.5435472Z [suno] Audio saved: /home/runner/work/llalalala/llalalala/output/opm_rnb_hugot_20260504_170903/music.mp3
+generate-and-post	Generate and post music video	2026-05-04T17:22:44.5438616Z [pipeline] Trimmed audio from 352s ΓåÆ 270s (fade-out 5s)
+generate-and-post	Generate and post music video	2026-05-04T17:22:44.5441707Z [pipeline] Generating viral story segments...
+generate-and-post	Generate and post music video	2026-05-04T17:22:44.5442587Z [pipeline] Story segments: 54 cards across 270s
+generate-and-post	Generate and post music video	2026-05-04T17:22:44.5445810Z [pipeline] Building music video...
+generate-and-post	Generate and post music video	2026-05-04T17:22:44.5450775Z [video] Audio: 264.1s (4.4 min)
+generate-and-post	Generate and post music video	2026-05-04T17:22:44.5453822Z [bg] Visual keywords from lyrics: ['rain on window', 'empty city street', 'couple silhouette night', 'candle flame flicker', 'desolate landscape']
+generate-and-post	Generate and post music video	2026-05-04T17:22:44.5457545Z [bg] Pexels 'rain on window' -> 15 results
+generate-and-post	Generate and post music video	2026-05-04T17:22:44.5460370Z [bg] Pexels 'empty city street' -> 15 results
+generate-and-post	Generate and post music video	2026-05-04T17:22:44.5464442Z [bg] Pexels 'couple silhouette night' -> 15 results
+generate-and-post	Generate and post music video	2026-05-04T17:22:44.5467786Z [bg] Pexels 'candle flame flicker' -> 15 results
+generate-and-post	Generate and post music video	2026-05-04T17:22:44.5470629Z [bg] Pexels 'desolate landscape' -> 15 results
+generate-and-post	Generate and post music video	2026-05-04T17:22:44.5473308Z [bg] Downloading clip 1/11...
+generate-and-post	Generate and post music video	2026-05-04T17:22:44.5476473Z [bg] Downloading clip 2/11...
+generate-and-post	Generate and post music video	2026-05-04T17:22:44.5480921Z [bg] Downloading clip 3/11...
+generate-and-post	Generate and post music video	2026-05-04T17:22:44.5483819Z [bg] Downloading clip 4/11...
+generate-and-post	Generate and post music video	2026-05-04T17:22:44.5486391Z [bg] Downloading clip 5/11...
+generate-and-post	Generate and post music video	2026-05-04T17:22:44.5489460Z [bg] Downloading clip 6/11...
+generate-and-post	Generate and post music video	2026-05-04T17:22:44.5490600Z [bg] Downloading clip 7/11...
+generate-and-post	Generate and post music video	2026-05-04T17:22:44.5494387Z [bg] Downloading clip 8/11...
+generate-and-post	Generate and post music video	2026-05-04T17:22:44.5497173Z [bg] Downloading clip 9/11...
+generate-and-post	Generate and post music video	2026-05-04T17:22:44.5500537Z [bg] Downloading clip 10/11...
+generate-and-post	Generate and post music video	2026-05-04T17:22:44.5503285Z [bg] Downloading clip 11/11...
+generate-and-post	Generate and post music video	2026-05-04T17:22:44.5503908Z [bg] 11 clips ready
+generate-and-post	Generate and post music video	2026-05-04T17:22:44.5506683Z [subs] Story mode: 56 cues across 264s
+generate-and-post	Generate and post music video	2026-05-04T17:22:44.5511358Z [subs] ASS: 56 cues -> /home/runner/work/llalalala/llalalala/output/opm_rnb_hugot_20260504_170903/lyrics.ass
+generate-and-post	Generate and post music video	2026-05-04T17:22:44.5522309Z [video] Pre-processing clips (two-pass encode to keep RAM low)...
+generate-and-post	Generate and post music video	2026-05-04T17:22:44.5532242Z [video] Pre-processing clip 1/11 (nvenc)...
+generate-and-post	Generate and post music video	2026-05-04T17:22:44.5540642Z [video] Pre-processing clip 1/11 (cpu)...
+generate-and-post	Generate and post music video	2026-05-04T17:22:44.5551297Z [video] Pre-processing clip 2/11 (nvenc)...
+generate-and-post	Generate and post music video	2026-05-04T17:22:44.5563327Z [video] Pre-processing clip 2/11 (cpu)...
+generate-and-post	Generate and post music video	2026-05-04T17:22:44.5571220Z [video] Pre-processing clip 3/11 (nvenc)...
+generate-and-post	Generate and post music video	2026-05-04T17:22:44.5575618Z [video] Pre-processing clip 3/11 (cpu)...
+generate-and-post	Generate and post music video	2026-05-04T17:22:44.5576492Z [video] Pre-processing clip 4/11 (nvenc)...
+generate-and-post	Generate and post music video	2026-05-04T17:22:44.5580587Z [video] Pre-processing clip 4/11 (cpu)...
+generate-and-post	Generate and post music video	2026-05-04T17:22:44.6623943Z     return future.result()
+generate-and-post	Generate and post music video	2026-05-04T17:22:44.6628635Z            ^^^^^^^^^^^^^^^
+generate-and-post	Generate and post music video	2026-05-04T17:22:44.6631738Z   File "/home/runner/work/llalalala/llalalala/main.py", line 466, in create_music_video
+generate-and-post	Generate and post music video	2026-05-04T17:22:44.6637612Z     build_music_video(
+generate-and-post	Generate and post music video	2026-05-04T17:22:44.6641494Z   File "/home/runner/work/llalalala/llalalala/music_video.py", line 973, in build_music_video
+generate-and-post	Generate and post music video	2026-05-04T17:22:44.6646643Z     proc_paths = _preprocess_clips(clip_paths, work_dir, ffmpeg, vstyle, log_path)
+generate-and-post	Generate and post music video	2026-05-04T17:22:44.6650257Z                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+generate-and-post	Generate and post music video	2026-05-04T17:22:44.6658334Z   File "/home/runner/work/llalalala/llalalala/music_video.py", line 751, in _preprocess_clips
+generate-and-post	Generate and post music video	2026-05-04T17:22:44.6666913Z     r = subprocess.run(cmd, stdout=lf, stderr=lf, timeout=180)
+generate-and-post	Generate and post music video	2026-05-04T17:22:44.6671238Z         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+generate-and-post	Generate and post music video	2026-05-04T17:22:44.6676479Z   File "/opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/subprocess.py", line 550, in run
+generate-and-post	Generate and post music video	2026-05-04T17:22:44.6681370Z     stdout, stderr = process.communicate(input, timeout=timeout)
+generate-and-post	Generate and post music video	2026-05-04T17:22:44.6694804Z                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+generate-and-post	Generate and post music video	2026-05-04T17:22:44.6704263Z   File "/opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/subprocess.py", line 1209, in communicate
+generate-and-post	Generate and post music video	2026-05-04T17:22:44.6710454Z     stdout, stderr = self._communicate(input, endtime, timeout)
+generate-and-post	Generate and post music video	2026-05-04T17:22:44.6713939Z                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+generate-and-post	Generate and post music video	2026-05-04T17:22:44.6721747Z   File "/opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/subprocess.py", line 2141, in _communicate
+generate-and-post	Generate and post music video	2026-05-04T17:22:44.6733582Z     self.wait(timeout=self._remaining_time(endtime))
+generate-and-post	Generate and post music video	2026-05-04T17:22:44.6737229Z   File "/opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/subprocess.py", line 1264, in wait
+generate-and-post	Generate and post music video	2026-05-04T17:22:44.6742755Z     return self._wait(timeout=timeout)
+generate-and-post	Generate and post music video	2026-05-04T17:22:44.6751158Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+generate-and-post	Generate and post music video	2026-05-04T17:22:44.6757610Z   File "/opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/subprocess.py", line 2045, in _wait
+generate-and-post	Generate and post music video	2026-05-04T17:22:44.6761644Z     raise TimeoutExpired(self.args, timeout)
+generate-and-post	Generate and post music video	2026-05-04T17:22:44.6769116Z subprocess.TimeoutExpired: Command '['/opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/imageio_ffmpeg/binaries/ffmpeg-linux-x86_64-v7.0.2', '-y', '-i', '/home/runner/work/llalalala/llalalala/output/opm_rnb_hugot_20260504_170903/_clip3.mp4', '-vf', 'fps=30,loop=loop=-1:size=900:start=0,trim=duration=30,setpts=PTS-STARTPTS,scale=2169:1220:force_original_aspect_ratio=increase,crop=1920:1080:(iw-ow)/2:(ih-oh)*(1-t/30),fps=30', '-t', '30', '-c:v', 'libx264', '-preset', 'ultrafast', '-crf', '23', '-an', '-pix_fmt', 'yuv420p', '/home/runner/work/llalalala/llalalala/output/opm_rnb_hugot_20260504_170903/_proc3.mp4']' timed out after 179.99998912 seconds
+generate-and-post	Generate and post music video	2026-05-04T17:22:45.0445375Z ##[error]Process completed with exit code 1.
+generate-and-post	Post Checkout repo	∩╗┐2026-05-04T17:22:45.1615799Z Post job cleanup.
+generate-and-post	Post Checkout repo	2026-05-04T17:22:45.3508833Z [command]/usr/bin/git version
+generate-and-post	Post Checkout repo	2026-05-04T17:22:45.3593735Z git version 2.53.0
+generate-and-post	Post Checkout repo	2026-05-04T17:22:45.3637828Z Temporarily overriding HOME='/home/runner/work/_temp/582df544-454a-4012-8ec2-38923d811669' before making global git config changes
+generate-and-post	Post Checkout repo	2026-05-04T17:22:45.3639718Z Adding repository directory to the temporary git global config as a safe directory
+generate-and-post	Post Checkout repo	2026-05-04T17:22:45.3646110Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/llalalala/llalalala
+generate-and-post	Post Checkout repo	2026-05-04T17:22:45.3688576Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+generate-and-post	Post Checkout repo	2026-05-04T17:22:45.3728747Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+generate-and-post	Post Checkout repo	2026-05-04T17:22:45.4087986Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+generate-and-post	Post Checkout repo	2026-05-04T17:22:45.4122427Z http.https://github.com/.extraheader
+generate-and-post	Post Checkout repo	2026-05-04T17:22:45.4134694Z [command]/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
+generate-and-post	Post Checkout repo	2026-05-04T17:22:45.4181334Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+generate-and-post	Post Checkout repo	2026-05-04T17:22:45.4465480Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+generate-and-post	Post Checkout repo	2026-05-04T17:22:45.4498929Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+generate-and-post	Complete job	∩╗┐2026-05-04T17:22:45.4922076Z Cleaning up orphan processes
+generate-and-post	Complete job	2026-05-04T17:22:45.5531571Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/cache@v4, actions/checkout@v4, actions/setup-python@v5. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
