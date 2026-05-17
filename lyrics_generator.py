@@ -217,8 +217,16 @@ def generate_tagalog_lyrics(
         f"into a universal Filipino emotional experience: frustration, hope, resilience, "
         f"or the feeling of being an ordinary Filipino facing real everyday struggles. "
         f"Do NOT directly name news events, politicians, or headlines in the lyrics — "
-        f"make it poetic and universally relatable.\n"
-        f"Make the opening line instantly hook the listener.\n"
+        f"make it poetic and universally relatable.\n\n"
+        f"CRITICAL — OPENING LINE RULE:\n"
+        f"The VERY FIRST line of [Verse 1] must be a SINGLE sentence that:\n"
+        f"  • Describes a SPECIFIC, vivid emotional moment (not a generic statement)\n"
+        f"  • Uses 'ako', 'ikaw', 'natin', or 'mo' to make it personal\n"
+        f"  • Is 8-12 syllables — singable in one breath\n"
+        f"  • Makes a Filipino immediately think: 'ako 'to'\n"
+        f"  • Example: 'Naalala ko pa 'yung gabing umalis ka nang walang paalam'\n"
+        f"  • Example: 'Tinanong kita kung mahal mo pa ko — tumango ka lang'\n"
+        f"This opening line will be the FIRST thing viewers hear and read — it determines if they stay.\n"
     )
     if extra_instructions:
         user_prompt += f"\nAdditional direction: {extra_instructions}\n"
@@ -306,54 +314,75 @@ def generate_song_title(lyrics: str, trend_title: str, genre_key: str = "") -> s
 
 def generate_viral_yt_title(story_title: str, lyrics: str, genre_key: str = "") -> str:
     """
-    Generate a punchy YouTube title in Tagalog/Taglish anchored to the trending topic.
-    Rant/protest genres: title must directly reference the news event.
-    Hugot/love genres: emotional hook style that reflects the story's theme.
+    Generate a punchy YouTube title in Tagalog/Taglish.
+
+    Strategy per genre type:
+      - Rant/protest: title MUST reference the specific news event (political rage bait)
+      - Hugot (love): title is a PURE EMOTIONAL HOOK derived from the LYRICS,
+        not from the news topic name. The news topic is only context for the song's
+        emotion — never a literal word in the title (avoids disease/policy names).
     """
     api_key = os.getenv("OPENROUTER_API_KEY", "")
     is_rant = genre_key in _RANT_GENRES
 
-    # Genre-specific suffix: boosts CTR and search relevance vs generic "| Music"
     _SUFFIXES = {
-        "hugot_ballad":       " | OPM Hugot 2026 🎵",
-        "hugot_opm_pop":      " | OPM Pop 2026 🇵🇭",
-        "pinoy_rap_hugot":    " | Pinoy Rap 2026 🎤",
-        "opm_rnb_hugot":      " | OPM R&B 2026 🌙",
-        "pamana_folk_opm":    " | OPM Folk 2026 🎸",
-        "pinoy_rant":         " | Pinoy Rant Song 😤",
+        "hugot_ballad":         " | OPM Hugot 2026 🎵",
+        "hugot_opm_pop":        " | OPM Pop 2026 🇵🇭",
+        "pinoy_rap_hugot":      " | Pinoy Rap 2026 🎤",
+        "opm_rnb_hugot":        " | OPM R&B 2026 🌙",
+        "pamana_folk_opm":      " | OPM Folk 2026 🎸",
+        "pinoy_rant":           " | Pinoy Rant Song 😤",
         "pinoy_protest_anthem": " | OPM Protest Song 🇵🇭",
     }
     suffix = _SUFFIXES.get(genre_key, " | OPM 2026 🇵🇭")
     max_base = 100 - len(suffix)
 
     if not api_key:
+        # Fallback: use first punchy lyric line as the title
+        for line in lyrics.splitlines():
+            line = line.strip()
+            if line and not line.startswith("[") and len(line) > 15:
+                return line[:max_base].rstrip() + suffix
         return story_title[:max_base].rstrip() + suffix
 
     if is_rant:
+        # Rant genres: title must directly name the news event so Filipinos recognize it
         content = (
             f"Trending news topic: \"{story_title}\"\n"
-            f"Sample lyrics about this topic:\n{lyrics[:300]}\n\n"
-            "Write ONE punchy YouTube video title in Tagalog or Taglish that DIRECTLY references "
+            f"Sample lyrics:\n{lyrics[:300]}\n\n"
+            "Write ONE punchy YouTube title in Tagalog or Taglish that DIRECTLY references "
             "this specific news topic — a Filipino viewer must instantly recognize what news event this is about. "
-            "Style: outraged, emotional, or eye-opening commentary — the kind shared on Facebook. "
-            "Examples for political/social topics:\n"
+            "Style: outraged, emotional, or eye-opening commentary — the kind shared on Facebook.\n"
+            "Examples:\n"
             "- 'Bakit Nilaban Nila si Sara? Ang Boto Na Nagpagalit sa Pilipinas'\n"
             "- 'Nagkamali Ba ang Kongreso? Ito ang Katotohanang Ayaw Nilang Marinig'\n"
-            "- 'Ang Boses ng Sambayanan — Laban o Talo ang mga Mamamayan?'\n"
-            f"Max {max_base} characters. No hashtags. No markdown. No quotes around the title. Just the title."
+            "- 'Taas Presyo Na Naman — Gaano Pa Natin Kaya ang Sistemang Ito?'\n"
+            f"Max {max_base} characters. No hashtags. No markdown. No quotes. Just the title."
         )
     else:
+        # Hugot genres: title is a LYRIC-BASED emotional hook.
+        # Do NOT mention the news topic name (avoid disease names, budget jargon, etc.)
+        # The title should sound like a relatable Filipino love/heartbreak experience.
+        # Pull the hook directly from the most emotional lines in the lyrics.
+        best_lines = "\n".join(
+            line.strip() for line in lyrics.splitlines()
+            if line.strip() and not line.strip().startswith("[") and len(line.strip()) > 15
+        )[:400]
         content = (
-            f"Trending story: \"{story_title}\"\n"
-            f"First lyric lines:\n{lyrics[:300]}\n\n"
-            "Write ONE viral YouTube title in Tagalog or Taglish for this OPM hugot music video. "
-            "The title should reflect the emotional theme of the trending story above — not generic romance. "
-            "Style: emotional story hook, the kind Filipinos share on social media. "
-            "Examples:\n"
+            f"These are the most emotional lines from an OPM hugot song:\n{best_lines}\n\n"
+            "Write ONE viral YouTube title in Tagalog or Taglish for this music video.\n"
+            "RULES:\n"
+            "1. The title must come from the EMOTION and STORY in the lyrics — NOT from any news topic or event name.\n"
+            "2. Use second-person 'ikaw/mo/ka' perspective so it feels personal to the viewer.\n"
+            "3. Use ellipsis (...) or em-dash (—) to create a curiosity gap.\n"
+            "4. Style: sounds like a real Filipino telling their love story to a friend.\n"
+            "Good examples:\n"
             "- 'Sabi Niya Mahal Niya Ako... Tapos Pinili Niya Pa Rin Ang Iba'\n"
-            "- 'Isang Taon Na Hinintay Kita... Hindi Ka Naman Bumalik'\n"
-            "- 'Iniwanan Mo Ako Para Sa Iyong Ex... Tapos Nagsorry Ka Nang Matagal Na'\n"
-            f"Max {max_base} characters. No hashtags. No markdown. No quotes around the title. Just the title."
+            "- 'Isang Taon Na Akong Naghintay... Hindi Ka Naman Pala Babalik'\n"
+            "- 'Iniwanan Mo Ako — Tapos Ngayon Nagso-Sorry Ka Na Lang?'\n"
+            "- 'Mahal Pa Rin Kita Kahit Matagal Ka Nang Nawala Sa Buhay Ko'\n"
+            "- 'Bakit Ngayon Ka Nagbabalik... Kailan Pa Naging Madali Para Sa Iyo Ito?'\n"
+            f"Max {max_base} characters. No hashtags. No news topic names. No markdown. Just the title."
         )
 
     messages = [{"role": "user", "content": content}]
@@ -363,6 +392,11 @@ def generate_viral_yt_title(story_title: str, lyrics: str, genre_key: str = "") 
         base = title if title else story_title
         return base[:max_base].rstrip() + suffix
     except Exception:
+        # Fallback: first strong lyric line
+        for line in lyrics.splitlines():
+            line = line.strip()
+            if line and not line.startswith("[") and len(line) > 15:
+                return line[:max_base].rstrip() + suffix
         return story_title[:max_base].rstrip() + suffix
 
 

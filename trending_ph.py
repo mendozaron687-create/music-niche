@@ -390,9 +390,46 @@ _POLITICS_KEYWORDS = [
     "south china sea", "spratly", "panatag", "kalayaan", "rotc",
 ]
 
+# Topics that make terrible hugot/OPM songs — skip these entirely.
+# We ONLY skip for hugot genres; rant genres can still use political topics.
+_MUSIC_UNSUITABLE_PATTERNS = [
+    # Diseases / health outbreaks
+    "hantavirus", "hanta", "mpox", "monkeypox", "dengue", "measles", "cholera",
+    "tuberculosis", "bird flu", "avian flu", "h5n1", "coronavirus", "covid",
+    "hepatitis", "malaria", "rabies", "outbreak", "epidemic", "pandemic", "virus",
+    "bacteria", "pathogen", "quarantine", "lockdown",
+    # Pure sports results (scores/wins/standings — no emotional story)
+    "beats", "defeats", "wins over", "loses to", "final score", "standings",
+    "championship game", "nba", "nfl", "fifa world cup", "pba finals",
+    "gilas pilipinas vs", "game 7", "series tied",
+    # Weather / natural disaster without human angle
+    "typhoon warning", "storm signal", "magnitude", "earthquake", "eruption",
+    "lpa", "itcz", "easterlies", "habagat",
+    # Financial/economic data (dry, not emotional)
+    "peso falls", "gdp", "inflation rate", "bsp rate", "interest rate",
+    "stock market", "psei", "dow jones", "crude oil price",
+    # Foreign/international (not PH-relatable)
+    "united states", "white house", "congress us", "uk parliament",
+    "european union", "israel", "ukraine", "russia", "iran", "north korea",
+    "elon musk", "trump", "biden", "xi jinping",
+    # Crime / violence (YouTube sensitive topics)
+    "murdered", "shot dead", "stabbed", "carnapping", "robbery", "rape case",
+    "hold-up", "salvage", "massacre", "crime scene",
+]
+
+
+def _is_suitable_for_music(title: str, description: str = "") -> bool:
+    """
+    Return True if a news topic can naturally inspire emotional OPM music.
+    Rejects disease outbreaks, pure sports scores, foreign news, financial data, and crime.
+    """
+    combined = (title + " " + description).lower()
+    return not any(pat in combined for pat in _MUSIC_UNSUITABLE_PATTERNS)
+
+
 _ENTERTAINMENT_KEYWORDS = [
     "celebrity", "artista", "singer", "actor", "actress", "showbiz",
-    "abs-cbn", "gma", "tv5", "kapamilya", "kapuso", "kapuso",
+    "abs-cbn", "gma", "tv5", "kapamilya", "kapuso",
     "opm", "concert", "fans", "bashers", "issue", "kontrobersya",
     "viral", "trending", "tiktok", "instagram", "youtube",
     "bb pilipinas", "ms universe", "miss world", "gilas", "pba",
@@ -595,14 +632,30 @@ def pick_trending_story(stories: list[dict]) -> tuple[dict, str]:
             "pinoy_rant",
         )
 
+    # For hugot genres: filter out topics that can't naturally inspire emotional OPM music
+    # (diseases, sports scores, foreign news, financial data, crime reports)
+    # Rant/political topics are kept regardless since the song IS about frustration.
+    suitable = [
+        s for s in stories
+        if _is_suitable_for_music(s["title"], s.get("description", ""))
+        or s.get("rant_score", 0) >= 3  # political rant stories always OK
+    ]
+    if not suitable:
+        print("[trending_ph] All topics unsuitable for music — using fallback")
+        suitable = stories  # fallback: use everything
+
+    if len(suitable) < len(stories):
+        skipped = len(stories) - len(suitable)
+        print(f"[trending_ph] Filtered {skipped} unsuitable topics (disease/sports/crime/foreign)")
+
     # Sort: political stories first (by rant_score), then hugot
     rant_stories = sorted(
-        [s for s in stories if s.get("rant_score", 0) >= 3],
+        [s for s in suitable if s.get("rant_score", 0) >= 3],
         key=lambda x: x.get("rant_score", 0),
         reverse=True,
     )
     hugot_stories = sorted(
-        [s for s in stories if s.get("rant_score", 0) < 3],
+        [s for s in suitable if s.get("rant_score", 0) < 3],
         key=lambda x: x.get("hugot_score", 0),
         reverse=True,
     )
