@@ -197,14 +197,30 @@ def upload_to_youtube(
     if not playlist_id and genre_key:
         playlist_id = _get_or_create_playlist(youtube, genre_key)
 
+    # Deduplicate tags, preserve order; YouTube allows ~500 chars total for tags
+    seen = set()
+    unique_tags = []
+    for t in tags:
+        tl = t.lower()
+        if tl not in seen:
+            seen.add(tl)
+            unique_tags.append(t)
+
+    # Determine content language for OPM (tells YouTube to serve to Filipino audience)
+    _is_opm_lang = genre_key in {
+        "hugot_ballad", "hugot_opm_pop", "pinoy_rap_hugot",
+        "opm_rnb_hugot", "pamana_folk_opm", "pinoy_rant", "pinoy_protest_anthem",
+    }
+
     insert_request = youtube.videos().insert(
         part="snippet,status",
         body={
             "snippet": {
                 "title": title[:100],
                 "description": description[:5000],
-                "tags": tags[:30],
+                "tags": unique_tags[:50],
                 "categoryId": "10",  # Music category
+                **({"defaultLanguage": "tl", "defaultAudioLanguage": "tl"} if _is_opm_lang else {}),
             },
             "status": {
                 "privacyStatus": "public",
@@ -270,43 +286,58 @@ def _generate_description(
     lyrics: str,
     is_opm: bool = False,
     chapters: str = "",
+    trend_topic: str = "",
 ) -> str:
     """Generate an SEO-optimised YouTube description via OpenRouter (or fallback)."""
+    import datetime
     api_key = os.getenv("OPENROUTER_API_KEY", "")
     style = genre_dict.get("style", "music")
-    tags_str = " ".join(f"#{t}" for t in genre_dict.get("youtube_tags", [])[:15])
+    year = datetime.date.today().year
 
-    # Filipino-specific CTA block for OPM genres (drives comments = algorithm signal)
+    # Up to 15 hashtags — YouTube renders these as clickable links above the title
+    hashtag_block = " ".join(
+        f"#{t}" for t in (genre_dict.get("youtube_tags", []) + ["OPM", "PinoyMusic", "Trending"])[:15]
+    )
+
+    # Filipino-specific CTA (drives comments = strongest algorithm signal)
     if is_opm:
+        topic_hook = f"Tungkol ito sa: {trend_topic}.\n" if trend_topic else ""
         cta_block = (
+            f"{topic_hook}"
             "💬 Sino ang nasa isip mo habang pinapakingan ito? I-comment ka below 👇\n"
-            "🔔 I-subscribe at i-on ang bell para hindi ka makaligtaan ng bagong musika!\n"
-            "❤️ I-share mo 'to sa taong kailangan marinig ito ngayon."
+            "🔔 I-subscribe at i-on ang bell para hindi ka makaligtaan ng bagong OPM!\n"
+            "❤️ I-share mo 'to sa taong kailangan marinig ito ngayon.\n"
+            "👇 Buksan ang description para sa lyrics at chapters."
         )
     else:
         cta_block = (
-            "🎵 New music uploaded regularly — Subscribe so you never miss a track!\n"
-            "🔔 Hit the bell to get notified!"
+            "🎵 New music uploaded daily — Subscribe so you never miss a track!\n"
+            "🔔 Hit the bell icon to get notified!"
         )
 
-    # Chapters block (YouTube auto-generates navigation if 00:00 is present)
     chapters_block = f"\n\n🎵 CHAPTERS\n{chapters}" if chapters else ""
 
     if api_key:
         import requests as _req
         if is_opm:
             prompt = (
-                f"Write a YouTube video description in Filipino (Tagalog/Taglish) for an OPM music video titled: '{title}'\n"
+                f"Write a YouTube description for this OPM music video.\n"
+                f"Video title: '{title}'\n"
                 f"Music style: {style}\n"
-                f"100-150 words. Include: what emotion this song captures, who this is for (e.g. 'Para sa lahat ng nasaktan'), "
-                f"encourage comments by asking a direct relatable question. Plain text only, no markdown."
+                f"Trending topic this song is about: '{trend_topic}'\n\n"
+                f"RULES:\n"
+                f"1. First sentence MUST contain the song title and the trending topic keyword (for YouTube search indexing).\n"
+                f"2. Mention the year {year} and 'OPM' at least once each.\n"
+                f"3. 120-160 words total. Tagalog/Taglish. Plain text only, no markdown, no bullet points.\n"
+                f"4. Capture the main emotion (heartbreak / frustration / pag-asa / etc).\n"
+                f"5. End with: 'Para sa bawat Pilipinong may nararamdaman ngayon — para ito sa inyo.' "
             )
         else:
             prompt = (
-                f"Write a YouTube video description for a music video titled: '{title}'\n"
-                f"Music style: {style}\n"
-                f"Keep it 150-200 words. Include: what the music is good for (studying/relaxing/working out etc), "
-                f"a CTA to subscribe, a note about AI-generated music. Plain text only."
+                f"Write a YouTube description for this music video.\n"
+                f"Title: '{title}' | Style: {style}\n"
+                f"150-200 words. Include: what the music is for, a subscribe CTA, mention AI-generated music. "
+                f"Include the year {year}. Plain text only."
             )
         try:
             resp = _req.post(
@@ -318,7 +349,7 @@ def _generate_description(
             )
             if resp.status_code == 200:
                 desc = resp.json()["choices"][0]["message"]["content"].strip()
-                return f"{desc}\n\n{cta_block}{chapters_block}\n\n{tags_str}"
+                return f"{desc}\n\n{cta_block}{chapters_block}\n\n{hashtag_block}"
         except Exception as e:
             print(f"[desc] OpenRouter failed: {e}")
 
@@ -326,16 +357,17 @@ def _generate_description(
     first_line = lyrics.splitlines()[0] if lyrics else ""
     if is_opm:
         return (
-            f"{title}\n\n"
+            f"{title} — OPM {year}\n\n"
             f'"{first_line}"\n\n'
-            f"Pakinggan mo ito kapag parang gusto mong mag-isa lang.\n\n"
-            f"{cta_block}{chapters_block}\n\n{tags_str}"
+            f"Pakinggan mo ito kapag parang gusto mong mag-isa lang.\n"
+            f"{('Tungkol ito sa: ' + trend_topic + chr(10)) if trend_topic else ''}"
+            f"\n{cta_block}{chapters_block}\n\n{hashtag_block}"
         )
     return (
         f"{title}\n\n"
-        f"Enjoy this AI-generated {style} track. Perfect for studying, relaxing, or setting the mood.\n\n"
+        f"Enjoy this AI-generated {style} track ({year}). Perfect for studying, relaxing, or setting the mood.\n\n"
         f'"{first_line}"\n\n'
-        f"{cta_block}{chapters_block}\n\n{tags_str}"
+        f"{cta_block}{chapters_block}\n\n{hashtag_block}"
     )
 
 
@@ -708,14 +740,26 @@ async def create_music_video(
 
     # 7. Build metadata (chapters from subtitle file + Filipino CTA for OPM)
     from music_video import extract_chapters_from_ass
+    import datetime as _dt
     chapters = extract_chapters_from_ass(ass_path, song_title or title)
+    _trend_topic = trend_story.get("title", "") if isinstance(trend_story, dict) else ""
     description = _generate_description(
         upload_title, genre_dict, lyrics,
         is_opm=is_opm, chapters=chapters,
+        trend_topic=_trend_topic,
     )
-    tags = genre_dict.get("youtube_tags", []) + ["music", "aimusic"]
+    # Base tags from genre + universal music terms
+    tags = genre_dict.get("youtube_tags", []) + ["music", "OPMmusic", str(_dt.date.today().year)]
     if is_opm:
-        tags += ["OPM", "Tagalog", "PinoyMusic"]
+        # High-volume Filipino search terms
+        tags += [
+            "OPM", "Tagalog", "PinoyMusic", "bagongOPM", "OPMhit",
+            "HugotSongs", "pinoylovesong", "bagongkanta", "pampalipasoras",
+        ]
+        # Inject keywords extracted from the trending topic title
+        if _trend_topic:
+            _kw = [w for w in _trend_topic.split() if len(w) >= 4 and w.isalpha()]
+            tags += [w.lower() for w in _kw[:6]]
 
     # Save metadata
     meta_path = os.path.join(output_dir, "metadata.json")

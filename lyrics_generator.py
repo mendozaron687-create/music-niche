@@ -311,10 +311,23 @@ def generate_viral_yt_title(story_title: str, lyrics: str, genre_key: str = "") 
     Hugot/love genres: emotional hook style that reflects the story's theme.
     """
     api_key = os.getenv("OPENROUTER_API_KEY", "")
-    if not api_key:
-        return story_title[:92].rstrip() + " | Music"
-
     is_rant = genre_key in _RANT_GENRES
+
+    # Genre-specific suffix: boosts CTR and search relevance vs generic "| Music"
+    _SUFFIXES = {
+        "hugot_ballad":       " | OPM Hugot 2026 🎵",
+        "hugot_opm_pop":      " | OPM Pop 2026 🇵🇭",
+        "pinoy_rap_hugot":    " | Pinoy Rap 2026 🎤",
+        "opm_rnb_hugot":      " | OPM R&B 2026 🌙",
+        "pamana_folk_opm":    " | OPM Folk 2026 🎸",
+        "pinoy_rant":         " | Pinoy Rant Song 😤",
+        "pinoy_protest_anthem": " | OPM Protest Song 🇵🇭",
+    }
+    suffix = _SUFFIXES.get(genre_key, " | OPM 2026 🇵🇭")
+    max_base = 100 - len(suffix)
+
+    if not api_key:
+        return story_title[:max_base].rstrip() + suffix
 
     if is_rant:
         content = (
@@ -327,7 +340,7 @@ def generate_viral_yt_title(story_title: str, lyrics: str, genre_key: str = "") 
             "- 'Bakit Nilaban Nila si Sara? Ang Boto Na Nagpagalit sa Pilipinas'\n"
             "- 'Nagkamali Ba ang Kongreso? Ito ang Katotohanang Ayaw Nilang Marinig'\n"
             "- 'Ang Boses ng Sambayanan — Laban o Talo ang mga Mamamayan?'\n"
-            "Max 90 characters. No hashtags. No markdown. No quotes around the title. Just the title."
+            f"Max {max_base} characters. No hashtags. No markdown. No quotes around the title. Just the title."
         )
     else:
         content = (
@@ -340,18 +353,17 @@ def generate_viral_yt_title(story_title: str, lyrics: str, genre_key: str = "") 
             "- 'Sabi Niya Mahal Niya Ako... Tapos Pinili Niya Pa Rin Ang Iba'\n"
             "- 'Isang Taon Na Hinintay Kita... Hindi Ka Naman Bumalik'\n"
             "- 'Iniwanan Mo Ako Para Sa Iyong Ex... Tapos Nagsorry Ka Nang Matagal Na'\n"
-            "Max 90 characters. No hashtags. No markdown. No quotes around the title. Just the title."
+            f"Max {max_base} characters. No hashtags. No markdown. No quotes around the title. Just the title."
         )
 
     messages = [{"role": "user", "content": content}]
     try:
         raw = _call_openrouter(messages, _MODELS[0])
-        # Strip markdown bold (**text**), quotes, and leading/trailing symbols
         title = re.sub(r'\*+', '', raw).strip().strip('"\'').split("\n")[0].strip()
         base = title if title else story_title
-        return base[:92].rstrip() + " | Music"
+        return base[:max_base].rstrip() + suffix
     except Exception:
-        return story_title[:92].rstrip() + " | Music"
+        return story_title[:max_base].rstrip() + suffix
 
 
 def generate_pinned_comment(story_title: str, lyrics: str) -> str:
