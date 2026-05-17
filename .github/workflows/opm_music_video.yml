@@ -2,9 +2,8 @@ name: OPM Music Video
 
 on:
   schedule:
-    # 2x daily — 6 PM and 10 PM Philippine Time (UTC+8)
+    # Once daily — 6:00 PM Philippine Time (UTC+8 = UTC+0 10:00)
     - cron: "0 10 * * *"   # 6:00 PM PHT
-    - cron: "0 14 * * *"   # 10:00 PM PHT
   workflow_dispatch:       # allow manual trigger from GitHub UI
 
 env:
