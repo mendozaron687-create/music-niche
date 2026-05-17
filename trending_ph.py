@@ -111,10 +111,31 @@ def _hugot_score(text: str) -> int:
 
 # ── Source 1: Reddit ─────────────────────────────────────────────────────────
 
+# Keywords that indicate NSFW/sensitive content — skip these stories entirely
+# to avoid YouTube age-restriction, self-harm flags, or content suppression.
+_NSFW_BLOCKLIST = [
+    # Sexual
+    "sex", "nakipagtalik", "ginalaw", "nilasog", "sexual", "rape", "molestation",
+    "harrassed", "nude", "nudes", "onlyfans", "porn", "kantot",
+    # Self-harm / suicide (YouTube sensitive topics policy)
+    "suicide", "nagpakamatay", "self-harm", "self harm", "nagputol", "gusto na mamatay",
+    "buhay mo", "pumatay", "magpakamatay",
+    # Extreme violence
+    "murder", "pinatay", "napatay", "dismember",
+]
+
+
+def _is_safe_story(title: str, selftext: str = "") -> bool:
+    """Return False if a Reddit story contains NSFW or policy-sensitive content."""
+    combined = (title + " " + selftext).lower()
+    return not any(kw in combined for kw in _NSFW_BLOCKLIST)
+
+
 def _get_reddit_ph(subreddits: list[str] = None, limit: int = 20) -> list[dict]:
     """Fetch hot posts from Philippine subreddits. No auth required."""
     if subreddits is None:
-        subreddits = ["Philippines", "phlgbt", "OFW", "OffMyChestPH"]
+        # Only safe, family-friendly PH subreddits — avoids age-restriction on YouTube
+        subreddits = ["Philippines", "OFW", "phtrending"]
 
     stories = []
     for sub in subreddits:
@@ -125,10 +146,13 @@ def _get_reddit_ph(subreddits: list[str] = None, limit: int = 20) -> list[dict]:
             posts = resp.json()["data"]["children"]
             for p in posts:
                 d = p["data"]
-                if d.get("stickied") or d.get("pinned"):
+                if d.get("stickied") or d.get("pinned") or d.get("over_18"):
                     continue
                 title = d.get("title", "")
                 selftext = (d.get("selftext", "") or "")[:300]
+                if not _is_safe_story(title, selftext):
+                    print(f"[trending_ph] Skipped NSFW/sensitive post: {title[:60]}")
+                    continue
                 combined = f"{title} {selftext}"
                 stories.append({
                     "title": title,
@@ -207,7 +231,7 @@ def get_trending_ph(max_results: int = 15) -> list[dict]:
 
     print("[trending_ph] Fetching Reddit r/Philippines...")
     all_stories.extend(_get_reddit_ph(
-        subreddits=["Philippines", "OFW", "phlgbt"],
+        subreddits=["Philippines", "OFW", "phtrending"],
         limit=20,
     ))
 
@@ -227,12 +251,11 @@ def get_trending_ph(max_results: int = 15) -> list[dict]:
 # ── Love story sources (for hugot genres) ────────────────────────────────────
 
 _LOVE_STORY_SUBREDDITS = [
-    "OffMyChestPH",
     "relationship_advice",
-    "phlgbt",
     "BreakUps",
     "TrueOffMyChest",
     "heartbreak",
+    "Philippines",
 ]
 
 _LOVE_KEYWORDS = [
@@ -258,12 +281,15 @@ def _get_reddit_love_stories(limit: int = 25) -> list[dict]:
             posts = resp.json()["data"]["children"]
             for p in posts:
                 d = p["data"]
-                if d.get("stickied") or d.get("pinned"):
+                if d.get("stickied") or d.get("pinned") or d.get("over_18"):
                     continue
                 title = d.get("title", "")
                 selftext = (d.get("selftext", "") or "").strip()
                 if len(selftext) < 100:
                     continue  # skip link-only or very short posts
+                if not _is_safe_story(title, selftext):
+                    print(f"[trending_ph] Skipped NSFW love story: {title[:60]}")
+                    continue
                 combined = f"{title} {selftext}"
                 score = _hugot_score(combined)
                 love_hits = sum(1 for kw in _LOVE_KEYWORDS if kw in combined.lower())
