@@ -90,7 +90,7 @@ def _sanitize_style(style: str) -> str:
 
 # ── Extra production style (applied randomly ~50% of the time) ──────────────
 # Set to "" to disable entirely. Change EXTRA_STYLE_CHANCE to adjust frequency.
-EXTRA_STYLE_CHANCE = 0.5   # 0.0 = never, 1.0 = always
+EXTRA_STYLE_CHANCE = 0.0   # Style is now set directly per-genre in GENRE_PROMPTS; no random appending
 EXTRA_STYLE_PROMPT = (
     "A catchy, feel-good love song with a smooth funky pop style inspired by modern "
     "retro R&B. Upbeat groove, warm bassline, clean guitar riffs, soft synth layers, "
@@ -108,7 +108,7 @@ def generate_music(
     style: str,
     title: str,
     instrumental: bool = False,
-    model: str = "V4_5ALL",
+    model: str = "V5_5",
 ) -> dict:
     """
     Generate music using Suno. Returns task info dict with taskId and tracks list.

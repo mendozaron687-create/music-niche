@@ -386,6 +386,7 @@ _FIRST_COMMENTS = [
 OPM_GENRES = {
     "hugot_ballad", "hugot_opm_pop", "pinoy_rap_hugot",
     "opm_rnb_hugot", "pamana_folk_opm",
+    "opm_funky_love",                           # feel-good original love songs
     "pinoy_rant", "pinoy_protest_anthem",       # political/rant genres
 }
 
@@ -395,7 +396,7 @@ async def create_music_video(
     genre_key: str = None,
     output_dir: str = None,
     upload: bool = True,
-    model: str = "V4_5ALL",
+    model: str = "V5_5",
     instrumental: bool = False,
     resume_from: str = None,
 ) -> dict:
@@ -579,26 +580,17 @@ async def create_music_video(
     trend_story = {}
 
     if genre_key in OPM_GENRES:
-        # OPM/Rant path: fetch YouTube PH trending → classify genre → LLM lyrics
-        from trending_ph import (
-            get_ph_news_trending, pick_trending_story, format_trending_context,
+        # OPM path: generate original love song from a preset romantic theme (no trending news)
+        from lyrics_generator import (
+            generate_tagalog_lyrics, generate_song_title,
+            generate_viral_yt_title, generate_pinned_comment, generate_story_cards,
+            get_romantic_theme, format_romantic_context,
         )
-        from lyrics_generator import generate_tagalog_lyrics, generate_song_title, GENRE_PROMPTS
 
-        print("[pipeline] Fetching PH trending news...")
-        news_stories = get_ph_news_trending(max_results=20)
+        trend_story = get_romantic_theme()
+        trend_context = format_romantic_context(trend_story)
 
-        # Auto-select genre from trending topic (unless genre was explicitly passed)
-        if genre_key not in ("pinoy_rant", "pinoy_protest_anthem"):
-            trend_story, detected_genre = pick_trending_story(news_stories)
-            genre_key = detected_genre
-            genre_dict = get_genre(genre_key)
-            print(f"[pipeline] Auto-detected genre: {genre_key}")
-        else:
-            trend_story, _ = pick_trending_story(news_stories)
-        trend_context = format_trending_context(trend_story)
-
-        print(f"[pipeline] Trending topic: {trend_story['title']}")
+        print(f"[pipeline] Theme: {trend_story['title']}")
         print(f"[pipeline] Genre: {genre_key}")
 
         print("[pipeline] Generating Tagalog lyrics via OpenRouter...")
@@ -609,8 +601,7 @@ async def create_music_video(
         song_title = generate_song_title(lyrics, trend_story["title"], genre_key=genre_key)
         print(f"[pipeline] Song title: {song_title}")
 
-        # Viral YouTube title — story-driven hook in Tagalog (for upload & thumbnail)
-        from lyrics_generator import generate_viral_yt_title, generate_pinned_comment
+        # Viral YouTube title — lyrics-driven hook
         yt_title = generate_viral_yt_title(trend_story["title"], lyrics, genre_key=genre_key)
         print(f"[pipeline] YouTube title: {yt_title}")
 
@@ -618,7 +609,6 @@ async def create_music_video(
         first_comment = generate_pinned_comment(trend_story["title"], lyrics)
 
         # Story intro cards + mid-video pull quotes
-        from lyrics_generator import generate_story_cards
         _sc_data = generate_story_cards(trend_story["title"], trend_story.get("description", ""))
         story_card_list = _sc_data.get("intro", [])
         pull_quote_list = _sc_data.get("mid", [])
@@ -856,7 +846,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="YouTube Music Niche Automation")
     parser.add_argument("--genre", default=None, help="Genre key (e.g. lofi_hiphop)")
     parser.add_argument("--no-upload", action="store_true", help="Skip YouTube upload")
-    parser.add_argument("--model", default="V4_5ALL", help="Suno model version")
+    parser.add_argument("--model", default="V5_5", help="Suno model version")
     parser.add_argument("--instrumental", action="store_true", help="Instrumental only")
     parser.add_argument("--output-dir", default=None, help="Custom output directory")
     parser.add_argument(

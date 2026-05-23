@@ -71,6 +71,26 @@ GENRE_PROMPTS = {
             "Structure: [Verse 1], [Chorus], [Verse 2], [Chorus], [Bridge], [Final Chorus]"
         ),
     },
+    "opm_funky_love": {
+        "suno_style": (
+            "A catchy, feel-good love song with a smooth funky pop style inspired by modern "
+            "retro R&B. Upbeat groove, warm bassline, clean guitar riffs, soft synth layers, "
+            "and a danceable rhythm. The vibe is romantic, playful, and slightly flirtatious—"
+            "like falling in love unexpectedly. Male vocals with soulful delivery, light "
+            "falsetto moments, and catchy melodic hooks. Chorus is addictive and easy to sing "
+            "along to. Tempo is mid-to-upbeat, perfect for dancing or cruising at night. "
+            "Overall mood: joyful, charming, and uplifting love energy."
+        ),
+        "instruction": (
+            "Write a catchy, feel-good OPM love song in Taglish (natural Tagalog-English mix). "
+            "The vibe is ROMANTIC, PLAYFUL, and FLIRTATIOUS — NOT a heartbreak or hugot song. "
+            "Pure happy love energy: butterflies, laughter, dancing, late night drives, new love. "
+            "The chorus must be ADDICTIVE and instantly singable — quotable on TikTok Philippines. "
+            "Soulful male vocals with light falsetto moments and a warm funky feel. "
+            "Opening line must be a vivid, specific romantic moment that hooks listeners immediately. "
+            "Structure: [Verse 1], [Pre-Chorus], [Chorus], [Verse 2], [Pre-Chorus], [Chorus], [Bridge], [Chorus]"
+        ),
+    },
     "pinoy_rant": {
         "suno_style": (
             "Pinoy rant rap, angry Tagalog hip hop, social commentary, trap beat, "
@@ -99,6 +119,46 @@ GENRE_PROMPTS = {
         ),
     },
 }
+
+
+# ── Preset romantic themes (replaces trending news as lyric inspiration) ────
+
+_ROMANTIC_THEMES = [
+    {"title": "Ang pag-ibig na hindi inaasahan", "description": "Unexpectedly falling for someone who changed everything."},
+    {"title": "Ikaw ang dahilan ng aking ngiti", "description": "The person who is the reason you smile every single day."},
+    {"title": "Mahal kita nang tahimik", "description": "A quiet, steady love — no grand gestures, just a constant warm presence."},
+    {"title": "Crush na naging mahal sa buhay", "description": "When a simple crush slowly became the love of your life."},
+    {"title": "Ang tamis ng bagong simula", "description": "The exciting, nervous sweetness of the very beginning of a love story."},
+    {"title": "Gusto kitang kasama lagi", "description": "Wanting to be with someone always — every morning, every night, every moment."},
+    {"title": "Pag-ibig sa unang titig", "description": "Love at first sight — that electric moment when eyes meet across a room."},
+    {"title": "Hindi ako mapagod sa iyo", "description": "A love so good you never get tired — their presence is always enough."},
+    {"title": "Ikaw ang sagot sa aking panalangin", "description": "You are the answer to a prayer I did not know I was making."},
+    {"title": "Sa iyong tabi, ako ay kumpleto", "description": "Feeling whole and complete simply by being beside someone you love."},
+    {"title": "Ang iyong ngiti ang nagpapagaan ng araw ko", "description": "Your smile makes every hard day lighter and worth living."},
+    {"title": "Bago tayong matulog, ikaw ang huling iniisip ko", "description": "The person who is always the last thought before sleep."},
+    {"title": "Nandito ako para sa iyo", "description": "Being fully, completely present for someone — through every moment."},
+    {"title": "Ang dating mo ay biglang nag-iba", "description": "When you suddenly see a familiar person in a whole new light."},
+    {"title": "Tayo ba naman ay para sa isa't isa", "description": "The beautiful uncertainty of new love — are we truly meant for each other?"},
+    {"title": "Ang pag-ibig na nagbibigay inspirasyon", "description": "A love that motivates you to be the best version of yourself."},
+    {"title": "First date na parang panaginip", "description": "A first date so magical it felt unreal — like living inside a dream."},
+    {"title": "Ikaw lang ang nakakaintindi sa akin", "description": "You are the only one who truly understands me without any words."},
+    {"title": "Ang boses mo ay musika sa aking tainga", "description": "Your voice is music — I could listen to it forever and never get tired."},
+    {"title": "Sayaw tayo hanggang umaga", "description": "Dancing together until sunrise — lost in music and each other all night long."},
+]
+
+
+def get_romantic_theme() -> dict:
+    """Return a random preset romantic theme for original love song generation."""
+    import random as _random
+    return _random.choice(_ROMANTIC_THEMES)
+
+
+def format_romantic_context(theme: dict) -> str:
+    """Build the LLM lyrics-generation context string from a romantic theme."""
+    return (
+        f'Song theme: "{theme["title"]}"\n'
+        f'Emotional context: {theme["description"]}'
+    )
 
 
 def _call_openrouter(messages: list[dict], model: str) -> str:

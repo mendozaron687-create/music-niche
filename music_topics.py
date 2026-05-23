@@ -219,6 +219,39 @@ GENRES = {
         "lang": "tl",
     },
 
+    # ── Feel-Good Original Love Song genre ──────────────────────────────────
+    # Original compositions — no trending news. Copyright-safe.
+    # Primary genre: upbeat funky pop OPM love song.
+
+    "opm_funky_love": {
+        "style": (
+            "A catchy, feel-good love song with a smooth funky pop style inspired by modern "
+            "retro R&B. Upbeat groove, warm bassline, clean guitar riffs, soft synth layers, "
+            "and a danceable rhythm. The vibe is romantic, playful, and slightly flirtatious—"
+            "like falling in love unexpectedly. Male vocals with soulful delivery, light "
+            "falsetto moments, and catchy melodic hooks. Chorus is addictive and easy to sing "
+            "along to. Tempo is mid-to-upbeat, perfect for dancing or cruising at night. "
+            "Overall mood: joyful, charming, and uplifting love energy."
+        ),
+        "title_templates": [
+            "{song_title} 🎶 | OPM Feel-Good Love Song 2026",
+            "{song_title} — Bagong OPM Funky Pop",
+            "{song_title} | Pinoy Funky Love Song 🇵🇭",
+            "{song_title} — OPM Pop Love 2026 🔥",
+            "{song_title} | Feel-Good OPM Music 2026",
+        ],
+        "lyric_prompt": "a catchy feel-good OPM love song in Taglish with upbeat funky pop vibes, romantic and playful.",
+        "mood_tags": ["romantic couple sunset", "city lights night", "dancing couple", "neon city", "golden hour philippines"],
+        "youtube_tags": [
+            "OPMlove", "OPM2026", "OPMpop", "PinoyMusic", "TagalogLoveSong",
+            "OPMhits", "BagongOPM", "feelgoodmusic", "FilipinoLoveSong",
+            "OPMnewrelease", "PinoyRnB", "OPMvibes", "romanticOPM",
+            "funkyPOP", "OPMdance",
+        ],
+        "video_style": "city",
+        "lang": "tl",
+    },
+
     # ── Political / Rant / Social Commentary genres ─────────────────────────
     # Triggered by political/social trending topics on YouTube PH.
     # Inspired by Filipino frustration with government, corruption, daily struggles.
@@ -273,13 +306,8 @@ GENRES = {
 
 
 def get_random_genre() -> tuple[str, dict]:
-    """Return (genre_key, genre_dict) randomly — hugot/OPM genres only."""
-    hugot_keys = [
-        "hugot_ballad", "hugot_opm_pop", "pinoy_rap_hugot",
-        "opm_rnb_hugot", "pamana_folk_opm",
-    ]
-    key = random.choice(hugot_keys)
-    return key, GENRES[key]
+    """Return (genre_key, genre_dict) — opm_funky_love is the primary genre."""
+    return "opm_funky_love", GENRES["opm_funky_love"]
 
 
 def get_genre(genre_key: str) -> dict:
