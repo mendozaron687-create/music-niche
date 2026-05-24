@@ -884,6 +884,7 @@ if __name__ == "__main__":
     except Exception as exc:
         err_msg = (
             "\u274c <b>Music pipeline FAILED</b>\n"
+            "\U0001f4e6 <i>mendozaron687-create/music-niche</i>\n"
             f"{traceback.format_exc()[-2000:]}"
         )
         _send_telegram(err_msg)
@@ -900,12 +901,14 @@ if __name__ == "__main__":
     if result.get("url"):
         tg_msg = (
             "\u2705 <b>New video uploaded!</b>\n"
+            "\U0001f4e6 <i>mendozaron687-create/music-niche</i>\n"
             f"\U0001f3b5 {result['title']}\n"
             f"\U0001f517 {result['url']}"
         )
     else:
         tg_msg = (
             "\u2705 <b>Video rendered (not uploaded)</b>\n"
+            "\U0001f4e6 <i>mendozaron687-create/music-niche</i>\n"
             f"\U0001f3b5 {result['title']}"
         )
     _send_telegram(tg_msg)
