@@ -22,9 +22,26 @@ import json
 import random
 import subprocess
 import shutil
+import traceback
 from datetime import datetime
 from dotenv import load_dotenv
 import requests as _requests
+
+
+def _send_telegram(message: str) -> None:
+    """Send a message to the configured Telegram bot. Silently skips if not configured."""
+    token = os.getenv("TELEGRAM_BOT_TOKEN", "").strip()
+    chat_id = os.getenv("TELEGRAM_CHAT_ID", "").strip()
+    if not token or not chat_id:
+        return
+    try:
+        _requests.post(
+            f"https://api.telegram.org/bot{token}/sendMessage",
+            json={"chat_id": chat_id, "text": message, "parse_mode": "HTML"},
+            timeout=10,
+        )
+    except Exception:
+        pass  # Never let TG failure crash the pipeline
 
 
 def _trim_audio(audio_path: str, max_sec: float = 270, fade_sec: float = 5) -> float:
@@ -855,19 +872,41 @@ if __name__ == "__main__":
     )
     args = parser.parse_args()
 
-    result = asyncio.run(create_music_video(
-        genre_key=args.genre,
-        output_dir=args.output_dir,
-        upload=not args.no_upload,
-        model=args.model,
-        instrumental=args.instrumental,
-        resume_from=args.resume,
-    ))
+    try:
+        result = asyncio.run(create_music_video(
+            genre_key=args.genre,
+            output_dir=args.output_dir,
+            upload=not args.no_upload,
+            model=args.model,
+            instrumental=args.instrumental,
+            resume_from=args.resume,
+        ))
+    except Exception as exc:
+        err_msg = (
+            "\u274c <b>Music pipeline FAILED</b>\n"
+            f"{traceback.format_exc()[-2000:]}"
+        )
+        _send_telegram(err_msg)
+        raise
 
+    url = result.get("url") or "Not uploaded"
     print("\n" + "="*55)
     print("DONE")
     print(f"  Title : {result['title']}")
     print(f"  Video : {result['paths']['final']}")
-    print(f"  URL   : {result.get('url', 'Not uploaded')}")
+    print(f"  URL   : {url}")
     print("="*55)
+
+    if result.get("url"):
+        tg_msg = (
+            "\u2705 <b>New video uploaded!</b>\n"
+            f"\U0001f3b5 {result['title']}\n"
+            f"\U0001f517 {result['url']}"
+        )
+    else:
+        tg_msg = (
+            "\u2705 <b>Video rendered (not uploaded)</b>\n"
+            f"\U0001f3b5 {result['title']}"
+        )
+    _send_telegram(tg_msg)
 
