@@ -113,6 +113,7 @@ _PEXELS_THUMB_QUERIES: dict = {
     "hugot_ballad":         ["woman crying face closeup", "sad woman portrait tears", "crying woman face"],
     "hugot_opm_pop":        ["shocked woman face closeup", "woman open mouth surprise", "emotional woman face"],
     "opm_rnb_hugot":        ["sad woman night portrait", "emotional woman crying", "heartbroken woman face"],
+    "opm_funky_love":       ["romantic couple sunset golden hour", "couple laughing happy love", "woman smiling joyful portrait", "couple embrace romantic", "happy woman in love closeup"],
     "pinoy_rap_hugot":      ["emotional man crying face", "sad man portrait", "man heartbroken face"],
     "pamana_folk_opm":      ["sad woman portrait", "tearful woman face closeup", "woman crying face"],
     "pinoy_rant":           ["angry man face closeup", "frustrated man expression", "shocked man face"],
@@ -120,7 +121,7 @@ _PEXELS_THUMB_QUERIES: dict = {
     "motivational_hip_hop": ["confident man face closeup", "motivated man portrait", "determined man face"],
     "lofi_hiphop":          ["sad girl face aesthetic", "lonely woman face", "melancholy woman portrait"],
     "chill_pop":            ["happy woman laughing face", "joyful woman face closeup", "happy girl face"],
-    "default":              ["emotional woman face crying", "sad woman face closeup", "woman heartbroken face"],
+    "default":              ["romantic couple sunset", "happy woman portrait smiling", "couple in love golden hour"],
 }
 
 
@@ -400,9 +401,8 @@ def generate_music_thumbnail(
     TX         = 50               # text left margin
     TEXT_ZONE  = int(W * 0.53)    # text stays left of this (~678px)
     MAX_TW     = TEXT_ZONE - TX - 18
-    is_hugot   = "hugot" in genre_key or "ballad" in genre_key or "opm" in genre_key
-    RED        = (218, 18, 38)
     YELLOW     = (255, 220, 0)
+    GOLD       = (255, 185, 0)
     WHITE      = (255, 255, 255)
 
     def _fn(size):
@@ -484,8 +484,11 @@ def generate_music_thumbnail(
     img = Image.alpha_composite(img, panel).convert("RGB")
 
     # ── 3. Split the ACTUAL title into 2 display lines ────────────────────────
-    # Strip '| Music' suffix so it doesn't appear on thumbnail
-    clean_title = re.sub(r'\s*\|\s*Music\s*$', '', title, flags=re.IGNORECASE).strip()
+    # Strip suffix and AI Version label — thumbnail shows just the core title
+    clean_title = re.sub(r'\s*\|\s*OPM Love Song.*$', '', title, flags=re.IGNORECASE).strip()
+    clean_title = re.sub(r'\s*\|\s*Music\s*$', '', clean_title, flags=re.IGNORECASE).strip()
+    clean_title = re.sub(r'\s*\(AI Version\)\s*', ' ', clean_title, flags=re.IGNORECASE).strip()
+    clean_title = re.sub(r'\s*AI Version\s*', ' ', clean_title, flags=re.IGNORECASE).strip()
     clean_title = re.sub(r'[^\x20-\x7E\u0080-\u024F]', '', clean_title).strip()
     y_txt, w_txt = _ai_split_thumbnail_text(clean_title, MAX_TW)
 
@@ -534,20 +537,15 @@ def generate_music_thumbnail(
     img  = Image.alpha_composite(img, glow).convert("RGB")
     draw = ImageDraw.Draw(img)
 
-    # ── 7. ♥ Heart + HUGOT pill tag ───────────────────────────────────────────
-    draw.text((TX + 3, tag_cy + 3), "\u2665", font=f_heart, fill=(80, 0, 12), anchor="lm")
-    draw.text((TX,     tag_cy),     "\u2665", font=f_heart, fill=RED,          anchor="lm")
-    hb      = f_heart.getbbox("\u2665")
-    heart_w = hb[2] - hb[0] + 10
-    pill_x  = TX + heart_w
-    tag_lbl = "HUGOT" if is_hugot else genre_key.upper()[:6]
+    # ── 7. Genre pill tag (no red, no hugot) ───────────────────────────────────
+    tag_lbl = "OPM LOVE SONG"
     tb      = f_tag.getbbox(tag_lbl)
     pill_w  = tb[2] - tb[0] + 22
     draw.rounded_rectangle(
-        [pill_x, tag_cy - H_TAG // 2, pill_x + pill_w, tag_cy + H_TAG // 2],
-        radius=7, fill=RED,
+        [TX, tag_cy - H_TAG // 2, TX + pill_w, tag_cy + H_TAG // 2],
+        radius=7, fill=(20, 20, 20),
     )
-    draw.text((pill_x + 11, tag_cy), tag_lbl, font=f_tag, fill=WHITE, anchor="lm")
+    draw.text((TX + 11, tag_cy), tag_lbl, font=f_tag, fill=YELLOW, anchor="lm")
 
     # ── 8. Yellow first line — thick stroke + fill ────────────────────────────
     _stroke_text(draw, (TX, yellow_cy), y_txt, f_yellow, YELLOW, sw=10, anchor="lm")
@@ -556,17 +554,17 @@ def generate_music_thumbnail(
     ul_y = yellow_cy + lh_y // 2 + 5
     draw.rectangle([TX, ul_y, TX + yb[2] - yb[0], ul_y + 7], fill=YELLOW)
 
-    # ── 9. White second line — thick stroke + fill ────────────────────────────
+    # ── 9. Second line — same yellow as first ────────────────────────────────
     if w_txt:
-        _stroke_text(draw, (TX, white_cy), w_txt, f_white, WHITE, sw=9, anchor="lm")
+        _stroke_text(draw, (TX, white_cy), w_txt, f_white, YELLOW, sw=9, anchor="lm")
 
-    # ── 10. Bottom red badge ───────────────────────────────────────────────────
-    draw.rectangle([0, H - BADGE_H, W, H], fill=RED)
-    badge_txt = "OPM HUGOT  \u2022  BAGONG KANTA" if is_hugot else "SUBSCRIBE FOR MORE MUSIC"
-    draw.text((W // 2, H - BADGE_H // 2), badge_txt, font=f_badge, fill=WHITE, anchor="mm")
+    # ── 10. Bottom dark badge ────────────────────────────────────────────────
+    draw.rectangle([0, H - BADGE_H, W, H], fill=(15, 15, 15))
+    badge_txt = "BAGONG OPM LOVE SONG  \u2022  SUBSCRIBE FOR MORE"
+    draw.text((W // 2, H - BADGE_H // 2), badge_txt, font=f_badge, fill=YELLOW, anchor="mm")
 
-    # ── 12. Thin top accent bar (4px) ─────────────────────────────────────────
-    draw.rectangle([0, 0, W, 4], fill=RED)
+    # ── 12. Thin top accent bar (4px yellow) ──────────────────────────────────
+    draw.rectangle([0, 0, W, 4], fill=GOLD)
 
     img.save(output_path, "PNG", quality=95)
     print(f"[thumb] Music thumbnail saved: {output_path}")
