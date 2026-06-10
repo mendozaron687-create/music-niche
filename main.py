@@ -324,7 +324,8 @@ def _generate_description(
             "💬 Sino ang nasa isip mo habang pinapakingan ito? I-comment ka below 👇\n"
             "🔔 I-subscribe at i-on ang bell para hindi ka makaligtaan ng bagong OPM!\n"
             "❤️ I-share mo 'to sa taong kailangan marinig ito ngayon.\n"
-            "👇 Buksan ang description para sa lyrics at chapters."
+            "👇 Buksan ang description para sa lyrics at chapters.\n\n"
+            "⚠️ DISCLOSURE: This is an AI-generated original song. Lyrics, melody, and vocals are created by artificial intelligence. Not a cover — all content is original."
         )
     else:
         cta_block = (
@@ -347,7 +348,8 @@ def _generate_description(
                 f"2. Mention the year {year} and 'OPM' at least once each.\n"
                 f"3. 120-160 words total. Tagalog/Taglish. Plain text only, no markdown, no bullet points.\n"
                 f"4. Capture the main emotion (heartbreak / frustration / pag-asa / etc).\n"
-                f"5. End with: 'Para sa bawat Pilipinong may nararamdaman ngayon — para ito sa inyo.' "
+                f"5. Mention that this is an AI-generated original song — NOT a cover.\n"
+                f"6. End with: 'Para sa bawat Pilipinong may nararamdaman ngayon — para ito sa inyo.' "
             )
         else:
             prompt = (
