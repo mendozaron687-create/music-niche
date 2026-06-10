@@ -597,17 +597,17 @@ async def create_music_video(
     trend_story = {}
 
     if genre_key in OPM_GENRES:
-        # OPM path: generate original love song from a preset romantic theme (no trending news)
+        # OPM path: generate original love song inspired by a famous Tagalog song title
         from lyrics_generator import (
             generate_tagalog_lyrics, generate_song_title,
             generate_viral_yt_title, generate_pinned_comment, generate_story_cards,
-            get_romantic_theme, format_romantic_context,
+            get_famous_song_theme, format_famous_song_context,
         )
 
-        trend_story = get_romantic_theme()
-        trend_context = format_romantic_context(trend_story)
+        trend_story = get_famous_song_theme()
+        trend_context = format_famous_song_context(trend_story)
 
-        print(f"[pipeline] Theme: {trend_story['title']}")
+        print(f"[pipeline] Famous song reference: {trend_story['song']} — {trend_story['artist']}")
         print(f"[pipeline] Genre: {genre_key}")
 
         print("[pipeline] Generating Tagalog lyrics via OpenRouter...")
@@ -615,24 +615,24 @@ async def create_music_video(
 
         # Short Tagalog song title (for Suno music generation)
         print("[pipeline] Generating song title...")
-        song_title = generate_song_title(lyrics, trend_story["title"], genre_key=genre_key)
+        song_title = generate_song_title(lyrics, trend_story["song"], genre_key=genre_key)
         print(f"[pipeline] Song title: {song_title}")
 
-        # Viral YouTube title — lyrics-driven hook
-        yt_title = generate_viral_yt_title(trend_story["title"], lyrics, genre_key=genre_key)
+        # Viral YouTube title — references the famous song name
+        yt_title = generate_viral_yt_title(trend_story["song"], lyrics, genre_key=genre_key, famous_song=trend_story)
         print(f"[pipeline] YouTube title: {yt_title}")
 
         # Pinned first comment — LLM-generated emotional hook
-        first_comment = generate_pinned_comment(trend_story["title"], lyrics)
+        first_comment = generate_pinned_comment(trend_story["song"], lyrics)
 
         # Story intro cards + mid-video pull quotes
-        _sc_data = generate_story_cards(trend_story["title"], trend_story.get("description", ""))
+        _sc_data = generate_story_cards(trend_story["song"], trend_story.get("theme", ""))
         story_card_list = _sc_data.get("intro", [])
         pull_quote_list = _sc_data.get("mid", [])
         print(f"[pipeline] Story cards: {len(story_card_list)} intro + {len(pull_quote_list)} mid-quotes")
 
         # Short story hook for video title card (first 5s retention)
-        hook_text = trend_story["title"][:70]
+        hook_text = trend_story["song"][:70]
 
         # Override the style from lyrics_generator (more specific than genre_dict)
         genre_dict = dict(genre_dict)

@@ -147,10 +147,58 @@ _ROMANTIC_THEMES = [
 ]
 
 
+# ── Famous Tagalog songs — used for YouTube title inspiration only ───────────
+# We write NEW original lyrics; we only borrow the emotional title/theme reference.
+_FAMOUS_TAGALOG_SONGS = [
+    {"song": "Ikaw", "artist": "Yeng Constantino", "theme": "declaring that you are the only one I want forever", "emotion": "devoted, romantic"},
+    {"song": "Kahit Maputi Na Ang Buhok Ko", "artist": "Rey Valera", "theme": "loving someone until old age, forever kind of love", "emotion": "timeless, tender"},
+    {"song": "Hanggang", "artist": "Wency Cornejo", "theme": "a love that lasts through every hardship", "emotion": "resilient, steadfast"},
+    {"song": "Kung Ikaw Ay Akin", "artist": "Ogie Alcasid", "theme": "wishing you were mine, dreaming of a love that could be", "emotion": "longing, hopeful"},
+    {"song": "Pag-ibig Ko'y Walang Kupas", "artist": "Basil Valdez", "theme": "an unfading love that never grows old", "emotion": "classic, enduring"},
+    {"song": "Nandito Ako", "artist": "Ogie Alcasid", "theme": "being fully here, present and ready to love", "emotion": "reassuring, warm"},
+    {"song": "Bakit Labis Kitang Mahal", "artist": "Sharon Cuneta", "theme": "loving someone so deeply you cannot explain why", "emotion": "overwhelming, pure"},
+    {"song": "Sana Maulit Muli", "artist": "Gary Valenciano", "theme": "wishing the beautiful moments of love could happen again", "emotion": "nostalgic, sweet"},
+    {"song": "Ngayon at Kailanman", "artist": "Jose Mari Chan", "theme": "a love that exists now and will last always", "emotion": "eternal, classic"},
+    {"song": "Mahal Kita Walang Iba", "artist": "Andrew E.", "theme": "you and no one else — a simple, absolute declaration", "emotion": "playful, sincere"},
+    {"song": "Ako'y Sayo at Ika'y Akin Pa Rin", "artist": "Imelda Papin", "theme": "belonging to each other completely, always", "emotion": "possessive, deep love"},
+    {"song": "Habang May Buhay", "artist": "Noel Cabangon", "theme": "staying together as long as there is life", "emotion": "soulful, committed"},
+    {"song": "Ikaw Lamang", "artist": "Silent Sanctuary", "theme": "only you in my heart, no one else matters", "emotion": "intense, devoted"},
+    {"song": "Kamusta Ka", "artist": "Gary Valenciano", "theme": "missing someone and genuinely asking how they are", "emotion": "gentle, caring"},
+    {"song": "Sa Aking Puso", "artist": "Lito Camo", "theme": "you live inside my heart, always with me", "emotion": "intimate, sentimental"},
+    {"song": "Bukas Na Lang Kita Mamahalin", "artist": "Freestyle", "theme": "the regret of delaying love until it is too late", "emotion": "bittersweet, nostalgic"},
+    {"song": "Forevermore", "artist": "Side A", "theme": "a love that promises forever, through everything", "emotion": "romantic, timeless"},
+    {"song": "Tuloy Pa Rin", "artist": "Neocolours", "theme": "love that keeps going despite all the distance and pain", "emotion": "persevering, romantic"},
+    {"song": "Tell Me", "artist": "Gloc-9 ft. Pauline", "theme": "the quiet courage of finally saying 'I love you'", "emotion": "tender, nervous"},
+    {"song": "Pag-ibig", "artist": "Apo Hiking Society", "theme": "the simple, real, and joyful meaning of love", "emotion": "classic, joyful"},
+    {"song": "Ligaya", "artist": "Eraserheads", "theme": "you are my happiness, my ligaya, my everything", "emotion": "youthful, upbeat"},
+    {"song": "Harana", "artist": "Parokya ni Edgar", "theme": "serenading the one you love with a song from the heart", "emotion": "playful, classic serenade"},
+    {"song": "Isang Tanong, Isang Sagot", "artist": "Aegis", "theme": "one question, one answer — will you be mine?", "emotion": "bold, romantic"},
+    {"song": "Kung Wala Ka", "artist": "Jessa Zaragoza", "theme": "imagining life without you — it is unthinkable", "emotion": "deep, dependent love"},
+    {"song": "Yakap Sa Dilim", "artist": "Sponge Cola", "theme": "holding on to love even in the darkest moments", "emotion": "passionate, intense"},
+]
+
+
+def get_famous_song_theme() -> dict:
+    """Return a random famous Tagalog song to use as YouTube title inspiration."""
+    import random as _random
+    return _random.choice(_FAMOUS_TAGALOG_SONGS)
+
+
 def get_romantic_theme() -> dict:
     """Return a random preset romantic theme for original love song generation."""
     import random as _random
     return _random.choice(_ROMANTIC_THEMES)
+
+
+def format_famous_song_context(song: dict) -> str:
+    """Build the LLM lyrics-generation context string from a famous song reference."""
+    return (
+        f'Song theme inspired by the emotion of the classic OPM song "{song["song"]}":\n'
+        f'Core theme: {song["theme"]}\n'
+        f'Emotional tone: {song["emotion"]}\n'
+        f'NOTE: Write COMPLETELY ORIGINAL lyrics — do NOT copy or reference the original song. '
+        f'Only the emotional theme and feeling should carry over.'
+    )
 
 
 def format_romantic_context(theme: dict) -> str:
@@ -372,15 +420,14 @@ def generate_song_title(lyrics: str, trend_title: str, genre_key: str = "") -> s
         return trend_title
 
 
-def generate_viral_yt_title(story_title: str, lyrics: str, genre_key: str = "") -> str:
+def generate_viral_yt_title(story_title: str, lyrics: str, genre_key: str = "", famous_song: dict | None = None) -> str:
     """
     Generate a punchy YouTube title in Tagalog/Taglish.
 
     Strategy per genre type:
+      - opm_funky_love: title references the famous Tagalog song name for searchability
       - Rant/protest: title MUST reference the specific news event (political rage bait)
-      - Hugot (love): title is a PURE EMOTIONAL HOOK derived from the LYRICS,
-        not from the news topic name. The news topic is only context for the song's
-        emotion — never a literal word in the title (avoids disease/policy names).
+      - Hugot (love): title is a PURE EMOTIONAL HOOK derived from the LYRICS
     """
     api_key = os.getenv("OPENROUTER_API_KEY", "")
     is_rant = genre_key in _RANT_GENRES
@@ -391,6 +438,7 @@ def generate_viral_yt_title(story_title: str, lyrics: str, genre_key: str = "") 
         "pinoy_rap_hugot":      " | Pinoy Rap 2026 🎤",
         "opm_rnb_hugot":        " | OPM R&B 2026 🌙",
         "pamana_folk_opm":      " | OPM Folk 2026 🎸",
+        "opm_funky_love":       " | OPM Love Song 2026 🇵🇭",
         "pinoy_rant":           " | Pinoy Rant Song 😤",
         "pinoy_protest_anthem": " | OPM Protest Song 🇵🇭",
     }
@@ -405,7 +453,31 @@ def generate_viral_yt_title(story_title: str, lyrics: str, genre_key: str = "") 
                 return line[:max_base].rstrip() + suffix
         return story_title[:max_base].rstrip() + suffix
 
-    if is_rant:
+    if genre_key == "opm_funky_love" and famous_song:
+        # Title references the famous song name to catch search traffic,
+        # but makes clear it is a fresh new version — NOT a cover.
+        best_lines = "\n".join(
+            line.strip() for line in lyrics.splitlines()
+            if line.strip() and not line.strip().startswith("[") and len(line.strip()) > 15
+        )[:300]
+        content = (
+            f"Famous OPM song for reference: \"{famous_song['song']}\" by {famous_song['artist']}\n"
+            f"New original song theme: {famous_song['theme']}\n"
+            f"Sample lyrics from the new original song:\n{best_lines}\n\n"
+            "Write ONE viral YouTube title in Tagalog or Taglish for this NEW original music video.\n"
+            "RULES:\n"
+            f"1. MUST mention the famous song title \"{famous_song['song']}\" naturally in the title.\n"
+            "2. Make it clear this is a NEW original song inspired by the same feeling — NOT a cover.\n"
+            "3. Use curiosity gap (... or —) to make people click.\n"
+            "4. Feel-good, romantic, upbeat energy — NOT hugot or heartbreak.\n"
+            "5. Sound like something you would share on Facebook or TikTok Philippines.\n"
+            "Good examples (for song 'Ikaw'):\n"
+            "- 'Parang \"Ikaw\" Pero Mas Masaya — Kinikilig Ako! 😍'\n"
+            "- 'Narinig Mo Na Ang \"Ikaw\"? Ito Ang Bagong Version Na Mas Feel-Good'\n"
+            "- '\"Ikaw\" Ang Mood Ko Ngayon — Bagong OPM Love Song 💛'\n"
+            f"Max {max_base} characters. No hashtags. No markdown. Just the title."
+        )
+    elif is_rant:
         # Rant genres: title must directly name the news event so Filipinos recognize it
         content = (
             f"Trending news topic: \"{story_title}\"\n"
@@ -421,9 +493,6 @@ def generate_viral_yt_title(story_title: str, lyrics: str, genre_key: str = "") 
         )
     else:
         # Hugot genres: title is a LYRIC-BASED emotional hook.
-        # Do NOT mention the news topic name (avoid disease names, budget jargon, etc.)
-        # The title should sound like a relatable Filipino love/heartbreak experience.
-        # Pull the hook directly from the most emotional lines in the lyrics.
         best_lines = "\n".join(
             line.strip() for line in lyrics.splitlines()
             if line.strip() and not line.strip().startswith("[") and len(line.strip()) > 15
