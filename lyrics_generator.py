@@ -464,7 +464,9 @@ def generate_viral_yt_title(story_title: str, lyrics: str, genre_key: str = "", 
     max_base = 100 - len(suffix)
 
     if not api_key:
-        # Fallback: use first punchy lyric line as the title
+        if genre_key == "opm_funky_love" and famous_song:
+            base = f'"{famous_song["song"]}" — Bagong OPM Love Song (AI Version) 🎵'
+            return base[:max_base].rstrip() + suffix
         for line in lyrics.splitlines():
             line = line.strip()
             if line and not line.startswith("[") and len(line) > 15:
@@ -484,15 +486,15 @@ def generate_viral_yt_title(story_title: str, lyrics: str, genre_key: str = "", 
             f"Sample lyrics from the new original song:\n{best_lines}\n\n"
             "Write ONE viral YouTube title in Tagalog or Taglish for this NEW original music video.\n"
             "RULES:\n"
-            f"1. MUST mention the famous song title \"{famous_song['song']}\" naturally in the title.\n"
-            "2. Make it clear this is a NEW original song inspired by the same feeling — NOT a cover.\n"
+            f"1. MUST include the famous song title \"{famous_song['song']}\" in the title (in quotes).\n"
+            "2. MUST include the words 'AI Version' somewhere in the title.\n"
             "3. Use curiosity gap (... or —) to make people click.\n"
             "4. Feel-good, romantic, upbeat energy — NOT hugot or heartbreak.\n"
             "5. Sound like something you would share on Facebook or TikTok Philippines.\n"
-            "Good examples (for song 'Ikaw'):\n"
-            "- 'Parang \"Ikaw\" Pero Mas Masaya — Kinikilig Ako! 😍'\n"
-            "- 'Narinig Mo Na Ang \"Ikaw\"? Ito Ang Bagong Version Na Mas Feel-Good'\n"
-            "- '\"Ikaw\" Ang Mood Ko Ngayon — Bagong OPM Love Song 💛'\n"
+            f"Good examples (for song 'Ikaw'):\n"
+            "- '\"Ikaw\" — Bagong OPM Love Song (AI Version) 💛'\n"
+            "- 'Parang \"Ikaw\" Pero Mas Feel-Good — AI Version 😍'\n"
+            "- '\"Ikaw\" AI Version — Kinikilig Ako Sa Kantang Ito!'\n"
             f"Max {max_base} characters. No hashtags. No markdown. Just the title."
         )
     elif is_rant:
@@ -537,9 +539,16 @@ def generate_viral_yt_title(story_title: str, lyrics: str, genre_key: str = "", 
         raw = _call_openrouter(messages, _MODELS[0])
         title = re.sub(r'\*+', '', raw).strip().strip('"\'').split("\n")[0].strip()
         base = title if title else story_title
+        # For opm_funky_love: if LLM forgot the song name, build a guaranteed template
+        if genre_key == "opm_funky_love" and famous_song:
+            song_name = famous_song["song"]
+            if song_name.lower() not in base.lower():
+                base = f'"{song_name}" — Bagong OPM Love Song (AI Version) 🎵'
         return base[:max_base].rstrip() + suffix
     except Exception:
-        # Fallback: first strong lyric line
+        if genre_key == "opm_funky_love" and famous_song:
+            base = f'"{famous_song["song"]}" — Bagong OPM Love Song (AI Version) 🎵'
+            return base[:max_base].rstrip() + suffix
         for line in lyrics.splitlines():
             line = line.strip()
             if line and not line.startswith("[") and len(line) > 15:
