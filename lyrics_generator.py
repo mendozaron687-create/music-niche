@@ -147,41 +147,59 @@ _ROMANTIC_THEMES = [
 ]
 
 
-# ── Famous Tagalog songs — used for YouTube title inspiration only ───────────
-# We write NEW original lyrics; we only borrow the emotional title/theme reference.
-_FAMOUS_TAGALOG_SONGS = [
-    {"song": "Ikaw", "artist": "Yeng Constantino", "theme": "declaring that you are the only one I want forever", "emotion": "devoted, romantic"},
-    {"song": "Kahit Maputi Na Ang Buhok Ko", "artist": "Rey Valera", "theme": "loving someone until old age, forever kind of love", "emotion": "timeless, tender"},
-    {"song": "Hanggang", "artist": "Wency Cornejo", "theme": "a love that lasts through every hardship", "emotion": "resilient, steadfast"},
-    {"song": "Kung Ikaw Ay Akin", "artist": "Ogie Alcasid", "theme": "wishing you were mine, dreaming of a love that could be", "emotion": "longing, hopeful"},
-    {"song": "Pag-ibig Ko'y Walang Kupas", "artist": "Basil Valdez", "theme": "an unfading love that never grows old", "emotion": "classic, enduring"},
-    {"song": "Nandito Ako", "artist": "Ogie Alcasid", "theme": "being fully here, present and ready to love", "emotion": "reassuring, warm"},
-    {"song": "Bakit Labis Kitang Mahal", "artist": "Sharon Cuneta", "theme": "loving someone so deeply you cannot explain why", "emotion": "overwhelming, pure"},
-    {"song": "Sana Maulit Muli", "artist": "Gary Valenciano", "theme": "wishing the beautiful moments of love could happen again", "emotion": "nostalgic, sweet"},
-    {"song": "Ngayon at Kailanman", "artist": "Jose Mari Chan", "theme": "a love that exists now and will last always", "emotion": "eternal, classic"},
-    {"song": "Mahal Kita Walang Iba", "artist": "Andrew E.", "theme": "you and no one else — a simple, absolute declaration", "emotion": "playful, sincere"},
-    {"song": "Ako'y Sayo at Ika'y Akin Pa Rin", "artist": "Imelda Papin", "theme": "belonging to each other completely, always", "emotion": "possessive, deep love"},
-    {"song": "Habang May Buhay", "artist": "Noel Cabangon", "theme": "staying together as long as there is life", "emotion": "soulful, committed"},
-    {"song": "Ikaw Lamang", "artist": "Silent Sanctuary", "theme": "only you in my heart, no one else matters", "emotion": "intense, devoted"},
-    {"song": "Kamusta Ka", "artist": "Gary Valenciano", "theme": "missing someone and genuinely asking how they are", "emotion": "gentle, caring"},
-    {"song": "Sa Aking Puso", "artist": "Lito Camo", "theme": "you live inside my heart, always with me", "emotion": "intimate, sentimental"},
-    {"song": "Bukas Na Lang Kita Mamahalin", "artist": "Freestyle", "theme": "the regret of delaying love until it is too late", "emotion": "bittersweet, nostalgic"},
-    {"song": "Forevermore", "artist": "Side A", "theme": "a love that promises forever, through everything", "emotion": "romantic, timeless"},
-    {"song": "Tuloy Pa Rin", "artist": "Neocolours", "theme": "love that keeps going despite all the distance and pain", "emotion": "persevering, romantic"},
-    {"song": "Tell Me", "artist": "Gloc-9 ft. Pauline", "theme": "the quiet courage of finally saying 'I love you'", "emotion": "tender, nervous"},
-    {"song": "Pag-ibig", "artist": "Apo Hiking Society", "theme": "the simple, real, and joyful meaning of love", "emotion": "classic, joyful"},
-    {"song": "Ligaya", "artist": "Eraserheads", "theme": "you are my happiness, my ligaya, my everything", "emotion": "youthful, upbeat"},
-    {"song": "Harana", "artist": "Parokya ni Edgar", "theme": "serenading the one you love with a song from the heart", "emotion": "playful, classic serenade"},
-    {"song": "Isang Tanong, Isang Sagot", "artist": "Aegis", "theme": "one question, one answer — will you be mine?", "emotion": "bold, romantic"},
-    {"song": "Kung Wala Ka", "artist": "Jessa Zaragoza", "theme": "imagining life without you — it is unthinkable", "emotion": "deep, dependent love"},
-    {"song": "Yakap Sa Dilim", "artist": "Sponge Cola", "theme": "holding on to love even in the darkest moments", "emotion": "passionate, intense"},
-]
 
+# ── Famous Tagalog songs — now loaded from famous_songs.json (400 entries) ──
+# get_famous_song_theme() reads from that file and tracks usage in used_songs.csv
 
 def get_famous_song_theme() -> dict:
-    """Return a random famous Tagalog song to use as YouTube title inspiration."""
+    """
+    Return a random famous Tagalog song that has NOT been used yet.
+    Tracks usage in used_songs.csv. Resets automatically when all 400 are exhausted.
+    """
     import random as _random
-    return _random.choice(_FAMOUS_TAGALOG_SONGS)
+    import json
+    import csv
+    from pathlib import Path
+    from datetime import date as _date
+
+    root = Path(__file__).parent
+    songs_file = root / "famous_songs.json"
+    used_file = root / "used_songs.csv"
+
+    # Load master list
+    with open(songs_file, encoding="utf-8") as f:
+        all_songs = json.load(f)
+
+    # Load already-used song titles
+    used_titles: set[str] = set()
+    if used_file.exists():
+        with open(used_file, newline="", encoding="utf-8") as f:
+            reader = csv.DictReader(f)
+            for row in reader:
+                used_titles.add(row.get("song", ""))
+
+    # Filter to unused songs
+    available = [s for s in all_songs if s["song"] not in used_titles]
+
+    if not available:
+        # Full cycle complete — reset and start over
+        print(f"[songs] Full cycle complete ({len(all_songs)} songs used) — resetting")
+        used_file.write_text("song,artist,date_used\n", encoding="utf-8")
+        available = all_songs
+
+    chosen = _random.choice(available)
+    remaining = len(available) - 1
+
+    # Append to CSV log
+    write_header = not used_file.exists() or used_file.stat().st_size == 0
+    with open(used_file, "a", newline="", encoding="utf-8") as f:
+        writer = csv.writer(f)
+        if write_header:
+            writer.writerow(["song", "artist", "date_used"])
+        writer.writerow([chosen["song"], chosen["artist"], _date.today().isoformat()])
+
+    print(f"[songs] Selected: \"{chosen['song']}\" — {remaining} songs remaining in cycle")
+    return chosen
 
 
 def get_romantic_theme() -> dict:

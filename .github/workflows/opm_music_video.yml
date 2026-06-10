@@ -73,6 +73,6 @@ jobs:
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add playlist_ids.json run_log.txt || true
+          git add playlist_ids.json run_log.txt used_songs.csv || true
           git diff --cached --quiet || git commit -m "chore: update run state [skip ci]"
           git push || true
